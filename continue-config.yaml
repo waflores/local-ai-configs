@@ -1,0 +1,88 @@
+name: llama.cpp configuration
+version: 1.0.0
+schema: v1
+models:
+  - name: IBM Granite 4 Tiny
+    provider: llama.cpp
+    model: ibm/granite-4-h-tiny
+    roles:
+      - chat
+      - edit
+      - apply
+      - autocomplete
+    capabilities:
+      - tool_use
+  - name: NVidia Nemotron 3 Nano
+    provider: llama.cpp
+    model: nvidia/nemotron-3-nano-4b
+    roles:
+      - chat
+      - edit
+      - apply
+      - autocomplete
+    capabilities:
+      - tool_use
+  - name: Gemma 4
+    provider: llama.cpp
+    model: google/gemma-4-e4b
+    roles:
+      - chat
+      - edit
+      - apply
+      - autocomplete
+    capabilities:
+      - tool_use
+  - name: Phi4 Reasoning Plus
+    provider: llama.cpp
+    model: microsoft/phi-4-reasoning-plus
+    roles:
+      - chat
+      - edit
+      - apply
+      - autocomplete
+    capabilities:
+      - tool_use
+  - name: Qwen 3.5 9B
+    provider: llama.cpp
+    model: Qwen3.5-9B-GGUF
+    roles:
+      - apply
+      - autocomplete
+      - chat
+      - edit
+      - rerank
+      - subagent
+      - summarize
+    capabilities:
+      - tool_use
+      - next_edit
+    # defaultCompletionOptions:
+    #   temperature: 0.6
+    #   topK: 20
+    #   topP: 0.95
+    #   minP: 0
+    #   maxTokens: -1
+    #   contextLength: 60000
+    # requestOptions:
+    #   timeout: 300000
+    # env:
+    #   FLASH_ATTENTION: "auto"
+    #   N_GPU_LAYERS: "all"
+    #   THREADS: "-1"
+    #   CONTEXT_SHIFT: "true"
+    #   RERANKING: "true"
+    #   VERBOSE: "true"
+    #   JINJA: "true"
+    #   TOOLS: "all"
+
+context:
+  - provider: repo-map
+    params:
+      includeSignatures: true # default true
+  - provider: os
+  - provider: diff
+  - provider: file
+  - provider: code
+  - provider: open
+  - provider: tree
+  - provider: currentFile

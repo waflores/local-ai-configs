@@ -1,0 +1,15 @@
+[[models]]
+name = "Qwen3.5-9B-GGUF"
+repo_id = "Qwen/Qwen3.5-9B-GGUF"
+filename = "Qwen3.5-9B-Q4_K_M.gguf"
+quant = "Q4_K_M"
+ctx = 8192
+port = 9091
+size_gib = 5.3
+local_path = "/home/waflores/.lmstudio/models/lmstudio-community/Qwen3.5-9B-GGUF/Qwen3.5-9B-Q4_K_M.gguf"
+mmproj_path = "/home/waflores/.lmstudio/models/lmstudio-community/Qwen3.5-9B-GGUF/mmproj-Qwen3.5-9B-BF16.gguf"
+reasoning = ""
+reasoning_budget = -1
+pin = false
+
+# We just need to add another [[models]] entry
