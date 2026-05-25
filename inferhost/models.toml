@@ -2,7 +2,7 @@
 name = "Qwen3.5-9B-GGUF"
 repo_id = "Qwen/Qwen3.5-9B-GGUF"
 filename = "Qwen3.5-9B-Q4_K_M.gguf"
-quant = "Q4_K_M"
+quant = "Q4_0"
 ctx = 8192
 port = 9091
 size_gib = 5.3

@@ -1,0 +1,17 @@
+healthCheckTimeout: 300
+logRequests: false
+models:
+  Qwen3.5-9B-GGUF:
+    cmd: /bin/sh -c 'exec env LD_LIBRARY_PATH=/home/waflores/.local/share/inferhost/bin
+      /home/waflores/.local/share/inferhost/bin/llama-server --model /home/waflores/.lmstudio/models/lmstudio-community/Qwen3.5-9B-GGUF/Qwen3.5-9B-Q4_K_M.gguf
+      --host 127.0.0.1 --port 9091 -ngl 99 -c 8192 -fa on --parallel 4 --jinja --reasoning
+      auto --reasoning-budget -1 -ctk q8_0 -ctv q8_0 --mmproj /home/waflores/.lmstudio/models/lmstudio-community/Qwen3.5-9B-GGUF/mmproj-Qwen3.5-9B-BF16.gguf
+      2>>/home/waflores/.local/share/inferhost/logs/Qwen3.5-9B-GGUF.err.log'
+    proxy: http://127.0.0.1:9091
+    ttl: 600
+groups:
+  swappable:
+    swap: true
+    exclusive: true
+    members:
+    - Qwen3.5-9B-GGUF
