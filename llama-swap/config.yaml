@@ -74,7 +74,6 @@ models:
         --reasoning-budget ${reasoningBudget} \
         --cache-ram ${cacheRamSpillover} \
         --temp ${temp} --top-k ${top_k} --top-p ${top_p} --min-p ${min_p}
-
   granite-4-h-tiny:
     # Display name for API
     name: "IBM Granite 4.0 Hybrid Tiny 7B"
@@ -90,22 +89,11 @@ models:
     # Using | for multi-line with comments
     cmd: |
       ${cmdPrefix} \
-        --port ${PORT} \
-        --models-dir ${models_directory} \
-        --model ${models_directory}/granite-4.0-h-tiny-GGUF/granite-4.0-h-tiny-Q4_K_M.gguf \
-        --n-gpu-layers ${nGpuLayers} \
-        --threads ${threads} \
-        --flash-attn ${flashAttn} \
-        --jinja \
-        --tools ${tools} \
-        --device ${device} \
-        --ctx-size ${ctxSize} \
-        --n-predict ${nPredict} \
-        --context-shift 
-        # --reasoning ${reasoning} \
-        # --reasoning-budget ${reasoningBudget} \
-        # --cache-ram ${cacheRamSpillover}
-
+      --port ${PORT} \
+      --models-dir ${models_directory} \
+      --model ${models_directory}/granite-4.0-h-tiny-GGUF/granite-4.0-h-tiny-Q4_K_M.gguf \
+      --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja \
+      --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --context-shift
   nemotron-3-nano-4b:
     # Display name for API
     name: "NVIDIA Nemotron 3 Nano 4B"
@@ -136,7 +124,27 @@ models:
         --reasoning-format ${reasoningFormat} \
         --reasoning-budget ${reasoningBudget} \
         --cache-ram ${cacheRamSpillover}
-
+  zerank-2-gguf:
+    # Display name for API
+    name: "Zerank 2.0"
+    # TTL for this specific model (overrides global if set)
+    ttl: 600
+    # Model-specific macros that override global defaults
+    macros:
+      ctxSize: "-1"
+      device: "Vulkan0"
+    env:
+      - "CUDA_VISIBLE_DEVICES=-1"
+      - "GGML_VK_VISIBLE_DEVICES=0"
+    # Command to start the model server
+    # Using | for multi-line with comments
+    cmd: |
+      ${cmdPrefix} \
+        --port ${PORT} \
+        --models-dir ${models_directory} \
+        --model ${models_directory}/../mradermacher/zerank-2-GGUF/zerank-2.Q4_K_S.gguf \
+        --device ${device} \
+        --reranking --tools all --embedding --reasoning-budget 0 --reasoning off --gpu-layers -2
 # ============================================
 # Groups Configuration (Legacy but supported)
 # ============================================
@@ -150,6 +158,5 @@ groups:
 performance:
   disabled: false
   every: 15s
-
 # Show thinking field
 sendLoadingState: true
