@@ -9,26 +9,31 @@ globalTTL: 0
 # ============================================
 # Global Settings (Shared across all models)
 # ============================================
+# ============================================
+# Extensible Macros Section
+# ============================================
 macros:
-  # Common llama-server parameters (override per-model if needed)
+  # --- Infrastructure & Paths ---
   models_directory: "/home/waflores/.lmstudio/models/lmstudio-community"
   cmdPrefix: "/home/waflores/.local/share/inferhost/bin/llama-server"
-  nGpuLayers: "all"
-  threads: "-1"
-  flashAttn: "auto"
-  tools: "all"
   device: "CUDA0"
-  # 131072; Max for Qwen is: 262144
-  ctxSize: "262144"
-  nPredict: "-1"
+  # --- Default Performance Settings (override per-model if needed) ---
+  threads: "-1" # -1 = use all available CPU threads
+  nGpuLayers: "all" # or specific number like "32"
+  flashAttn: "auto" # flash attention optimization
+  # --- Default Context & Cache ---
+  ctxSize: "262144" # 256K context (max for most models)
+  nPredict: "-1" # -1 = unlimited prediction length
+  cacheRamSpillover: "4096"
+  # --- Reasoning Capabilities ---
   reasoning: "auto"
   reasoningBudget: "-1"
-  checkEndpoint: "/health"
-  # We can set to -1 in order to have no limit
-  cacheRamSpillover: "4096"
-  # jinja: "true"
-  # contextShift: "true"
-  # reranking: "true"
+  reasoningFormat: "deepseek"
+  # --- Feature Flags ---
+  jinja: "true"
+  tools: "all"
+  # --- Context Management ---
+  contextShift: "false"
 # ============================================
 # Models Configuration
 # ============================================
@@ -38,7 +43,14 @@ models:
     name: "Qwen3.5-9B-GGUF"
     # TTL for this specific model (overrides global if set)
     ttl: 600
-
+    # Model-specific macros that override global defaults
+    macros:
+      ctxSize: "262144"
+      # --- Default Model Parameters ---
+      temp: "0.6"
+      top_k: "20"
+      top_p: "0.95"
+      min_p: "0"
     env:
       - "GGML_CUDA_ENABLE_UNIFIED_MEMORY=1"
     # Command to start the model server
@@ -57,11 +69,41 @@ models:
         --n-predict ${nPredict} \
         --context-shift \
         --reasoning ${reasoning} \
+        --reasoning-format ${reasoningFormat} \
         --reasoning-budget ${reasoningBudget} \
         --cache-ram ${cacheRamSpillover} \
-        --reasoning-format deepseek \
-        --temp 0.6 --top-k 20 --top-p 0.95 --min-p 0
+        --temp ${temp} --top-k ${top_k} --top-p ${top_p} --min-p ${min_p}
 
+  granite-4-h-tiny:
+    # Display name for API
+    name: "ibm/granite-4-h-tiny"
+    # TTL for this specific model (overrides global if set)
+    ttl: 600
+    # Model-specific macros that override global defaults
+    macros:
+      ctxSize: "541440"
+      device: "Vulkan0"
+      cacheRamSpillover: "-1"
+    # Command to start the model server
+    # Using | for multi-line with comments
+    cmd: |
+      ${cmdPrefix} \
+        --port ${PORT} \
+        --model ${models_directory}/granite-4.0-h-tiny-GGUF/granite-4.0-h-tiny-Q4_K_M.gguf \
+        --n-gpu-layers ${nGpuLayers} \
+        --threads ${threads} \
+        --flash-attn ${flashAttn} \
+        --jinja \
+        --tools ${tools} \
+        --device ${device} \
+        --ctx-size ${ctxSize} \
+        --n-predict ${nPredict} \
+        --context-shift 
+        # --reasoning ${reasoning} \
+        # --reasoning-budget ${reasoningBudget} \
+        # --cache-ram ${cacheRamSpillover}
+
+  
 # ============================================
 # Groups Configuration (Legacy but supported)
 # ============================================
