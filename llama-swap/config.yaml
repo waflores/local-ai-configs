@@ -1,0 +1,15 @@
+healthCheckTimeout: 300
+logRequests: false
+models:
+  Qwen3.5-9B-GGUF:
+    cmd:
+      /home/waflores/.local/share/inferhost/bin/llama-server --port ${PORT} --model /home/waflores/.lmstudio/models/lmstudio-community/Qwen3.5-9B-GGUF/Qwen3.5-9B-Q4_K_M.gguf
+      --fit on --n-gpu-layers all --threads -1 --flash-attn auto --jinja --tools all --device CUDA0 --ctx-size 60000 --n-predict -1 --context-shift --reranking --verbose
+      --reasoning auto --reasoning-budget -1
+    ttl: 600
+groups:
+  swappable:
+    swap: true
+    exclusive: true
+    members:
+      - Qwen3.5-9B-GGUF
