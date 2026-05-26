@@ -3,13 +3,9 @@
 healthCheckTimeout: 60
 logLevel: debug
 logToStdout: "proxy"
-
 # Port and TTL management
 startPort: 10001
 globalTTL: 0
-
-
-
 # ============================================
 # Global Settings (Shared across all models)
 # ============================================
@@ -20,17 +16,16 @@ macros:
   nGpuLayers: "all"
   threads: "-1"
   flashAttn: "auto"
-  jinja: "true"
   tools: "all"
   device: "CUDA0"
   ctxSize: "60000"
   nPredict: "-1"
-  contextShift: "true"
-  reranking: "true"
   reasoning: "auto"
   reasoningBudget: "-1"
   checkEndpoint: "/health"
-
+  # jinja: "true"
+  # contextShift: "true"
+  # reranking: "true"
 # ============================================
 # Models Configuration
 # ============================================
@@ -38,10 +33,8 @@ models:
   Qwen3.5-9B-GGUF:
     # Display name for API
     name: "Qwen3.5-9B-GGUF"
-
     # TTL for this specific model (overrides global if set)
     ttl: 600
-
     # Command to start the model server
     # Using | for multi-line with comments
     cmd: |
@@ -57,26 +50,11 @@ models:
         --ctx-size ${ctxSize} \
         --n-predict ${nPredict} \
         --context-shift \
-        --reranking \
         --reasoning ${reasoning} \
-        --reasoning-budget ${reasoningBudget}
-
+        --reasoning-budget ${reasoningBudget} \
+        --temp 0.6 --top-k 20 --top-p 0.95 --min-p 0 --cache-ram -1
     # Optional: Health check endpoint (default: /health)
     checkEndpoint: /health
-
-  # Add more models here with similar structure
-  # Example:
-  # Llama-3.2-3B-GGUF:
-  #   name: "Llama-3.2-3B-GGUF"
-  #   model: /path/to/Llama-3.2-3B-GGUF/Llama-3.2-3B-Q4_K_M.gguf
-  #   ttl: 600
-  #   cmd: |
-  #     ${cmdPrefix} \
-  #       --port ${PORT} \
-  #       --model ${model} \
-  #       --n-gpu-layers ${nGpuLayers} \
-  #       ...
-
 # ============================================
 # Groups Configuration (Legacy but supported)
 # ============================================
@@ -86,9 +64,7 @@ groups:
     exclusive: true
     members:
       - Qwen3.5-9B-GGUF
-
 # Recommended: Add performance monitoring
 performance:
   disabled: false
   every: 15s
-
