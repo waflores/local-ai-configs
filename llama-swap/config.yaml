@@ -1,15 +1,52 @@
-healthCheckTimeout: 300
-logRequests: false
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mostlygeek/llama-swap/refs/heads/main/config-schema.json
+# Global settings
+healthCheckTimeout: 60
+logLevel: debug
+logToStdout: "proxy"
+startPort: 10001
+globalTTL: 0
+
+# Models configuration
 models:
   Qwen3.5-9B-GGUF:
-    cmd:
-      /home/waflores/.local/share/inferhost/bin/llama-server --port ${PORT} --model /home/waflores/.lmstudio/models/lmstudio-community/Qwen3.5-9B-GGUF/Qwen3.5-9B-Q4_K_M.gguf
-      --fit on --n-gpu-layers all --threads -1 --flash-attn auto --jinja --tools all --device CUDA0 --ctx-size 60000 --n-predict -1 --context-shift --reranking --verbose
-      --reasoning auto --reasoning-budget -1
+    # Command to start the model server
+    # Using | for multi-line with comments
+    cmd: |
+      /home/waflores/.local/share/inferhost/bin/llama-server \
+        --port ${PORT} \
+        --model /home/waflores/.lmstudio/models/lmstudio-community/Qwen3.5-9B-GGUF/Qwen3.5-9B-Q4_K_M.gguf \
+        --n-gpu-layers all \
+        --threads -1 \
+        --flash-attn auto \
+        --jinja \
+        --tools all \
+        --device CUDA0 \
+        --ctx-size 60000 \
+        --n-predict -1 \
+        --context-shift \
+        --reranking \
+        --reasoning auto \
+        --reasoning-budget -1
+
+    # Optional: Health check endpoint (default: /health)
+    checkEndpoint: /health
+
+    # Optional: Display name for API
+    name: "Qwen3.5-9B-GGUF"
+
+    # Optional: Auto-unload after inactivity
     ttl: 600
+
+# Groups configuration (legacy but supported)
 groups:
   swappable:
     swap: true
     exclusive: true
     members:
       - Qwen3.5-9B-GGUF
+
+# Recommended: Add performance monitoring
+performance:
+  disabled: false
+  every: 15s
+
