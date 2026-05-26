@@ -40,7 +40,7 @@ macros:
 models:
   Qwen3.5-9B-GGUF:
     # Display name for API
-    name: "Qwen3.5-9B-GGUF"
+    name: "Qwen3.5 9B"
     # TTL for this specific model (overrides global if set)
     ttl: 600
     # Model-specific macros that override global defaults
@@ -58,6 +58,7 @@ models:
     cmd: |
       ${cmdPrefix} \
         --port ${PORT} \
+        --models-dir ${models_directory} \
         --model ${models_directory}/Qwen3.5-9B-GGUF/Qwen3.5-9B-Q4_K_M.gguf \
         --n-gpu-layers ${nGpuLayers} \
         --threads ${threads} \
@@ -76,7 +77,8 @@ models:
 
   granite-4-h-tiny:
     # Display name for API
-    name: "ibm/granite-4-h-tiny"
+    name: "IBM Granite 4.0 Hybrid Tiny 7B"
+    useModelName: "ibm/granite-4-h-tiny"
     # TTL for this specific model (overrides global if set)
     ttl: 600
     # Model-specific macros that override global defaults
@@ -89,6 +91,7 @@ models:
     cmd: |
       ${cmdPrefix} \
         --port ${PORT} \
+        --models-dir ${models_directory} \
         --model ${models_directory}/granite-4.0-h-tiny-GGUF/granite-4.0-h-tiny-Q4_K_M.gguf \
         --n-gpu-layers ${nGpuLayers} \
         --threads ${threads} \
@@ -103,7 +106,37 @@ models:
         # --reasoning-budget ${reasoningBudget} \
         # --cache-ram ${cacheRamSpillover}
 
-  
+  nemotron-3-nano-4b:
+    # Display name for API
+    name: "NVIDIA Nemotron 3 Nano 4B"
+    # TTL for this specific model (overrides global if set)
+    ttl: 600
+    # Model-specific macros that override global defaults
+    macros:
+      ctxSize: "1048576"
+    env:
+      - "GGML_CUDA_ENABLE_UNIFIED_MEMORY=1"
+    # Command to start the model server
+    # Using | for multi-line with comments
+    cmd: |
+      ${cmdPrefix} \
+        --port ${PORT} \
+        --models-dir ${models_directory} \
+        --model ${models_directory}/NVIDIA-Nemotron-3-Nano-4B-GGUF/NVIDIA-Nemotron-3-Nano-4B-Q4_K_M.gguf \
+        --n-gpu-layers ${nGpuLayers} \
+        --threads ${threads} \
+        --flash-attn ${flashAttn} \
+        --jinja \
+        --tools ${tools} \
+        --device ${device} \
+        --ctx-size ${ctxSize} \
+        --n-predict ${nPredict} \
+        --context-shift \
+        --reasoning ${reasoning} \
+        --reasoning-format ${reasoningFormat} \
+        --reasoning-budget ${reasoningBudget} \
+        --cache-ram ${cacheRamSpillover}
+
 # ============================================
 # Groups Configuration (Legacy but supported)
 # ============================================
@@ -117,3 +150,6 @@ groups:
 performance:
   disabled: false
   every: 15s
+
+# Show thinking field
+sendLoadingState: true

@@ -4,7 +4,7 @@ schema: v1
 models:
   - name: IBM Granite 4 Tiny
     provider: llama.cpp
-    model: ibm/granite-4-h-tiny
+    model: granite-4-h-tiny
     roles:
       - chat
       - edit
@@ -50,30 +50,10 @@ models:
       - autocomplete
       - chat
       - edit
-      - rerank
-      - subagent
       - summarize
     capabilities:
       - tool_use
       - next_edit
-    # defaultCompletionOptions:
-    #   temperature: 0.6
-    #   topK: 20
-    #   topP: 0.95
-    #   minP: 0
-    #   maxTokens: -1
-    #   contextLength: 60000
-    # requestOptions:
-    #   timeout: 300000
-    # env:
-    #   FLASH_ATTENTION: "auto"
-    #   N_GPU_LAYERS: "all"
-    #   THREADS: "-1"
-    #   CONTEXT_SHIFT: "true"
-    #   RERANKING: "true"
-    #   VERBOSE: "true"
-    #   JINJA: "true"
-    #   TOOLS: "all"
 
 context:
   - provider: repo-map
