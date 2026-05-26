@@ -14,7 +14,7 @@ models:
       - tool_use
   - name: NVidia Nemotron 3 Nano
     provider: llama.cpp
-    model: nvidia/nemotron-3-nano-4b
+    model: nemotron-3-nano-4b
     roles:
       - chat
       - edit
@@ -54,7 +54,12 @@ models:
     capabilities:
       - tool_use
       - next_edit
-
+  - name: Zerank 2.0
+    provider: llama.cpp
+    model: zerank-2-GGUF/zerank-2.Q4_K_S.gguf
+    roles:
+      - rerank
+      - embed
 context:
   - provider: repo-map
     params:
