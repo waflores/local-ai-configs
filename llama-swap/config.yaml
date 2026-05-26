@@ -18,7 +18,7 @@ macros:
   flashAttn: "auto"
   tools: "all"
   device: "CUDA0"
-  ctxSize: "60000"
+  ctxSize: "262144"
   nPredict: "-1"
   reasoning: "auto"
   reasoningBudget: "-1"
@@ -35,6 +35,8 @@ models:
     name: "Qwen3.5-9B-GGUF"
     # TTL for this specific model (overrides global if set)
     ttl: 600
+    env:
+      - "GGML_CUDA_ENABLE_UNIFIED_MEMORY=1"
     # Command to start the model server
     # Using | for multi-line with comments
     cmd: |
@@ -52,7 +54,8 @@ models:
         --context-shift \
         --reasoning ${reasoning} \
         --reasoning-budget ${reasoningBudget} \
-        --temp 0.6 --top-k 20 --top-p 0.95 --min-p 0 --cache-ram -1
+        --temp 0.6 --top-k 20 --top-p 0.95 --min-p 0 --cache-ram -1 \
+        --verbose
     # Optional: Health check endpoint (default: /health)
     checkEndpoint: /health
 # ============================================
