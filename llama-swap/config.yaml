@@ -1,43 +1,85 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/mostlygeek/llama-swap/refs/heads/main/config-schema.json
-# Global settings
+# Health and logging
 healthCheckTimeout: 60
 logLevel: debug
 logToStdout: "proxy"
+
+# Port and TTL management
 startPort: 10001
 globalTTL: 0
 
-# Models configuration
+
+
+# ============================================
+# Global Settings (Shared across all models)
+# ============================================
+macros:
+  # Common llama-server parameters (override per-model if needed)
+  models_directory: "/home/waflores/.lmstudio/models/lmstudio-community"
+  cmdPrefix: "/home/waflores/.local/share/inferhost/bin/llama-server"
+  nGpuLayers: "all"
+  threads: "-1"
+  flashAttn: "auto"
+  jinja: "true"
+  tools: "all"
+  device: "CUDA0"
+  ctxSize: "60000"
+  nPredict: "-1"
+  contextShift: "true"
+  reranking: "true"
+  reasoning: "auto"
+  reasoningBudget: "-1"
+  checkEndpoint: "/health"
+
+# ============================================
+# Models Configuration
+# ============================================
 models:
   Qwen3.5-9B-GGUF:
+    # Display name for API
+    name: "Qwen3.5-9B-GGUF"
+
+    # TTL for this specific model (overrides global if set)
+    ttl: 600
+
     # Command to start the model server
     # Using | for multi-line with comments
     cmd: |
-      /home/waflores/.local/share/inferhost/bin/llama-server \
+      ${cmdPrefix} \
         --port ${PORT} \
-        --model /home/waflores/.lmstudio/models/lmstudio-community/Qwen3.5-9B-GGUF/Qwen3.5-9B-Q4_K_M.gguf \
-        --n-gpu-layers all \
-        --threads -1 \
-        --flash-attn auto \
+        --model ${models_directory}/Qwen3.5-9B-GGUF/Qwen3.5-9B-Q4_K_M.gguf \
+        --n-gpu-layers ${nGpuLayers} \
+        --threads ${threads} \
+        --flash-attn ${flashAttn} \
         --jinja \
-        --tools all \
-        --device CUDA0 \
-        --ctx-size 60000 \
-        --n-predict -1 \
+        --tools ${tools} \
+        --device ${device} \
+        --ctx-size ${ctxSize} \
+        --n-predict ${nPredict} \
         --context-shift \
         --reranking \
-        --reasoning auto \
-        --reasoning-budget -1
+        --reasoning ${reasoning} \
+        --reasoning-budget ${reasoningBudget}
 
     # Optional: Health check endpoint (default: /health)
     checkEndpoint: /health
 
-    # Optional: Display name for API
-    name: "Qwen3.5-9B-GGUF"
+  # Add more models here with similar structure
+  # Example:
+  # Llama-3.2-3B-GGUF:
+  #   name: "Llama-3.2-3B-GGUF"
+  #   model: /path/to/Llama-3.2-3B-GGUF/Llama-3.2-3B-Q4_K_M.gguf
+  #   ttl: 600
+  #   cmd: |
+  #     ${cmdPrefix} \
+  #       --port ${PORT} \
+  #       --model ${model} \
+  #       --n-gpu-layers ${nGpuLayers} \
+  #       ...
 
-    # Optional: Auto-unload after inactivity
-    ttl: 600
-
-# Groups configuration (legacy but supported)
+# ============================================
+# Groups Configuration (Legacy but supported)
+# ============================================
 groups:
   swappable:
     swap: true
