@@ -372,9 +372,3 @@ models:
 *Last updated: 2025-01-17*
 *Author: LlamaStash + llama-swap Integration Project*
 *License: MIT*
-</think>
-
-```tool
-TOOL_NAME: create_new_file
-BEGIN_ARG: filepath
-/home/waflores/DevFolder/ai/local-config/llamastash/INTEGRATION-PATTERNS.md
