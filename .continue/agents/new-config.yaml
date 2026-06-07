@@ -1,0 +1,26 @@
+name: LM Studio configuration
+version: 1.0.0
+schema: v1
+models:
+  - name: IBM Granite 4 Tiny
+    provider: lmstudio
+    model: ibm/granite-4-h-tiny
+    roles:
+      - chat
+      - edit
+      - apply
+      - autocomplete
+    capabilities:
+      - tool_use
+
+context:
+  - provider: repo-map
+    params:
+      includeSignatures: true # default true
+  - provider: os
+  - provider: diff
+  - provider: file
+  - provider: code
+  - provider: open
+  - provider: tree
+  - provider: currentFile

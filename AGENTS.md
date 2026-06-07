@@ -231,6 +231,44 @@ This document defines the agents (humans and AI) involved in this configuration 
 - **AGENTS.md:** This file - agent roles and workflow
 - **Iteration Logs:** What was tried and results
 - **Configuration Files:** Actual llama-swap settings
+- **SKILL.md:** AI agent commands and capabilities (see [Skill File Locations](#skill-file-locations))
+
+### Skill File Locations
+
+**continue.dev** looks for `SKILL.md` files in the following locations:
+
+1. **Project Root Directory** (Primary)
+   ```
+   <project-root>/SKILL.md
+   ```
+   This is the main location for project-specific AI agent commands.
+
+2. **Per-Project Configuration**
+   Skills can also be registered in:
+   ```
+   <project-root>/.continue/config.json
+   ```
+   or through the Continue.dev settings UI.
+
+3. **Extension Package** (for custom skills)
+   Custom skills can be loaded from:
+   ```
+   ~/.continue/packages/
+   ```
+   or installed as npm packages.
+
+**How Skills Work:**
+- Create a `SKILL.md` file with markdown content
+- Document commands using `## Commands` sections
+- Example:
+  ```markdown
+  ## Commands
+  - /benchmark
+  - /swap-model
+  - /config-analyze
+  ```
+- continue.dev parses the file and makes commands available in the chat interface
+- Skills are automatically associated with the current project context
 
 ### Performance Reports
 - **Benchmark Results:** Speed, latency, memory usage
