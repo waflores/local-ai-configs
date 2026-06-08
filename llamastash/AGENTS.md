@@ -20,6 +20,7 @@ This file provides project-level guidance to AI agents (Claude Code, OpenCode, C
 ```
 
 Expected output:
+
 ```json
 {
   "proxy": { "enabled": true, "listen": "127.0.0.1:11435" },
@@ -136,10 +137,10 @@ After any change that alters user-visible behavior, update:
 ## Common Gotchas
 
 1. **LlamaStash daemon must be running** - llama-swap proxies to LlamaStash's control plane
-2. **Port 10001 must be available** - External model serving port
-3. **Use `--json` for stable output** - Pin against `--json`, not TTY rendering
-4. **Daemon restart required** - Changes to config require restarting llama-swap
-5. **External models vs managed models** - LlamaStash manages models on its proxy port; external models are proxied separately
+1. **Port 10001 must be available** - External model serving port
+1. **Use `--json` for stable output** - Pin against `--json`, not TTY rendering
+1. **Daemon restart required** - Changes to config require restarting llama-swap
+1. **External models vs managed models** - LlamaStash manages models on its proxy port; external models are proxied separately
 
 ## Architecture
 
@@ -168,6 +169,7 @@ log-analysis/             # Analyze logs and detect issues
 ```
 
 Each skill folder contains:
+
 - `SKILL.md` - Metadata and instructions
 - Configuration files
 - Scripts
@@ -192,14 +194,14 @@ Each skill folder contains:
 ## Next Steps
 
 1. ✅ Verify LlamaStash daemon status
-2. ✅ Start llama-swap with integration config
-3. ✅ Access Web UI at `http://localhost:8080/ui`
-4. ✅ Test model inference
-5. ✅ Explore log streaming and metrics
-6. ✅ Optionally enable auto-discovery
+1. ✅ Start llama-swap with integration config
+1. ✅ Access Web UI at `http://localhost:8080/ui`
+1. ✅ Test model inference
+1. ✅ Explore log streaming and metrics
+1. ✅ Optionally enable auto-discovery
 
----
+______________________________________________________________________
 
-**Status:** Integration ready for deployment  
-**Last Updated:** 2024  
+**Status:** Integration ready for deployment\
+**Last Updated:** 2024\
 **Integration Version:** 1.0

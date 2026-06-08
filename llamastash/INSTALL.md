@@ -19,6 +19,7 @@ Verify LlamaStash is installed and running:
 ```
 
 Expected output:
+
 ```json
 {
   "proxy": { "enabled": true, "listen": "127.0.0.1:11435" },
@@ -81,6 +82,7 @@ curl http://127.0.0.1:8080/v1/models
 ```
 
 Expected output:
+
 ```json
 {"health":"ok"}
 {"models":[{"id":"Qwen3.5-9B-GGUF",...}]}
@@ -95,6 +97,7 @@ Expected output:
 ```
 
 Key settings:
+
 - `healthCheckTimeout: 60` - Health check timeout in seconds
 - `startPort: 10001` - Port for external model serving
 - `proxy: http://127.0.0.1:10001` - Proxy endpoint
@@ -117,6 +120,7 @@ curl http://127.0.0.1:8080/health
 ```
 
 Expected:
+
 ```json
 {"health":"ok"}
 ```
@@ -128,6 +132,7 @@ curl http://127.0.0.1:8080/v1/models
 ```
 
 Expected:
+
 ```json
 {"models":[{"id":"Qwen3.5-9B-GGUF","name":"Qwen3.5 9B"}]}
 ```
@@ -201,6 +206,6 @@ rm -rf /home/waflores/DevFolder/ai/local-config/llamastash/logs/
 
 ## Status
 
-**Installation Status:** Complete  
-**Integration Version:** 1.0  
+**Installation Status:** Complete\
+**Integration Version:** 1.0\
 **Last Verified:** 2024

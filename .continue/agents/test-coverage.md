@@ -1,7 +1,6 @@
----
-name: Test Coverage
-description: Ensure new functionality includes corresponding tests
----
+______________________________________________________________________
+
+## name: Test Coverage description: Ensure new functionality includes corresponding tests
 
 # Test Coverage Check
 
@@ -15,18 +14,19 @@ Review this pull request to determine if new functionality has adequate test cov
    - Edge cases (empty inputs, null/undefined, boundary values)
    - Error cases (invalid inputs throw or return appropriate errors)
 
-2. **New CLI commands or subcommands** - Should have:
+1. **New CLI commands or subcommands** - Should have:
 
    - Smoke tests verifying the command registers and runs
    - Tests for flag parsing and validation
    - Tests for expected output format
 
-3. **Bug fixes** - If a PR fixes a bug, there should be a regression test that:
+1. **Bug fixes** - If a PR fixes a bug, there should be a regression test that:
 
    - Reproduces the original bug condition
    - Verifies the fix resolves it
 
-4. **New API endpoints or handlers** - Should have integration tests covering:
+1. **New API endpoints or handlers** - Should have integration tests covering:
+
    - Successful request/response
    - Error responses for invalid inputs
    - Authentication/authorization (if applicable)

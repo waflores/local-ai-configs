@@ -1,8 +1,6 @@
----
-name: Sub Agent Foreground Prompt
-description: Start a subagent using the continue cli in the foreground
-invokable: true
----
+______________________________________________________________________
+
+## name: Sub Agent Foreground Prompt description: Start a subagent using the continue cli in the foreground invokable: true
 
 # Continue Sub Agent Foreground Prompt
 

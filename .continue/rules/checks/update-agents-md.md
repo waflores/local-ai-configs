@@ -1,7 +1,6 @@
----
-name: Update AGENTS.md
-description: Update AGENTS.md
----
+______________________________________________________________________
+
+## name: Update AGENTS.md description: Update AGENTS.md
 
 # Intent Layer Sync Agent
 
@@ -55,9 +54,9 @@ An update is NOT needed for:
 If updates are needed, work leaf-first (most specific nodes first, then ancestors):
 
 1. Write specific edits to the intent file(s)
-2. Keep updates **dense and high-signal** - compress to essentials
-3. Follow the existing structure/format of the intent file
-4. Use the LCA principle: place facts at the shallowest node that covers all relevant code
+1. Keep updates **dense and high-signal** - compress to essentials
+1. Follow the existing structure/format of the intent file
+1. Use the LCA principle: place facts at the shallowest node that covers all relevant code
 
 ### Step 5: Push your changes
 

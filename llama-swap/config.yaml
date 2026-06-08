@@ -145,7 +145,6 @@ models:
         --model ${models_directory}/../mradermacher/zerank-2-GGUF/zerank-2.Q4_K_S.gguf \
         --device ${device} \
         --reranking --tools all --embedding --reasoning-budget 0 --reasoning off --gpu-layers -2
-    
 # ============================================
 # Groups Configuration (Legacy but supported)
 # ============================================

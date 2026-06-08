@@ -1,8 +1,6 @@
----
-name: Bigger Picture Description Rules
-description: Guidelines for explaining how code works in context
-alwaysApply: false
----
+______________________________________________________________________
+
+## name: Bigger Picture Description Rules description: Guidelines for explaining how code works in context alwaysApply: false
 
 When a user asks how a certain part of the code works:
 

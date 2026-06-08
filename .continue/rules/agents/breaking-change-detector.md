@@ -1,7 +1,6 @@
----
-name: Breaking Change Detector
-description: Flag renamed commands, APIs, or config options with stale references
----
+______________________________________________________________________
+
+## name: Breaking Change Detector description: Flag renamed commands, APIs, or config options with stale references
 
 # Breaking Change Detector
 
@@ -17,18 +16,18 @@ Analyze this pull request for breaking changes that may leave stale references e
    - README and CONTRIBUTING.md are current
    - GitHub Actions workflows don't invoke the old command
 
-2. **Public API changes** - If exported functions, interfaces, or types in `core/` or `packages/` are renamed or have signature changes, check that:
+1. **Public API changes** - If exported functions, interfaces, or types in `core/` or `packages/` are renamed or have signature changes, check that:
 
    - All callers in `gui/`, `extensions/`, and `binary/` are updated
    - Type definitions in `packages/config-types/` are consistent
 
-3. **Configuration schema changes** - If config file formats (YAML or JSON) are modified, check that:
+1. **Configuration schema changes** - If config file formats (YAML or JSON) are modified, check that:
 
    - Validation logic handles both old and new formats (or migration is provided)
    - Documentation examples use the new format
    - Default configs are updated
 
-4. **URL changes** - If any hardcoded URLs (e.g., `hub.continue.dev`, `api.continue.dev`) are changed, scan for stale references across the repo.
+1. **URL changes** - If any hardcoded URLs (e.g., `hub.continue.dev`, `api.continue.dev`) are changed, scan for stale references across the repo.
 
 ## What to Do
 

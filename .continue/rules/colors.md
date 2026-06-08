@@ -1,9 +1,6 @@
----
-name: Extension Color Themes
-description: Guidelines for using theme colors in GUI components
-alwaysApply: false
-globs: "gui/**/*.tsx"
----
+______________________________________________________________________
+
+## name: Extension Color Themes description: Guidelines for using theme colors in GUI components alwaysApply: false globs: "gui/\*\*/\*.tsx"
 
 When adding colors to components, use tailwind color classes.
 Do NOT use explicit colors like text-gray-400. Instead, use theme colors.

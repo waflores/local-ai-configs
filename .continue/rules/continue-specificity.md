@@ -1,7 +1,6 @@
----
-globs: /**/*.
-description: General questions about code completion should be answered specific to Continue
----
+______________________________________________________________________
+
+## globs: /\*\*/\*. description: General questions about code completion should be answered specific to Continue
 
 # Continue Specificity
 

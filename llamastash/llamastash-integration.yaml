@@ -1,7 +1,6 @@
 # LlamaStash Integration Configuration for llama-swap
 # This config enables llama-swap to proxy requests to LlamaStash-managed endpoints
 # while leveraging llama-swap's Web UI and advanced proxy features
-
 healthCheckTimeout: 60
 logLevel: info
 logToStdout: "proxy"
@@ -10,7 +9,6 @@ startPort: 10001
 sendLoadingState: true
 includeAliasesInList: false
 globalTTL: 0
-
 # Models managed by LlamaStash (proxying to LlamaStash's control plane)
 models:
   Qwen3.5-9B-GGUF:
@@ -20,30 +18,25 @@ models:
     ttl: 600
     checkEndpoint: /health
     unlisted: false
-
   granite-4-h-tiny:
     name: "IBM Granite 4.0 Hybrid Tiny 7B"
     proxy: http://127.0.0.1:10001
     ttl: 600
     useModelName: "ibm/granite-4-h-tiny"
-
   nemotron-3-nano-4b:
     name: "NVIDIA Nemotron 3 Nano 4B"
     proxy: http://127.0.0.1:10001
     ttl: 600
-
   zerank-2-gguf:
     name: "Zerank 2.0"
     description: "Reranking and embedding model"
     proxy: http://127.0.0.1:10001
     ttl: 600
     unlisted: true
-
 # Performance settings
 performance:
   disabled: false
   every: 15s
-
 # LlamaStash integration notes:
 # - LlamaStash daemon runs on ports 48134 (control) and 11435 (proxy)
 # - External model serving on port 10001 is proxied by llama-swap
@@ -52,7 +45,6 @@ performance:
 
 # API Keys (empty for now - can be added if needed)
 apiKeys: []
-
 # Hooks for integration
 hooks:
   on_startup:

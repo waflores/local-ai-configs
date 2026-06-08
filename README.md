@@ -15,6 +15,7 @@ Create an optimized local LLM setup using **llama-swap** integrated with **conti
 | **OS** | Ubuntu 26.04 LTS (Resolute Raccoon) |
 
 ### Available Devices in llama-server
+
 - **CUDA0:** NVIDIA GeForce RTX 5070 Laptop GPU (7707 MiB, 4 MiB free)
 - **Vulkan0:** Intel(R) Graphics (ARL) (23633 MiB, 11154 MiB free)
 - **Vulkan1:** NVIDIA GeForce RTX 5070 Laptop GPU (8151 MiB, 4 MiB free)
@@ -23,12 +24,14 @@ Create an optimized local LLM setup using **llama-swap** integrated with **conti
 ## 📦 Model Inventory
 
 ### Code-Specialized Models
+
 | Model | Parameters | Size (Q4_K_M) | Use Case |
 |-------|------------|---------------|----------|
 | CodeLlama-7B-Instruct | 7B | ~4 GB | Python, general coding |
 | Granite-4.0-h-tiny | 7B | ~4 GB | IBM's code model |
 
 ### Mistral Family
+
 | Model | Parameters | Size (Q4_K_M) | Use Case |
 |-------|------------|---------------|----------|
 | Ministral-3B | 3B | ~2 GB | Fast completions |
@@ -37,6 +40,7 @@ Create an optimized local LLM setup using **llama-swap** integrated with **conti
 | Mistral-Nemo-13B | 13B | ~6.5 GB | Balanced performance |
 
 ### Qwen Family
+
 | Model | Parameters | Size (Q4_K_M) | Use Case |
 |-------|------------|---------------|----------|
 | DeepSeek-R1-8B | 8B | ~5 GB | Reasoning |
@@ -45,17 +49,20 @@ Create an optimized local LLM setup using **llama-swap** integrated with **conti
 | Qwen3-VL-8B | 8B | ~5 GB | Vision-language |
 
 ### NVIDIA Models
+
 | Model | Parameters | Size (Q4_K_M) | Use Case |
 |-------|------------|---------------|----------|
 | Nemotron-3-Nano-4B | 4B | ~2.8 GB | Optimized for NVIDIA |
 
 ### Phi Family
+
 | Model | Parameters | Size (Q4_K_M) | Use Case |
 |-------|------------|---------------|----------|
 | Phi-4-mini | 3B | ~2.5 GB | Lightweight tasks |
 | Phi-4-reasoning-plus | 13B | ~9 GB | Advanced reasoning |
 
 ### Other Models
+
 | Model | Parameters | Size | Use Case |
 |-------|------------|------|----------|
 | LFM2-24B-A2B | 24B | ~14.4 GB | Embeddings |
@@ -67,24 +74,29 @@ Create an optimized local LLM setup using **llama-swap** integrated with **conti
 ## 🎯 Goals & Objectives
 
 ### Primary Goals
+
 1. **Optimize Resource Utilization**
+
    - Use CUDA (RTX 5070) for active models requiring speed
    - Use Vulkan (Intel) for model swapping and storage
    - Balance VRAM usage across models
 
-2. **Enable Advanced continue.dev Features**
+1. **Enable Advanced continue.dev Features**
+
    - Code completion (inline suggestions)
    - Chat with codebase
    - Natural language to code generation
    - Documentation generation
    - Refactoring suggestions
 
-3. **Support Multiple Programming Languages**
+1. **Support Multiple Programming Languages**
+
    - Python (primary)
    - C/C++ (secondary)
    - Cross-language understanding
 
 ### Performance Targets
+
 - **Latency:** < 2s for model swap operations
 - **Throughput:** > 10 tokens/sec for 7B models
 - **Context Window:** Support 32K+ tokens for complex tasks
@@ -92,6 +104,7 @@ Create an optimized local LLM setup using **llama-swap** integrated with **conti
 ## 🚀 Strategy Overview
 
 ### Model Swapping Strategy
+
 ```
 ┌─────────────────────────────────────────────────────────┐
 │                    Model Swapping                        │
@@ -114,6 +127,7 @@ Create an optimized local LLM setup using **llama-swap** integrated with **conti
 ```
 
 ### Resource Allocation Strategy
+
 - **Active Models (CUDA):** Keep 1-2 models loaded for immediate use
 - **Swapped Models (Vulkan):** Store 5-8 models for on-demand loading
 - **RAM Spillover:** Use system RAM (~20 GB free) for additional models
@@ -122,6 +136,7 @@ Create an optimized local LLM setup using **llama-swap** integrated with **conti
 ## 📋 Configuration Roadmap
 
 ### Phase 1: Foundation (Current)
+
 - [x] Hardware analysis
 - [x] Model inventory assessment
 - [ ] Basic llama-swap configuration
@@ -129,18 +144,21 @@ Create an optimized local LLM setup using **llama-swap** integrated with **conti
 - [ ] Initial model loading strategy
 
 ### Phase 2: Optimization
+
 - [ ] CUDA/Vulkan integration testing
 - [ ] Model swapping performance benchmarks
 - [ ] Context window optimization
 - [ ] Quantization strategy refinement
 
 ### Phase 3: Advanced Features
+
 - [ ] Multi-model concurrent loading
 - [ ] Smart model selection based on task
 - [ ] C/C++ specific optimizations
 - [ ] Vision-language model integration
 
 ### Phase 4: Production
+
 - [ ] Performance monitoring
 - [ ] Resource usage optimization
 - [ ] Documentation completion
@@ -149,24 +167,28 @@ Create an optimized local LLM setup using **llama-swap** integrated with **conti
 ## 📊 Documentation Structure
 
 ### Technical Deep-Dives
+
 - Configuration examples
 - Architecture decisions
 - Performance analysis
 - Troubleshooting guides
 
 ### Performance Benchmarks
+
 - Model loading times
 - Generation speeds
 - Memory usage patterns
 - Swap operation timings
 
 ### Iteration Logs
+
 - What was tried
 - What worked
 - What didn't work and why
 - Lessons learned
 
 ### Quick Start Guides
+
 - Common use cases
 - Model selection guides
 - Configuration templates
@@ -193,10 +215,10 @@ Create an optimized local LLM setup using **llama-swap** integrated with **conti
 ## 🌟 Success Criteria
 
 1. **Seamless Model Swapping:** Models load within 2 seconds
-2. **High Code Quality:** Generated code passes basic syntax checks
-3. **Low Latency:** < 2s for simple completions
-4. **Resource Efficient:** < 70% VRAM utilization when possible
-5. **Developer Productivity:** Measurable improvement in coding speed
+1. **High Code Quality:** Generated code passes basic syntax checks
+1. **Low Latency:** < 2s for simple completions
+1. **Resource Efficient:** < 70% VRAM utilization when possible
+1. **Developer Productivity:** Measurable improvement in coding speed
 
 ## 📚 Related Resources
 
@@ -207,11 +229,12 @@ Create an optimized local LLM setup using **llama-swap** integrated with **conti
 ## 🔄 Iteration Process
 
 This project will be documented iteratively. Each session will:
+
 1. **Review** previous configurations and results
-2. **Experiment** with new configurations
-3. **Benchmark** performance improvements
-4. **Document** findings and lessons learned
-5. **Refine** based on results
+1. **Experiment** with new configurations
+1. **Benchmark** performance improvements
+1. **Document** findings and lessons learned
+1. **Refine** based on results
 
 ## 📝 Version History
 
@@ -219,7 +242,7 @@ This project will be documented iteratively. Each session will:
 |---------|------|---------|
 | 0.1.0 | Initial | Hardware analysis, model inventory, vision document |
 
----
+______________________________________________________________________
 
 *Last updated: 2026*
 *Status: Phase 1 - Foundation*

@@ -89,11 +89,13 @@ This project uses the **Agent Skills** format for extending AI agent capabilitie
 ## Technical Details
 
 ### LlamaStash Daemon
+
 - **Control Plane:** `http://127.0.0.1:48134` (JSON-RPC)
 - **Proxy:** `http://127.0.0.1:11435` (OpenAI-compatible)
 - **Binary:** `/home/waflores/.cargo/bin/llamastash`
 
 ### llama-swap
+
 - **Binary:** `/home/waflores/.cargo/bin/llama-swap`
 - **Default Port:** 8080
 - **Web UI:** `/ui`
@@ -128,6 +130,6 @@ This project uses the **Agent Skills** format for extending AI agent capabilitie
 
 ## Status
 
-**Integration Version:** 1.0  
-**Last Updated:** 2024  
+**Integration Version:** 1.0\
+**Last Updated:** 2024\
 **Status:** Ready for deployment

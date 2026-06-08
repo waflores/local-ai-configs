@@ -1,7 +1,6 @@
----
-globs: core/llm/llms/**/*.{ts,test.ts}
-description: Tailor recommendations for LLM code based on which specific LLM is being used.
----
+______________________________________________________________________
+
+## globs: core/llm/llms/\*\*/\*.{ts,test.ts} description: Tailor recommendations for LLM code based on which specific LLM is being used.
 
 # LLM Model Specificity
 

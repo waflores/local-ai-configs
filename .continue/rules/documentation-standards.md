@@ -1,8 +1,6 @@
----
-globs: docs/\*_/_.{md,mdx}
-description: This style guide should be used as a reference for maintaining consistency across all Continue documentation
-alwaysApply: false
----
+______________________________________________________________________
+
+## globs: docs/\*_/_.{md,mdx} description: This style guide should be used as a reference for maintaining consistency across all Continue documentation alwaysApply: false
 
 # Continue Documentation Style Guide
 
@@ -44,10 +42,10 @@ alwaysApply: false
 ### Page Organization
 
 1. **Visual Introduction**: Lead with GIFs or images showing the feature in action
-2. **Purpose Statement**: Brief explanation of what the feature does and when to use it
-3. **Step-by-Step Instructions**: Clear, actionable steps with keyboard shortcuts
-4. **Platform-Specific Notes**: Separate sections for VS Code and JetBrains when needed
-5. **Additional Tips**: Advanced usage or troubleshooting notes
+1. **Purpose Statement**: Brief explanation of what the feature does and when to use it
+1. **Step-by-Step Instructions**: Clear, actionable steps with keyboard shortcuts
+1. **Platform-Specific Notes**: Separate sections for VS Code and JetBrains when needed
+1. **Additional Tips**: Advanced usage or troubleshooting notes
 
 ### Section Headers
 

@@ -45,6 +45,7 @@ cd /home/waflores/DevFolder/ai/local-config/llamastash
 ```
 
 Expected output:
+
 ```json
 {
   "proxy": { "enabled": true, "listen": "127.0.0.1:11435" },
@@ -82,6 +83,7 @@ curl http://127.0.0.1:8080/v1/models
 **Purpose:** Starts llama-swap with LlamaStash integration configuration and verifies LlamaStash daemon is running.
 
 **Usage:**
+
 ```bash
 /home/waflores/.cargo/bin/llama-swap-integration.sh
 ```
@@ -95,6 +97,7 @@ curl http://127.0.0.1:8080/v1/models
 **Purpose:** Discovers models from LlamaStash and generates llama-swap configuration dynamically.
 
 **Usage:**
+
 ```bash
 /home/waflores/.cargo/bin/llama-swap-integrate.sh status      # Check daemon status
 /home/waflores/.cargo/bin/llama-swap-integrate.sh discover   # Discover models
@@ -116,16 +119,18 @@ Main configuration file for llama-swap integration:
 ### llama-swap-integration.sh
 
 Integration launcher script that:
+
 1. Checks LlamaStash daemon status
-2. Verifies external model is running
-3. Starts llama-swap with integration config
+1. Verifies external model is running
+1. Starts llama-swap with integration config
 
 ### llamastash-integrate.sh
 
 Auto-discovery tool that:
+
 1. Fetches LlamaStash status
-2. Discovers available models
-3. Generates llama-swap configuration
+1. Discovers available models
+1. Generates llama-swap configuration
 
 ## Access Points
 
@@ -140,11 +145,13 @@ Auto-discovery tool that:
 ## Technical Details
 
 ### LlamaStash Daemon
+
 - **Control Plane:** `http://127.0.0.1:48134` (JSON-RPC)
 - **Proxy:** `http://127.0.0.1:11435` (OpenAI-compatible)
 - **Binary:** `/home/waflores/.cargo/bin/llamastash`
 
 ### llama-swap
+
 - **Binary:** `/home/waflores/.cargo/bin/llama-swap`
 - **Default Port:** 8080
 - **Web UI:** `/ui`
@@ -171,6 +178,7 @@ Auto-discovery tool that:
 ### Model not responding on port 10001
 
 Check if external model is running:
+
 ```bash
 ps aux | grep llama-server
 curl http://127.0.0.1:10001/health
@@ -203,12 +211,12 @@ kill <PID>
 ## Next Steps
 
 1. Start llama-swap with integration config
-2. Access Web UI at `http://localhost:8080/ui`
-3. Test model inference
-4. Explore log streaming and metrics
-5. Optionally enable auto-discovery for dynamic model management
+1. Access Web UI at `http://localhost:8080/ui`
+1. Test model inference
+1. Explore log streaming and metrics
+1. Optionally enable auto-discovery for dynamic model management
 
----
+______________________________________________________________________
 
 **Status:** Integration ready for deployment
 **Last Updated:** 2024

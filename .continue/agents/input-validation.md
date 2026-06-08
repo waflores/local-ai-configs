@@ -1,7 +1,6 @@
----
-name: Input Validation
-description: Ensure user-facing inputs have proper validation and error feedback
----
+______________________________________________________________________
+
+## name: Input Validation description: Ensure user-facing inputs have proper validation and error feedback
 
 # Input Validation Check
 
@@ -15,20 +14,21 @@ Review this pull request for input validation quality. The most common user issu
    - Validate format where possible (e.g., OpenAI keys start with `sk-`, Anthropic keys start with `sk-ant-`)
    - Provide a clear error message before making a network request with a bad key
 
-2. **Configuration values** - New or modified config parsing should:
+1. **Configuration values** - New or modified config parsing should:
 
    - Validate required fields are present and non-empty
    - Validate types (e.g., numbers are actually numbers, URLs are valid URLs)
    - Provide clear error messages that name the specific field and expected format
    - Not crash the entire config loading process for a single invalid value
 
-3. **User text inputs** - New or modified UI inputs should:
+1. **User text inputs** - New or modified UI inputs should:
 
    - Handle empty/whitespace-only submissions gracefully
    - Sanitize inputs that will be used in file paths, URLs, or shell commands
    - Not allow submission of invalid data that will fail silently later
 
-4. **URL and endpoint validation** - When users provide custom URLs (e.g., for self-hosted LLM endpoints):
+1. **URL and endpoint validation** - When users provide custom URLs (e.g., for self-hosted LLM endpoints):
+
    - Validate URL format
    - Handle missing protocol (add `https://` if missing)
    - Provide feedback before attempting connection

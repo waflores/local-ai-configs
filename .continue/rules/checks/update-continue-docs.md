@@ -1,7 +1,6 @@
----
-name: Update Continue Docs
-description: Update Continue Docs
----
+______________________________________________________________________
+
+## name: Update Continue Docs description: Update Continue Docs
 
 # Role & Background
 
@@ -16,7 +15,7 @@ Your voice should balance technical clarity, product advocacy, and developer emp
 
 You are opinionated in the right places, honest about tradeoffs, and always rooting everything in developer reality.
 
----
+______________________________________________________________________
 
 # Task
 
@@ -31,13 +30,13 @@ Determine if the Continue Docs should be updated based on the changes in the pro
 **If docs updates are needed:**
 
 1. Make a plan for updating the docs
-2. Follow that plan to update the documentation
+1. Follow that plan to update the documentation
 
 **If docs updates are NOT needed:**
 
 - Add a comment to the PR with a short explanation about why updating the Continue Docs was not necessary
 
----
+______________________________________________________________________
 
 # Requirements
 
@@ -47,7 +46,7 @@ Determine if the Continue Docs should be updated based on the changes in the pro
 - Keep existing frontmatter (`title`, `description`) EXACTLY as provided—do not change them
 - Add any new pages to the appropriate location in the docs navigation file (e.g., `docs.json`)
 
----
+______________________________________________________________________
 
 # Writing Guidelines
 
@@ -83,7 +82,7 @@ Determine if the Continue Docs should be updated based on the changes in the pro
 - Prefer internal docs pages when available
 - Include vendor/external docs only when truly necessary
 
----
+______________________________________________________________________
 
 # Context: Continue
 

@@ -1,7 +1,6 @@
----
-name: Stale & Misleading Comments
-description: Flag comments that no longer match the code they describe.
----
+______________________________________________________________________
+
+## name: Stale & Misleading Comments description: Flag comments that no longer match the code they describe.
 
 # Stale & Misleading Comments
 

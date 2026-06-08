@@ -127,10 +127,10 @@ kill <PID>
 ## Next Steps
 
 1. ✅ **Access Web UI** - Open `http://localhost:8080/ui`
-2. ✅ **Test inference** - Try the playground
-3. ✅ **Explore logs** - Check `/logs/stream`
-4. ✅ **View metrics** - Access `/metrics`
-5. ✅ **Discover models** - Run auto-discovery
+1. ✅ **Test inference** - Try the playground
+1. ✅ **Explore logs** - Check `/logs/stream`
+1. ✅ **View metrics** - Access `/metrics`
+1. ✅ **Discover models** - Run auto-discovery
 
 ## Common Use Cases
 
@@ -159,6 +159,6 @@ curl http://127.0.0.1:8080/metrics | grep "llama_server_requests_total"
 
 ## Status
 
-**Setup Status:** Ready  
-**Integration Version:** 1.0  
+**Setup Status:** Ready\
+**Integration Version:** 1.0\
 **Last Updated:** 2024

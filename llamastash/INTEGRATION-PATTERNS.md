@@ -43,7 +43,7 @@ This document describes the different integration patterns available for combini
   - [Implementation Example](#implementation-example)
   - [See Also](#see-also)
 
----
+______________________________________________________________________
 
 ## Overview
 
@@ -56,7 +56,7 @@ Both LlamaStash and llama-swap provide powerful local LLM management capabilitie
 | **llama-swap Primary** | Multi-model deployments, Web UI focus | Medium |
 | **Hybrid** | Maximum flexibility, advanced users | High |
 
----
+______________________________________________________________________
 
 ## Pattern 1: API-Level Proxy
 
@@ -90,6 +90,7 @@ Both LlamaStash and llama-swap provide powerful local LLM management capabilitie
 ### Configuration
 
 **llama-swap config.yaml:**
+
 ```yaml
 listen: 127.0.0.1:8080
 models:
@@ -100,22 +101,25 @@ models:
 ```
 
 ### Pros
+
 - ✅ Single API endpoint for all operations
 - ✅ Automatic model discovery via llama-swap
 - ✅ Preserves LlamaStash model management
 - ✅ Easy to add additional models later
 
 ### Cons
+
 - ❌ llama-swap adds one hop (latency)
 - ❌ Requires LlamaStash proxy running
 - ❌ Limited to models LlamaStash manages
 
 ### Use Cases
+
 - Unified API access from multiple clients
 - Existing LlamaStash deployment
 - Adding llama-swap Web UI to LlamaStash
 
----
+______________________________________________________________________
 
 ## Pattern 2: LlamaStash as Primary, llama-swap as UI
 
@@ -143,6 +147,7 @@ models:
 ### Configuration
 
 **llama-swap config.yaml:**
+
 ```yaml
 listen: 127.0.0.1:8080
 models:
@@ -153,21 +158,24 @@ models:
 ```
 
 ### Pros
+
 - ✅ LlamaStash handles model management
 - ✅ llama-swap provides additional endpoints
 - ✅ Simple setup
 - ✅ Preserves LlamaStash's control plane
 
 ### Cons
+
 - ❌ llama-swap doesn't manage models independently
 - ❌ Limited to LlamaStash's model list
 
 ### Use Cases
+
 - Want LlamaStash's model management
 - Need llama-swap's Web UI and metrics
 - Single-server deployment
 
----
+______________________________________________________________________
 
 ## Pattern 3: llama-swap as Primary, LlamaStash as Model Manager
 
@@ -196,6 +204,7 @@ models:
 ### Configuration
 
 **llama-swap config.yaml:**
+
 ```yaml
 listen: 127.0.0.1:8080
 models:
@@ -210,6 +219,7 @@ models:
 ```
 
 **LlamaStash config:**
+
 ```yaml
 models:
   qwen3.5-9b:
@@ -220,22 +230,25 @@ models:
 ```
 
 ### Pros
+
 - ✅ llama-swap is primary API endpoint
 - ✅ Multiple models can be managed
 - ✅ Full llama-swap feature set (logs, metrics, Web UI)
 - ✅ LlamaStash handles model lifecycle
 
 ### Cons
+
 - ❌ More complex setup
 - ❌ Requires managing both systems
 - ❌ Configuration synchronization needed
 
 ### Use Cases
+
 - Multi-model deployments
 - Want llama-swap's full feature set
 - Need independent model management
 
----
+______________________________________________________________________
 
 ## Pattern 4: Hybrid Architecture
 
@@ -268,6 +281,7 @@ models:
 ### Configuration
 
 **llama-swap config.yaml:**
+
 ```yaml
 listen: 127.0.0.1:8080
 models:
@@ -282,22 +296,25 @@ models:
 ```
 
 ### Pros
+
 - ✅ Maximum flexibility
 - ✅ Can use either system independently
 - ✅ Can chain models across systems
 - ✅ Best for advanced use cases
 
 ### Cons
+
 - ❌ Most complex setup
 - ❌ Requires careful configuration
 - ❌ Higher maintenance overhead
 
 ### Use Cases
+
 - Advanced deployment scenarios
 - Need to use both systems' features
 - Experimental or research use cases
 
----
+______________________________________________________________________
 
 ## Comparison Matrix
 
@@ -312,53 +329,60 @@ models:
 | **Maintenance** | Medium | Low | Medium | High |
 | **Best For** | Unified API | LlamaStash focus | llama-swap focus | Advanced |
 
----
+______________________________________________________________________
 
 ## Decision Framework
 
 ### Use Pattern 1 if:
+
 - You want a single API endpoint
 - You're already using LlamaStash
 - You want to add llama-swap's Web UI
 
 ### Use Pattern 2 if:
+
 - You primarily use LlamaStash
 - You want llama-swap's additional endpoints
 - You want minimal configuration changes
 
 ### Use Pattern 3 if:
+
 - You want llama-swap as primary API
 - You need multi-model deployments
 - You want full llama-swap features
 
 ### Use Pattern 4 if:
+
 - You need maximum flexibility
 - You're comfortable with complex setups
 - You want to use both systems' features
 
----
+______________________________________________________________________
 
 ## Implementation Example
 
 **Recommended for most users (Pattern 1):**
 
 1. **Install llama-swap:**
+
    ```bash
    /home/waflores/.cargo/bin/llama-swap --config /home/waflores/DevFolder/ai/local-config/llamastash/llamastash-integration.yaml --listen 127.0.0.1:8080
    ```
 
-2. **Verify integration:**
+1. **Verify integration:**
+
    ```bash
    curl http://127.0.0.1:8080/health
    curl http://127.0.0.1:8080/v1/models
    ```
 
-3. **Access Web UI:**
+1. **Access Web UI:**
+
    ```bash
    open http://127.0.0.1:8080/ui
    ```
 
----
+______________________________________________________________________
 
 ## See Also
 
@@ -367,7 +391,7 @@ models:
 - [INSTALL.md](INSTALL.md) - Installation guide
 - [QUICK-START.md](QUICK-START.md) - Quick setup guide
 
----
+______________________________________________________________________
 
 *Last updated: 2025-01-17*
 *Author: LlamaStash + llama-swap Integration Project*

@@ -1,8 +1,6 @@
----
-name: Sub Agent Background Prompt
-description: Start a subagent using the continue cli in the background
-invokable: true
----
+______________________________________________________________________
+
+## name: Sub Agent Background Prompt description: Start a subagent using the continue cli in the background invokable: true
 
 # Continue Sub Agent Background Prompt
 

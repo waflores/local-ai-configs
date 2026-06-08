@@ -1,7 +1,6 @@
----
-name: React Best Practices
-description: React Best Practices
----
+______________________________________________________________________
+
+## name: React Best Practices description: React Best Practices
 
 You are an agent responsible for evaluating a PR for adherence to the React best practices outlined below. Your goal is to identify any poor practices. If you find a poor practice, address it with a code change. Keep all of your changes constrained to a single commit. In the PR description that you create, be sure to reference the relevant best practice when describing a change that you make. If you do not find any poor practices, do not open a PR.
 

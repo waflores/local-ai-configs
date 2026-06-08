@@ -1,7 +1,6 @@
----
-name: Error Message Quality
-description: Ensure error handling surfaces actionable messages to users
----
+______________________________________________________________________
+
+## name: Error Message Quality description: Ensure error handling surfaces actionable messages to users
 
 # Error Message Quality Check
 
@@ -11,7 +10,7 @@ Review this pull request for error handling quality. The most common user-facing
 
 1. **Catch blocks that discard error details** - Look for `catch` blocks that re-throw or return a generic message without including the original error's message, status code, or context.
 
-2. **HTTP status codes without user-friendly mapping** - When making API calls (especially to LLM providers), ensure that common HTTP errors produce distinct, actionable messages:
+1. **HTTP status codes without user-friendly mapping** - When making API calls (especially to LLM providers), ensure that common HTTP errors produce distinct, actionable messages:
 
    - `401` → "Invalid API key" (not "Unknown error")
    - `402` → "Insufficient funds or quota exceeded"
@@ -19,9 +18,9 @@ Review this pull request for error handling quality. The most common user-facing
    - `429` → "Rate limited - please wait and retry"
    - `5xx` → "Provider service error - try again later"
 
-3. **Silent failures** - Look for empty catch blocks, caught errors that are only logged but not surfaced, or promise rejections that are swallowed.
+1. **Silent failures** - Look for empty catch blocks, caught errors that are only logged but not surfaced, or promise rejections that are swallowed.
 
-4. **Error messages that lack context** - Error messages should include what operation failed and what the user can do about it, not just the raw error string.
+1. **Error messages that lack context** - Error messages should include what operation failed and what the user can do about it, not just the raw error string.
 
 ## What NOT to Flag
 

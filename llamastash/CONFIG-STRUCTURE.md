@@ -42,9 +42,10 @@ models:                        # Model definitions
 **Location:** `/home/waflores/DevFolder/ai/local-config/llamastash/llama-swap-integration.sh`
 
 **Purpose:** Launcher script that:
+
 1. Checks LlamaStash daemon status
-2. Verifies external model is running
-3. Starts llama-swap with integration config
+1. Verifies external model is running
+1. Starts llama-swap with integration config
 
 **Usage:**
 
@@ -219,6 +220,6 @@ curl http://127.0.0.1:8080/health
 
 ## Status
 
-**Configuration System:** Complete  
-**Integration Version:** 1.0  
+**Configuration System:** Complete\
+**Integration Version:** 1.0\
 **Last Updated:** 2024

@@ -7,8 +7,8 @@ When working with Mintlify documentation components (Card, Info, Tip, Note, Warn
 ### Bullet Points and Lists
 
 1. **Always add a blank line** after the opening component tag and before the closing tag
-2. **Indent content** by 2 spaces within components
-3. **Use proper list formatting** with each item on its own line:
+1. **Indent content** by 2 spaces within components
+1. **Use proper list formatting** with each item on its own line:
    - Start lists on a new line after introductory text
    - Use `-` for unordered lists
    - Maintain consistent indentation
@@ -50,13 +50,14 @@ When working with Mintlify documentation components (Card, Info, Tip, Note, Warn
 ### Component-Specific Rules
 
 1. **Card Components**: Always include blank lines and proper indentation
-2. **Info/Tip/Note/Warning**: Format lists as bullet points, not inline
-3. **CardGroup**: Each Card within should follow the same formatting rules
-4. **Code Blocks**: Within components, maintain proper indentation
+1. **Info/Tip/Note/Warning**: Format lists as bullet points, not inline
+1. **CardGroup**: Each Card within should follow the same formatting rules
+1. **Code Blocks**: Within components, maintain proper indentation
 
 ### Links in Lists
 
 When including links in bullet points:
+
 ```mdx
 - [Link Text](url): Description of the link
 ```
@@ -64,6 +65,7 @@ When including links in bullet points:
 ### Nested Components
 
 For nested components, maintain proper indentation levels:
+
 ```mdx
 <CardGroup>
   <Card title="First Card">
@@ -87,6 +89,7 @@ For nested components, maintain proper indentation levels:
 ## Application
 
 These rules apply to all `.mdx` files in the `docs/` directory, particularly:
+
 - Guide documents
 - Cookbook documents
 - Reference documentation
@@ -95,6 +98,7 @@ These rules apply to all `.mdx` files in the `docs/` directory, particularly:
 ## Automation Note
 
 When using Continue or other AI assistants to generate or modify documentation:
+
 - Always format Mintlify components according to these rules
 - Review generated content for proper formatting
 - Apply these rules consistently across all documentation

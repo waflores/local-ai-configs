@@ -1,6 +1,6 @@
----
-alwaysApply: false
----
+______________________________________________________________________
+
+## alwaysApply: false
 
 # Continue Development Data (Dev Data) Guide
 
@@ -25,14 +25,14 @@ Development data (dev data) captures detailed information about how developers i
 ### Core Event Types
 
 1. **`tokensGenerated`**: LLM token usage tracking
-2. **`autocomplete`**: Code completion interactions
-3. **`chatInteraction`**: Chat-based development assistance
-4. **`editInteraction`**: Code editing sessions
-5. **`editOutcome`**: Results of edit operations
-6. **`nextEditOutcome`**: Next Edit feature outcomes
-7. **`chatFeedback`**: User feedback on AI responses
-8. **`toolUsage`**: Tool interaction statistics
-9. **`quickEdit`**: Quick edit functionality usage
+1. **`autocomplete`**: Code completion interactions
+1. **`chatInteraction`**: Chat-based development assistance
+1. **`editInteraction`**: Code editing sessions
+1. **`editOutcome`**: Results of edit operations
+1. **`nextEditOutcome`**: Next Edit feature outcomes
+1. **`chatFeedback`**: User feedback on AI responses
+1. **`toolUsage`**: Tool interaction statistics
+1. **`quickEdit`**: Quick edit functionality usage
 
 ### Schema Versioning
 
@@ -122,30 +122,30 @@ data:
 ### Adding New Event Types
 
 1. **Create schema**: Add new event schema in `/packages/config-yaml/src/schemas/data/`
-2. **Update index**: Add to schema aggregator in `/packages/config-yaml/src/schemas/data/index.ts`
-3. **Implement logging**: Add logging calls in relevant service files
-4. **Update version**: Consider schema version bump if breaking changes
+1. **Update index**: Add to schema aggregator in `/packages/config-yaml/src/schemas/data/index.ts`
+1. **Implement logging**: Add logging calls in relevant service files
+1. **Update version**: Consider schema version bump if breaking changes
 
 ### Modifying Existing Events
 
 1. **Schema changes**: Update schema files in `/packages/config-yaml/src/schemas/data/`
-2. **Backward compatibility**: Ensure changes don't break existing data consumers
-3. **Version management**: Increment schema version for breaking changes
-4. **Test thoroughly**: Validate schema changes with existing data
+1. **Backward compatibility**: Ensure changes don't break existing data consumers
+1. **Version management**: Increment schema version for breaking changes
+1. **Test thoroughly**: Validate schema changes with existing data
 
 ### Adding New Logging Points
 
 1. **Import DataLogger**: `import { DataLogger } from "core/data/log"`
-2. **Log events**: Call `DataLogger.getInstance().logDevData(eventName, data)`
-3. **Follow patterns**: Use existing logging services as examples
-4. **Validate data**: Ensure logged data matches schema requirements
+1. **Log events**: Call `DataLogger.getInstance().logDevData(eventName, data)`
+1. **Follow patterns**: Use existing logging services as examples
+1. **Validate data**: Ensure logged data matches schema requirements
 
 ### Debugging Dev Data Issues
 
 1. **Check local storage**: Verify files are being created in `~/.continue/dev_data/`
-2. **Validate schemas**: Ensure event data matches expected schema format
-3. **Review configuration**: Check `data` blocks in Continue config
-4. **Test endpoints**: Verify remote endpoints are reachable and accepting data
+1. **Validate schemas**: Ensure event data matches expected schema format
+1. **Review configuration**: Check `data` blocks in Continue config
+1. **Test endpoints**: Verify remote endpoints are reachable and accepting data
 
 ## Best Practices
 

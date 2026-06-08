@@ -7,8 +7,10 @@ This document defines the agents (humans and AI) involved in this configuration 
 ## 👥 Human Agents
 
 ### Lead Developer (Will)
+
 **Role:** Primary researcher and configuration architect
 **Responsibilities:**
+
 - Define project vision and goals
 - Select appropriate models for specific use cases
 - Configure llama-swap and continue.dev settings
@@ -16,14 +18,17 @@ This document defines the agents (humans and AI) involved in this configuration 
 - Document findings and iterate on configurations
 
 **Key Skills:**
+
 - Deep understanding of LLM inference
 - Proficiency in Python, C, C++
 - Experience with CUDA and Vulkan APIs
 - Strong documentation practices
 
 ### Research Assistant
+
 **Role:** Technical research and experimentation
 **Responsibilities:**
+
 - Investigate llama-swap configuration options
 - Research continue.dev best practices
 - Experiment with different model combinations
@@ -31,6 +36,7 @@ This document defines the agents (humans and AI) involved in this configuration 
 - Provide recommendations for optimization
 
 **Key Skills:**
+
 - Research methodology
 - Technical writing
 - Performance analysis
@@ -41,6 +47,7 @@ This document defines the agents (humans and AI) involved in this configuration 
 ### ⚠️ Rules of Engagement
 
 **DO:**
+
 - ✅ **Always document** every configuration change with clear reasoning
 - ✅ **Prioritize data-driven decisions** - benchmark before committing to major changes
 - ✅ **Communicate clearly** - explain technical trade-offs to the Lead Developer
@@ -53,6 +60,7 @@ This document defines the agents (humans and AI) involved in this configuration 
 - ✅ **Use Vulkan for swapped models** (free up VRAM for active models)
 
 **DON'T:**
+
 - ❌ **Don't make assumptions** about model compatibility without testing
 - ❌ **Don't ignore error messages** - they often contain crucial clues
 - ❌ **Don't over-optimize** early iterations - get basic functionality first
@@ -65,27 +73,33 @@ This document defines the agents (humans and AI) involved in this configuration 
 - ❌ **Don't skip iteration logs** - they're invaluable for future reference
 
 ### Configuration Analyst
+
 **Role:** Analyze and recommend llama-swap configurations
 **Capabilities:**
+
 - Parse hardware specifications
 - Recommend model loading strategies
 - Analyze resource utilization patterns
 - Suggest quantization optimizations
 
 **Tools:**
+
 - Hardware monitoring utilities
 - llama-server diagnostics
 - Resource usage analyzers
 
 ### Performance Benchmarking Agent
+
 **Role:** Measure and compare model performance
 **Capabilities:**
+
 - Run speed tests for different models
 - Measure swap operation timings
 - Analyze memory usage patterns
 - Generate performance reports
 
 **Metrics Tracked:**
+
 - Tokens per second
 - Model load time
 - Swap operation latency
@@ -93,28 +107,34 @@ This document defines the agents (humans and AI) involved in this configuration 
 - Context window efficiency
 
 ### Documentation Agent
+
 **Role:** Maintain and update project documentation
 **Capabilities:**
+
 - Write technical deep-dives
 - Create quick-start guides
 - Document iteration logs
 - Generate configuration examples
 
 **Output Formats:**
+
 - Markdown documentation
 - Configuration templates
 - Troubleshooting guides
 - Best practices compilations
 
 ### Code Analysis Agent
+
 **Role:** Analyze code generation quality
 **Capabilities:**
+
 - Evaluate generated code quality
 - Check for syntax errors
 - Verify best practices compliance
 - Suggest improvements
 
 **Evaluation Criteria:**
+
 - Syntax correctness
 - Code style adherence
 - Security considerations
@@ -125,6 +145,7 @@ This document defines the agents (humans and AI) involved in this configuration 
 ### Lead Developer Rules
 
 **DO:**
+
 - ✅ **Approve configuration changes** thoughtfully - consider long-term impact
 - ✅ **Review benchmark results** before making major decisions
 - ✅ **Balance performance with practicality** - don't over-optimize prematurely
@@ -133,6 +154,7 @@ This document defines the agents (humans and AI) involved in this configuration 
 - ✅ **Document decisions** - explain the reasoning behind major choices
 
 **DON'T:**
+
 - ❌ **Don't change configurations** without understanding the rationale
 - ❌ **Don't micromanage** - trust the research and benchmarking process
 - ❌ **Don't ignore practical constraints** - keep hardware limits in mind
@@ -142,6 +164,7 @@ This document defines the agents (humans and AI) involved in this configuration 
 ### Research Assistant Rules
 
 **DO:**
+
 - ✅ **Explore multiple options** before recommending changes
 - ✅ **Research thoroughly** - don't make assumptions about compatibility
 - ✅ **Document findings** - even negative results are valuable
@@ -149,6 +172,7 @@ This document defines the agents (humans and AI) involved in this configuration 
 - ✅ **Suggest alternatives** - offer fallback options when primary choice fails
 
 **DON'T:**
+
 - ❌ **Don't recommend** configurations without testing them first
 - ❌ **Don't ignore** existing documentation - check what's already known
 - ❌ **Don't overcomplicate** solutions - start simple, optimize later
@@ -157,6 +181,7 @@ This document defines the agents (humans and AI) involved in this configuration 
 ### General Team Communication Rules
 
 **DO:**
+
 - ✅ **Be explicit** - always state your reasoning clearly
 - ✅ **Ask questions** - don't hesitate to clarify requirements
 - ✅ **Provide context** - explain why something matters
@@ -165,6 +190,7 @@ This document defines the agents (humans and AI) involved in this configuration 
 - ✅ **Be thorough** - don't skip important details
 
 **DON'T:**
+
 - ❌ **Don't make assumptions** - always confirm requirements
 - ❌ **Don't skip steps** - follow the process consistently
 - ❌ **Don't ignore errors** - they often contain valuable information
@@ -206,19 +232,23 @@ This document defines the agents (humans and AI) involved in this configuration 
 ### Decision Making Process
 
 #### Configuration Decisions
+
 **Level 1 - Quick Decisions (Immediate)**
+
 - Model selection for specific tasks
 - Context window sizing
 - Temperature settings
 - **Agents:** Research + Lead approval
 
 **Level 2 - Medium Decisions (Short-term)**
+
 - Model swapping strategies
 - Resource allocation changes
 - Quantization level adjustments
 - **Agents:** Research + Benchmark + Lead approval
 
 **Level 3 - Major Decisions (Long-term)**
+
 - Backend selection (llama.cpp vs vLLM)
 - Architecture changes
 - Significant resource reallocation
@@ -227,6 +257,7 @@ This document defines the agents (humans and AI) involved in this configuration 
 ## 🎯 Agent Communication Channels
 
 ### Documentation Updates
+
 - **README.md:** Project vision, goals, roadmap
 - **AGENTS.md:** This file - agent roles and workflow
 - **Iteration Logs:** What was tried and results
@@ -248,49 +279,57 @@ The `.continue/` directory serves as the **intent layer**, capturing institution
 When agents need to find tools and information, they should search in this order:
 
 1. **`.continue/` directory** - Contains agent definitions, rules, and checks:
+
    - **`agents/`** - Agent definitions (breaking-change-detector, dependency-security-review, error-message-quality, input-validation, test-coverage)
    - **`rules/`** - Rule definitions for various coding standards and practices
    - **`checks/`** - Quality checks (anti-slop, react-best-practices, security-audit, stale-comments, update-agents-md, update-continue-docs, setup-scripts)
    - **`prompts/`** - Prompt templates and examples
 
-2. **`AGENTS.md`** - Primary intent layer file with:
+1. **`AGENTS.md`** - Primary intent layer file with:
+
    - Agent roles and responsibilities
    - Configuration workflow definitions
    - Performance tracking targets
    - Collaboration guidelines
 
-3. **`README.md`** - Project vision, goals, and roadmap
+1. **`README.md`** - Project vision, goals, and roadmap
 
-4. **Iteration logs** - Historical configuration changes and results
+1. **Iteration logs** - Historical configuration changes and results
 
-5. **Configuration files** - llama-swap and continue.dev settings
+1. **Configuration files** - llama-swap and continue.dev settings
 
 ### Skill File Locations
-
 
 **continue.dev** looks for `SKILL.md` files in the following locations:
 
 1. **Project Root Directory** (Primary)
+
    ```
    <project-root>/SKILL.md
    ```
+
    This is the main location for project-specific AI agent commands.
 
-2. **Per-Project Configuration**
+1. **Per-Project Configuration**
    Skills can also be registered in:
+
    ```
    <project-root>/.continue/config.json
    ```
+
    or through the Continue.dev settings UI.
 
-3. **Extension Package** (for custom skills)
+1. **Extension Package** (for custom skills)
    Custom skills can be loaded from:
+
    ```
    ~/.continue/packages/
    ```
+
    or installed as npm packages.
 
 **How Skills Work:**
+
 - Create a `SKILL.md` file with markdown content
 - Document commands using `## Commands` sections
 - Example:
@@ -304,11 +343,13 @@ When agents need to find tools and information, they should search in this order
 - Skills are automatically associated with the current project context
 
 ### Performance Reports
+
 - **Benchmark Results:** Speed, latency, memory usage
 - **Comparison Tables:** Model performance rankings
 - **Resource Utilization:** VRAM, RAM, swap usage
 
 ### Technical Deep-Dives
+
 - **Architecture Analysis:** How configurations work
 - **Troubleshooting Guides:** Common issues and solutions
 - **Optimization Tips:** Performance improvement strategies
@@ -328,26 +369,31 @@ When agents need to find tools and information, they should search in this order
 ## 🚀 Agent Capabilities
 
 ### Lead Developer
+
 - **Strategic:** Vision setting, goal definition
 - **Technical:** Configuration, deployment
 - **Evaluative:** Performance assessment, decision making
 
 ### Research Assistant
+
 - **Investigative:** Configuration research, best practices
 - **Analytical:** Performance analysis, comparison
 - **Documentary:** Technical writing, deep-dives
 
 ### Configuration Analyst
+
 - **Hardware-aware:** GPU/CPU resource management
 - **Model-aware:** Architecture understanding
 - **Optimization:** Quantization, context management
 
 ### Performance Benchmarking Agent
+
 - **Measurement:** Speed, latency, memory tracking
 - **Analysis:** Pattern recognition, bottleneck identification
 - **Reporting:** Clear, actionable metrics
 
 ### Documentation Agent
+
 - **Writing:** Clear, concise documentation
 - **Organization:** Structured information presentation
 - **Maintenance:** Keeping docs current and accurate
@@ -357,23 +403,27 @@ When agents need to find tools and information, they should search in this order
 ### Session Structure
 
 **Pre-Session:**
+
 1. Review previous iteration logs
-2. Check performance benchmarks
-3. Identify optimization opportunities
+1. Check performance benchmarks
+1. Identify optimization opportunities
 
 **During Session:**
+
 1. Execute planned experiments
-2. Collect performance data
-3. Document findings immediately
+1. Collect performance data
+1. Document findings immediately
 
 **Post-Session:**
+
 1. Update documentation
-2. Write iteration log entry
-3. Plan next session
+1. Write iteration log entry
+1. Plan next session
 
 ### Documentation Standards
 
 **Iteration Log Entries Must Include:**
+
 - Date and session number
 - Objective of this iteration
 - Configuration changes made
@@ -383,6 +433,7 @@ When agents need to find tools and information, they should search in this order
 - Next steps planned
 
 **Technical Deep-Dive Requirements:**
+
 - Clear problem statement
 - Configuration details
 - Expected vs actual results
@@ -390,6 +441,7 @@ When agents need to find tools and information, they should search in this order
 - Recommendations
 
 **Benchmark Report Requirements:**
+
 - Test setup description
 - Models tested
 - Metrics collected
@@ -410,16 +462,19 @@ When agents need to find tools and information, they should search in this order
 ### Benchmark Schedule
 
 **Weekly:**
+
 - Model swap timing tests
 - Generation speed benchmarks
 - Memory usage monitoring
 
 **Monthly:**
+
 - Full performance suite
 - Model comparison analysis
 - Configuration optimization
 
 **Per Major Change:**
+
 - Before/after comparison
 - Impact assessment
 - Regression testing
@@ -429,21 +484,25 @@ When agents need to find tools and information, they should search in this order
 ### Documentation Categories
 
 1. **Configuration Guides**
+
    - llama-swap setup
    - continue.dev integration
    - Model loading strategies
 
-2. **Performance Analysis**
+1. **Performance Analysis**
+
    - Benchmark results
    - Model comparisons
    - Optimization tips
 
-3. **Troubleshooting**
+1. **Troubleshooting**
+
    - Common issues
    - Error resolutions
    - Debugging guides
 
-4. **Best Practices**
+1. **Best Practices**
+
    - Resource management
    - Model selection
    - Performance tuning
@@ -459,18 +518,21 @@ When agents need to find tools and information, they should search in this order
 ### Individual Agent Success
 
 **Lead Developer:**
+
 - ✅ System configured and operational
 - ✅ Performance meets targets
 - ✅ Documentation comprehensive
 - ✅ Iteration process effective
 
 **Research Assistant:**
+
 - ✅ Configuration options explored
 - ✅ Best practices documented
 - ✅ Performance analysis complete
 - ✅ Recommendations actionable
 
 **All Agents:**
+
 - ✅ Clear communication maintained
 - ✅ Documentation up-to-date
 - ✅ Performance tracked
@@ -479,21 +541,25 @@ When agents need to find tools and information, they should search in this order
 ## 📈 Evolution Path
 
 ### Phase 1: Foundation (Current)
+
 - Establish basic configuration
 - Document initial setup
 - Create benchmarking framework
 
 ### Phase 2: Optimization
+
 - Refine model swapping strategy
 - Optimize resource utilization
 - Improve performance metrics
 
 ### Phase 3: Advanced
+
 - Implement intelligent model selection
 - Add multi-model support
 - Enhance C/C++ optimizations
 
 ### Phase 4: Production
+
 - Achieve production-ready configuration
 - Document best practices
 - Create deployment guides
@@ -503,16 +569,19 @@ When agents need to find tools and information, they should search in this order
 ### Regular Review Cadence
 
 **Daily:**
+
 - Check performance metrics
 - Update iteration logs
 - Address immediate issues
 
 **Weekly:**
+
 - Review benchmark results
 - Plan next experiments
 - Update documentation
 
 **Monthly:**
+
 - Evaluate overall progress
 - Review success criteria
 - Plan major improvements
@@ -520,16 +589,18 @@ When agents need to find tools and information, they should search in this order
 ### Feedback Loops
 
 **From Benchmarks → Configuration:**
+
 - Performance data informs model selection
 - Latency metrics guide optimization
 - Memory usage patterns reveal bottlenecks
 
 **From Documentation → Knowledge:**
+
 - Iteration logs build expertise
 - Deep-dives create reference material
 - Troubleshooting guides help future sessions
 
----
+______________________________________________________________________
 
 *Last updated: 2026*
 *Status: Phase 1 - Foundation*

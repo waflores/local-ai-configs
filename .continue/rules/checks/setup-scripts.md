@@ -1,7 +1,6 @@
----
-name: Setup Scripts
-description: Update Setup Scripts if needed
----
+______________________________________________________________________
+
+## name: Setup Scripts description: Update Setup Scripts if needed
 
 If there are any changes in this pull request that would require changes to any setup scripts in this repository, please make the requisite updates. This would include things like new package management systems, new moving parts of the build process, or an updated local development environment. If the PR only includes "content" (docs, source code, etc.) changes, then you can basically immediately disqualify it as not requiring updates to setup scripts.
 

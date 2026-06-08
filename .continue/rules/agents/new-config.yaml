@@ -12,7 +12,6 @@ models:
       - autocomplete
     capabilities:
       - tool_use
-
 context:
   - provider: repo-map
     params:

@@ -1,8 +1,6 @@
----
-name: Unit Testing Rules
-description: Guidelines for unit testing in this project
-alwaysApply: false
----
+______________________________________________________________________
+
+## name: Unit Testing Rules description: Guidelines for unit testing in this project alwaysApply: false
 
 For unit testing in this project:
 
