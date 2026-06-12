@@ -3,7 +3,6 @@ _: {
 
   programs = {
     nixfmt.enable = true;
-    # yamllint.enable = true;
     yamlfmt.enable = true;
     shellcheck.enable = true;
     shfmt.enable = true;
