@@ -123,6 +123,8 @@ models:
       temp: "0.7"
       top_p: "0.9"
       top_k: "40"
+    env:
+      - "GGML_CUDA_ENABLE_UNIFIED_MEMORY=1"
     cmd: |
       ${cmdPrefix} \
         --port ${PORT} \
@@ -145,6 +147,8 @@ models:
       temp: "0.7"
       top_p: "0.9"
       top_k: "40"
+    env:
+      - "GGML_CUDA_ENABLE_UNIFIED_MEMORY=1"
     cmd: |
       ${cmdPrefix} \
         --port ${PORT} \
@@ -168,6 +172,8 @@ models:
       temp: "0.7"
       top_p: "0.9"
       top_k: "40"
+    env:
+      - "GGML_CUDA_ENABLE_UNIFIED_MEMORY=1"
     cmd: |
       ${cmdPrefix} \
         --port ${PORT} \
@@ -188,7 +194,6 @@ models:
     ttl: 600
     macros:
       ctxSize: "541440"
-      device: "CUDA0"
       cacheRamSpillover: "-1"
     env:
       - "GGML_CUDA_ENABLE_UNIFIED_MEMORY=1"
@@ -422,6 +427,8 @@ models:
       temp: "0.7"
       top_p: "0.9"
       top_k: "40"
+    env:
+      - "GGML_CUDA_ENABLE_UNIFIED_MEMORY=1"
     cmd: |
       ${cmdPrefix} \
         --port ${PORT} \
