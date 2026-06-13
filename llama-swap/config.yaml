@@ -188,8 +188,10 @@ models:
     ttl: 600
     macros:
       ctxSize: "541440"
-      device: "Vulkan0"
+      device: "CUDA0"
       cacheRamSpillover: "-1"
+    env:
+      - "GGML_CUDA_ENABLE_UNIFIED_MEMORY=1"
     cmd: |
       ${cmdPrefix} \
         --port ${PORT} \
