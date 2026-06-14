@@ -4,7 +4,7 @@ healthCheckTimeout: 60
 # Note to AI Agents: do not change logLevel
 # Note to AI Agents: do not remove inline comments for settings
 logLevel: debug
-logToStdout: "proxy"
+logToStdout: proxy
 # Port and TTL management
 startPort: 10001
 globalTTL: 0
@@ -13,24 +13,24 @@ globalTTL: 0
 # ============================================
 macros:
   # --- Infrastructure & Paths ---
-  models_directory: "/home/waflores/.lmstudio/models/lmstudio-community"
-  cmdPrefix: "/home/waflores/.local/share/inferhost/bin/llama-server"
-  device: "CUDA0"
+  models_directory: /home/waflores/.lmstudio/models/lmstudio-community
+  cmdPrefix: /home/waflores/.local/share/inferhost/bin/llama-server
+  device: CUDA0
   # --- Default Performance Settings (override per-model if needed) ---
   threads: "-1" # -1 = use all available CPU threads
-  nGpuLayers: "all" # or specific number like "32"
-  flashAttn: "auto" # flash attention optimization
+  nGpuLayers: all # or specific number like "32"
+  flashAttn: auto # flash attention optimization
   # --- Default Context & Cache ---
   ctxSize: "262144" # 256K context (max for most models)
   nPredict: "-1" # -1 = unlimited prediction length
   cacheRamSpillover: "4096"
   # --- Reasoning Capabilities ---
-  reasoning: "auto"
+  reasoning: auto
   reasoningBudget: "-1"
-  reasoningFormat: "deepseek"
+  reasoningFormat: deepseek
   # --- Feature Flags ---
   jinja: "true"
-  tools: "all"
+  tools: all
   contextShift: "false"
 # ============================================
 # Models Configuration
@@ -38,7 +38,7 @@ macros:
 models:
   # --- Small Models (7B) - CUDA Active ---
   Meta-Llama-3.1-8B-Instruct:
-    name: "Llama 3.1 8B"
+    name: Llama 3.1 8B
     ttl: 600
     macros:
       ctxSize: "262144"
@@ -60,7 +60,7 @@ models:
         --n-predict ${nPredict} \
         --temp ${temp} --top-k ${top_k} --top-p ${top_p}
   CodeLlama-7B-Instruct:
-    name: "CodeLlama 7B"
+    name: CodeLlama 7B
     ttl: 600
     macros:
       ctxSize: "262144"
@@ -83,7 +83,7 @@ models:
         --temp ${temp} --top-k ${top_k} --top-p ${top_p}
   # --- Qwen Series - CUDA Active ---
   Qwen3.5-9B-GGUF:
-    name: "Qwen3.5 9B"
+    name: Qwen3.5 9B"
     ttl: 600
     macros:
       ctxSize: "262144"
@@ -93,7 +93,7 @@ models:
       top_p: "0.95"
       min_p: "0"
     env:
-      - "GGML_CUDA_ENABLE_UNIFIED_MEMORY=1"
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
     # Command to start the model server
     # Using | for multi-line with comments
     cmd: |
@@ -116,7 +116,7 @@ models:
         --cache-ram ${cacheRamSpillover} \
         --temp ${temp} --top-k ${top_k} --top-p ${top_p} --min-p ${min_p}
   Qwen3.6-27B-GGUF:
-    name: "Qwen3.6 27B"
+    name: Qwen3.6 27B
     ttl: 600
     macros:
       ctxSize: "262144"
@@ -124,7 +124,7 @@ models:
       top_p: "0.9"
       top_k: "40"
     env:
-      - "GGML_CUDA_ENABLE_UNIFIED_MEMORY=1"
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
     cmd: |
       ${cmdPrefix} \
         --port ${PORT} \
@@ -140,7 +140,7 @@ models:
         --n-predict ${nPredict} \
         --temp ${temp} --top-k ${top_k} --top-p ${top_p}
   Qwen3-4B-Thinking-2507-GGUF:
-    name: "Qwen3 4B Thinking"
+    name: Qwen3 4B Thinking
     ttl: 600
     macros:
       ctxSize: "262144"
@@ -148,7 +148,7 @@ models:
       top_p: "0.9"
       top_k: "40"
     env:
-      - "GGML_CUDA_ENABLE_UNIFIED_MEMORY=1"
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
     cmd: |
       ${cmdPrefix} \
         --port ${PORT} \
@@ -165,7 +165,7 @@ models:
         --temp ${temp} --top-k ${top_k} --top-p ${top_p}
   # --- DeepSeek R1 ---
   DeepSeek-R1-0528-Qwen3-8B-GGUF:
-    name: "DeepSeek R1 8B"
+    name: DeepSeek R1 8B
     ttl: 600
     macros:
       ctxSize: "262144"
@@ -173,7 +173,7 @@ models:
       top_p: "0.9"
       top_k: "40"
     env:
-      - "GGML_CUDA_ENABLE_UNIFIED_MEMORY=1"
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
     cmd: |
       ${cmdPrefix} \
         --port ${PORT} \
@@ -190,13 +190,13 @@ models:
         --temp ${temp} --top-k ${top_k} --top-p ${top_p}
   # --- Granite Hybrid ---
   granite-4-h-tiny:
-    name: "IBM Granite 4.0 Hybrid Tiny"
+    name: IBM Granite 4.0 Hybrid Tiny
     ttl: 600
     macros:
       ctxSize: "541440"
       cacheRamSpillover: "-1"
     env:
-      - "GGML_CUDA_ENABLE_UNIFIED_MEMORY=1"
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
     cmd: |
       ${cmdPrefix} \
         --port ${PORT} \
@@ -213,7 +213,7 @@ models:
         --context-shift
   # --- Mistral Series ---
   Ministral-3-3B-Instruct-2512-GGUF:
-    name: "Ministral 3B"
+    name: Ministral 3B
     ttl: 600
     macros:
       ctxSize: "262144"
@@ -235,7 +235,7 @@ models:
         --n-predict ${nPredict} \
         --temp ${temp} --top-k ${top_k} --top-p ${top_p}
   Ministral-3-14B-Reasoning-2512-GGUF:
-    name: "Ministral 14B Reasoning"
+    name: Ministral 14B Reasoning
     ttl: 600
     macros:
       ctxSize: "262144"
@@ -257,7 +257,7 @@ models:
         --n-predict ${nPredict} \
         --temp ${temp} --top-k ${top_k} --top-p ${top_p}
   Mistral-Nemo-Instruct-2407-GGUF:
-    name: "Mistral Nemo 12B"
+    name: Mistral Nemo 12B
     ttl: 600
     macros:
       ctxSize: "262144"
@@ -280,7 +280,7 @@ models:
         --temp ${temp} --top-k ${top_k} --top-p ${top_p}
   # --- Phi Series ---
   Phi-4-mini-reasoning-GGUF:
-    name: "Phi-4 Mini Reasoning"
+    name: Phi-4 Mini Reasoning
     ttl: 600
     macros:
       ctxSize: "262144"
@@ -302,7 +302,7 @@ models:
         --n-predict ${nPredict} \
         --temp ${temp} --top-k ${top_k} --top-p ${top_p}
   Phi-4-reasoning-plus-GGUF:
-    name: "Phi-4 Reasoning Plus"
+    name: Phi-4 Reasoning Plus
     ttl: 600
     macros:
       ctxSize: "262144"
@@ -325,7 +325,7 @@ models:
         --temp ${temp} --top-k ${top_k} --top-p ${top_p}
   # --- Gemma ---
   gemma-4-E4B-it-GGUF:
-    name: "Gemma 4E Instruct"
+    name: Gemma 4E Instruct
     ttl: 600
     macros:
       ctxSize: "262144"
@@ -348,12 +348,12 @@ models:
         --temp ${temp} --top-k ${top_k} --top-p ${top_p}
   # --- NVIDIA Nemotron ---
   NVIDIA-Nemotron-3-Nano-4B-GGUF:
-    name: "NVIDIA Nemotron 3 Nano 4B"
+    name: NVIDIA Nemotron 3 Nano 4B
     ttl: 600
     macros:
       ctxSize: "1048576"
     env:
-      - "GGML_CUDA_ENABLE_UNIFIED_MEMORY=1"
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
     # Command to start the model server
     # Using | for multi-line with comments
     cmd: |
@@ -376,7 +376,7 @@ models:
         --cache-ram ${cacheRamSpillover}
   # --- Specialized Models ---
   Devstral-Small-2-24B-Instruct-2512-GGUF:
-    name: "Devstral 24B"
+    name: Devstral 24B
     ttl: 600
     macros:
       ctxSize: "262144"
@@ -398,7 +398,7 @@ models:
         --n-predict ${nPredict} \
         --temp ${temp} --top-k ${top_k} --top-p ${top_p}
   LFM2-24B-A2B-GGUF:
-    name: "LFM2 24B A2B"
+    name: LFM2 24B A2B
     ttl: 600
     macros:
       ctxSize: "262144"
@@ -420,7 +420,7 @@ models:
         --n-predict ${nPredict} \
         --temp ${temp} --top-k ${top_k} --top-p ${top_p}
   Qwen3-VL-8B-Instruct-GGUF:
-    name: "Qwen3-VL 8B Vision"
+    name: Qwen3-VL 8B Vision
     ttl: 600
     macros:
       ctxSize: "262144"
@@ -428,7 +428,7 @@ models:
       top_p: "0.9"
       top_k: "40"
     env:
-      - "GGML_CUDA_ENABLE_UNIFIED_MEMORY=1"
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
     cmd: |
       ${cmdPrefix} \
         --port ${PORT} \
@@ -444,7 +444,7 @@ models:
         --n-predict ${nPredict} \
         --temp ${temp} --top-k ${top_k} --top-p ${top_p}
   olmOCR-2-7B-1025-GGUF:
-    name: "olmOCR 7B"
+    name: olmOCR 7B
     ttl: 600
     macros:
       ctxSize: "262144"
@@ -466,7 +466,7 @@ models:
         --n-predict ${nPredict} \
         --temp ${temp} --top-k ${top_k} --top-p ${top_p}
   rnj-1-instruct-GGUF:
-    name: "RNJ-1 Instruct"
+    name: RNJ-1 Instruct
     ttl: 600
     macros:
       ctxSize: "262144"
@@ -488,14 +488,14 @@ models:
         --n-predict ${nPredict} \
         --temp ${temp} --top-k ${top_k} --top-p ${top_p}
   zerank-2-gguf:
-    name: "Zerank 2.0"
+    name: Zerank 2.0
     ttl: 600
     macros:
       ctxSize: "-1"
-      device: "Vulkan0"
+      device: Vulkan0
     env:
-      - "CUDA_VISIBLE_DEVICES=-1"
-      - "GGML_VK_VISIBLE_DEVICES=0"
+      - CUDA_VISIBLE_DEVICES=-1
+      - GGML_VK_VISIBLE_DEVICES=0
     cmd: |
       ${cmdPrefix} \
         --port ${PORT} \
@@ -504,7 +504,7 @@ models:
         --device ${device} \
         --reranking --tools all --embedding --reasoning-budget 0 --reasoning off --gpu-layers -2
   zerank-1-small-gguf:
-    name: "Zerank 1 Small"
+    name: Zerank 1 Small
     ttl: 600
     macros:
       ctxSize: "262144"

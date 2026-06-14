@@ -87,7 +87,7 @@ test_model() {
   # Start the model server in background
   echo -e "${YELLOW}  Starting llama-server...${NC}"
   local server_port=$((10000 + RANDOM % 100))
-  local cmd=$(echo "${model_config}" | grep "^    cmd:" | sed 's/^    cmd:[[:space:]]*//' | tr -d '"')
+  cmd=$(echo "${model_config}" | grep "^    cmd:" | sed 's/^    cmd:[[:space:]]*//' | tr -d '"')
 
   # Replace PORT placeholder
   cmd="${cmd//\${PORT/}/${server_port}/}"
@@ -103,7 +103,7 @@ test_model() {
 
   # Test the model
   local test_url="http://localhost:${server_port}/v1/chat/completions"
-  local test_payload=$(
+  test_payload=$(
     cat <<EOF
 {
   "model": "test",
@@ -120,12 +120,12 @@ EOF
   )
 
   echo -e "${YELLOW}  Sending test request...${NC}"
-  local response=$(curl -s -w "\n%{http_code}" -X POST "${test_url}" \
+  response=$(curl -s -w "\n%{http_code}" -X POST "${test_url}" \
     -H "Content-Type: application/json" \
     -d "${test_payload}" 2>&1)
 
-  local http_code=$(echo "${response}" | tail -1)
-  local response_body=$(echo "${response}" | head -n -1)
+  http_code=$(echo "${response}" | tail -1)
+  response_body=$(echo "${response}" | head -n -1)
 
   # Stop server
   kill "${server_pid}" 2>/dev/null || true
