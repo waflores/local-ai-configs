@@ -1,0 +1,76 @@
+# llama-swap Model Benchmark Test Suite
+# Use this file to run benchmarks on all configured models
+#
+# Quick start:
+#   python run_benchmark.py --config tests/model-bench.yaml
+#
+# Or for individual model tests:
+#   python run_benchmark.py --config tests/model-bench.yaml --model-name Meta-Llama-3.1-8B-Instruct
+model_root: "/home/waflores/DevFolder/ai/local-config/inferhost/models"
+backend: "cuda"
+config_file: "/home/waflores/DevFolder/ai/local-config/llama-swap/config.yaml"
+# Benchmark parameters
+benchmark_params:
+  test_prompt: "What is the capital of France? Keep your answer concise."
+  max_tokens: 100
+  temperature: 0.7
+  context_window: 2048
+  batch_size: 1
+  timeout_seconds: 30
+# Test cases to run
+test_cases:
+  - name: "Basic Load Test"
+    description: "Verify model loads and responds to basic queries"
+    enabled: true
+    test_prompt: "What is 2+2?"
+    expected_response_contains: "4"
+  - name: "Long Context Test"
+    description: "Test with extended context window"
+    enabled: true
+    context_window: 8192
+    max_tokens: 500
+    test_prompt: "Summarize the following text: [long context text placeholder]"
+  - name: "Code Generation Test"
+    description: "Test code generation capabilities"
+    enabled: true
+    test_prompt: "Write a Python function to calculate fibonacci numbers"
+    expected_response_contains: "def fibonacci"
+  - name: "Reasoning Test"
+    description: "Test reasoning capabilities"
+    enabled: true
+    test_prompt: "If I have 3 apples and eat 2, how many do I have left?"
+    expected_response_contains: "1 apple"
+# Models to test (extracted from config.yaml)
+models_to_test:
+  - "Meta-Llama-3.1-8B-Instruct"
+  - "CodeLlama-7B-Instruct"
+  - "Qwen3.5-9B-GGUF"
+  - "Qwen3-4B-Thinking-2507-GGUF"
+  - "DeepSeek-R1-0528-Qwen3-8B-GGUF"
+  - "granite-4-h-tiny"
+  - "Ministral-3-3B-Instruct-2512-GGUF"
+  - "Ministral-3-14B-Reasoning-2512-GGUF"
+  - "Mistral-Nemo-Instruct-2407-GGUF"
+  - "Phi-4-mini-reasoning-GGUF"
+  - "Phi-4-reasoning-plus-GGUF"
+  - "gemma-4-E4B-it-GGUF"
+  - "NVIDIA-Nemotron-3-Nano-4B-GGUF"
+  - "Devstral-Small-2-24B-Instruct-2512-GGUF"
+  - "LFM2-24B-A2B-GGUF"
+  - "Qwen3-VL-8B-Instruct-GGUF"
+  - "olmOCR-2-7B-1025-GGUF"
+  - "rnj-1-instruct-GGUF"
+  - "zerank-2-gguf"
+  - "zerank-1-small-gguf"
+# Output settings
+output:
+  results_file: "logs/benchmark-results.md"
+  verbose: true
+  include_timing: true
+  include_vram_usage: true
+# Performance thresholds
+performance_thresholds:
+  max_load_time_seconds: 10
+  min_generation_speed_tokens_per_sec: 5
+  max_context_overflow_errors: 0
+  max_oom_errors: 0
