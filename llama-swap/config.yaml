@@ -20,8 +20,8 @@ macros:
   threads: "-1" # -1 = use all available CPU threads
   nGpuLayers: all # or specific number like "32"
   flashAttn: auto # flash attention optimization
-  # --- Default Context & Cache ---
-  ctxSize: "262144" # 256K context (max for most models)
+  # --- Default Context & Cache (UPDATED from context-verification) ---
+  ctxSize: "262144" # 256K context (max for most models, overridden per-model)
   nPredict: "-1" # -1 = unlimited prediction length
   cacheRamSpillover: "4096"
   # --- Reasoning Capabilities ---
@@ -41,7 +41,7 @@ models:
     name: Llama 3.1 8B
     ttl: 600
     macros:
-      ctxSize: "262144"
+      ctxSize: "60000" # Updated from context-verification: memory-safe limit
       temp: "0.7"
       top_p: "0.9"
       top_k: "40"
@@ -63,7 +63,7 @@ models:
     name: CodeLlama 7B
     ttl: 600
     macros:
-      ctxSize: "262144"
+      ctxSize: "52105" # Updated from context-verification: memory-safe limit
       temp: "0.8"
       top_p: "0.9"
       top_k: "40"
@@ -86,7 +86,7 @@ models:
     name: Qwen3.5 9B"
     ttl: 600
     macros:
-      ctxSize: "262144"
+      ctxSize: "13846" # Updated from context-verification: memory-safe limit
       # --- Default Model Parameters ---
       temp: "0.6"
       top_k: "20"
