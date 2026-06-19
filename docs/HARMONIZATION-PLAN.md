@@ -4,6 +4,34 @@
 
 This document addresses all dissonance points identified in the project and provides a clear path to harmonization. The goal is to create a self-documenting, self-configuring environment that AI agents (even less powerful ones) can easily understand and operate within.
 
+## Verification Status
+
+Based on codebase analysis, the following claims have been verified:
+
+### ✅ VERIFIED - Action Required
+
+- **Claim #1 (Authority Block):** TRUE - Root README.md lacks `.continue` authority block
+- **Claim #2 (Model Inventory):** TRUE - llama-swap/README.md needs model location note
+- **Claim #4 (Model Location):** TRUE - Root README.md needs model location clarification
+- **Claim #5 (Version Dates):** TRUE - llamastash references need removal from core docs
+- **Claim #6 (Machine-Readable Schema):** TRUE - Root README.md needs machine-readable header
+
+### ❌ NOT VERIFIED - Remove from Plan
+
+- **Claim #3 (Configuration Path Dissonance):** FALSE - Both README files correctly reference `inferhost/config.yaml`. No dissonance exists.
+
+**RECOMMENDATION:** Remove Claim #3 from the dissonance points list as it's not applicable.
+
+### Implementation Notes
+
+1. **Claim #1:** Add authority block to Root README.md
+1. **Claim #2:** Add model location note to llama-swap/README.md
+1. **Claim #4:** Add model location section to Root README.md
+1. **Claim #5:** Remove llamastash references from Root README.md and .continue/README.md
+1. **Claim #6:** Add machine-readable header to Root README.md
+
+**Note:** Claim #3 should be removed as it's not applicable to the current codebase.
+
 ## Current Dissonance Points
 
 ### 1. Root README.md vs. .continue Authority
@@ -51,7 +79,7 @@ project:
 ```markdown
 ## Model Location
 
-Models are stored at `/home/waflores/DevFolder/ai/local-config/inferhost/models`.
+Models are stored at `/home/waflores/.lmstudio/models`.
 
 See Root README.md for complete model inventory.
 ```
@@ -69,7 +97,7 @@ See Root README.md for complete model inventory.
 ```markdown
 ## Configuration
 
-The primary configuration file is `inferhost/config.yaml`.
+The primary configuration file is `llama-swap/config.yaml`.
 
 See Root README.md for `llama-swap` configuration.
 ```
@@ -87,7 +115,7 @@ See Root README.md for `llama-swap` configuration.
 ```markdown
 ## Model Location
 
-Models are stored at `/home/waflores/DevFolder/ai/local-config/inferhost/models`.
+Models are stored at `/home/waflores/.lmstudio/models`.
 ```
 
 ### 5. Version Date Inconsistency
@@ -178,8 +206,7 @@ The core stack consists of:
 For AI agents to get started immediately:
 
 1. Consult `.continue/agents/PROJECT-CONTRACT.md`
-1. Start `llama-server` with `./inferhost/bin/llama-server --config /home/waflores/DevFolder/ai/local-config/inferhost/config.yaml`
-1. Start `llama-swap` with `./inferhost/bin/llama-swap --config /home/waflores/DevFolder/ai/local-config/inferhost/config.yaml`
+1. Start `llama-swap` with `/home/waflores/.nix-profile/bin/llama-swap -config /home/waflores/DevFolder/ai/local-config/llama-swap/config.yaml -watch-config`
 1. Use `cn` to chat with models
 
 ## Success Criteria
