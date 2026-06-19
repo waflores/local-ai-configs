@@ -31,7 +31,7 @@ Expected output:
 ### 2. Start llama-swap with Integration
 
 ```bash
-/home/waflores/.cargo/bin/llama-swap \
+/home/waflores/bin/llama-swap\
   --config /home/waflores/DevFolder/ai/local-config/llamastash/llamastash-integration.yaml \
   --listen 127.0.0.1:8080
 ```
@@ -58,7 +58,7 @@ open http://localhost:8080/ui
 /home/waflores/.cargo/bin/llamastash daemon status --json
 
 # Start llama-swap with integration
-/home/waflores/.cargo/bin/llama-swap \
+/home/waflores/bin/llama-swap\
   --config /home/waflores/DevFolder/ai/local-config/llamastash/llamastash-integration.yaml \
   --listen 127.0.0.1:8080
 
@@ -73,7 +73,7 @@ curl http://127.0.0.1:8080/health
 curl http://127.0.0.1:8080/v1/models
 
 # Access logs
-/home/waflores/.cargo/bin/llama-swap logs stream
+/home/waflores/bin/llama-swaplogs stream
 
 # Access metrics
 curl http://127.0.0.1:8080/metrics

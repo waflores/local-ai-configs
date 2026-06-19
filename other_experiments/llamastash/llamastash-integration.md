@@ -56,7 +56,7 @@ Expected output:
 ### 2. Start llama-swap with Integration
 
 ```bash
-/home/waflores/.cargo/bin/llama-swap \
+/home/waflores/bin/llama-swap\
   --config /home/waflores/DevFolder/ai/local-config/llamastash/llamastash-integration.yaml \
   --listen 127.0.0.1:8080
 ```
@@ -192,7 +192,7 @@ lsof -i :10001
 
 # Or kill and restart
 kill <PID>
-/home/waflores/.cargo/bin/llama-swap --config <CONFIG> --listen 127.0.0.1:10002
+/home/waflores/bin/llama-swap--config <CONFIG> --listen 127.0.0.1:10002
 ```
 
 ## File Structure

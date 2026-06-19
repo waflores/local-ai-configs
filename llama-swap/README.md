@@ -21,5 +21,5 @@ See Root README.md for complete model inventory.
 
 ## Getting Started
 
-1. Start `llama-swap` with `/home/waflores/.nix-profile/bin/llama-swap -config /home/waflores/DevFolder/ai/local-config/llama-swap/config.yaml -watch-config`
+1. Start `llama-swap` with `/home/waflores/bin/llama-swap -config /home/waflores/DevFolder/ai/local-config/llama-swap/config.yaml -watch-config`
 1. Use `cn` to chat with models.

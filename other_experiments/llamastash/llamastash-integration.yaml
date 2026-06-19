@@ -41,7 +41,7 @@ performance:
 # - LlamaStash daemon runs on ports 48134 (control) and 11435 (proxy)
 # - External model serving on port 10001 is proxied by llama-swap
 # - Use /home/waflores/.cargo/bin/llamastash for LlamaStash operations
-# - Use /home/waflores/.cargo/bin/llama-swap for llama-swap operations
+# - Use /home/waflores/bin/llama-swapfor llama-swap operations
 
 # API Keys (empty for now - can be added if needed)
 apiKeys: []

@@ -19,7 +19,7 @@ Get up and running with LlamaStash + llama-swap in minutes.
 ### 2. Start llama-swap
 
 ```bash
-/home/waflores/.cargo/bin/llama-swap \
+/home/waflores/bin/llama-swap\
   --config /home/waflores/DevFolder/ai/local-config/llamastash/llamastash-integration.yaml \
   --listen 127.0.0.1:8080
 ```
@@ -47,7 +47,7 @@ curl http://127.0.0.1:8080/v1/models
 ### View Logs
 
 ```bash
-/home/waflores/.cargo/bin/llama-swap logs stream
+/home/waflores/bin/llama-swaplogs stream
 ```
 
 ### View Metrics
@@ -119,7 +119,7 @@ kill <PID>
 
 ```bash
 # Use different port
-/home/waflores/.cargo/bin/llama-swap \
+/home/waflores/bin/llama-swap\
   --config /home/waflores/DevFolder/ai/local-config/llamastash/llamastash-integration.yaml \
   --listen 127.0.0.1:8081
 ```
@@ -148,7 +148,7 @@ curl -X POST http://127.0.0.1:8080/v1/chat/completions \
 ### Stream Logs
 
 ```bash
-/home/waflores/.cargo/bin/llama-swap logs stream
+/home/waflores/bin/llama-swaplogs stream
 ```
 
 ### Get Metrics

@@ -32,7 +32,7 @@ Expected output:
 Verify llama-swap is installed:
 
 ```bash
-/home/waflores/.cargo/bin/llama-swap --version
+/home/waflores/bin/llama-swap--version
 ```
 
 ## Installation Steps
@@ -69,7 +69,7 @@ If not running, start it:
 ### 3. Start llama-swap with Integration
 
 ```bash
-/home/waflores/.cargo/bin/llama-swap \
+/home/waflores/bin/llama-swap\
   --config /home/waflores/DevFolder/ai/local-config/llamastash/llamastash-integration.yaml \
   --listen 127.0.0.1:8080
 ```
@@ -174,7 +174,7 @@ kill <PID>
 lsof -i :10001
 
 # Or use different port
-/home/waflores/.cargo/bin/llama-swap \
+/home/waflores/bin/llama-swap\
   --config /home/waflores/DevFolder/ai/local-config/llamastash/llamastash-integration.yaml \
   --listen 127.0.0.1:8081
 ```

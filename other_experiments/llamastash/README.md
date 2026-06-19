@@ -49,7 +49,7 @@ cd /home/waflores/DevFolder/ai/local-config/llamastash
 ### 2. Start llama-swap with Integration
 
 ```bash
-/home/waflores/.cargo/bin/llama-swap \
+/home/waflores/bin/llama-swap\
   --config /home/waflores/DevFolder/ai/local-config/llamastash/llamastash-integration.yaml \
   --listen 127.0.0.1:8080
 ```

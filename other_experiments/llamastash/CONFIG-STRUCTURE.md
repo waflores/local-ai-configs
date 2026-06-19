@@ -129,13 +129,13 @@ models:                        # Model definitions
 
 ```bash
 export LLAMA_SWAP_LISTEN="127.0.0.1:8081"
-/home/waflores/.cargo/bin/llama-swap --config <CONFIG>
+/home/waflores/bin/llama-swap--config <CONFIG>
 ```
 
 ### 2. Command-line Flags (High Priority)
 
 ```bash
-/home/waflores/.cargo/bin/llama-swap \
+/home/waflores/bin/llama-swap\
   --config /path/to/config.yaml \
   --listen 127.0.0.1:8080
 ```
@@ -201,13 +201,13 @@ hooks:
 ### Check Config Syntax
 
 ```bash
-/home/waflores/.cargo/bin/llama-swap --config /path/to/config.yaml --help
+/home/waflores/bin/llama-swap--config /path/to/config.yaml --help
 ```
 
 ### Verify Integration
 
 ```bash
-/home/waflores/.cargo/bin/llama-swap \
+/home/waflores/bin/llama-swap\
   --config /home/waflores/DevFolder/ai/local-config/llamastash/llamastash-integration.yaml \
   --listen 127.0.0.1:8080
 ```

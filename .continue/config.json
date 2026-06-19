@@ -100,7 +100,7 @@
   
   "get_started": {
     "step_1": "Consult .continue/agents/PROJECT-CONTRACT.md",
-    "step_2": "Start llama-swap with /home/waflores/.nix-profile/bin/llama-swap -config /home/waflores/DevFolder/ai/local-config/llama-swap/config.yaml -watch-config",
+    "step_2": "Start llama-swap with /home/waflores/bin/llama-swap-config /home/waflores/DevFolder/ai/local-config/llama-swap/config.yaml -watch-config",
     "step_3": "Use 'cn' to chat with models"
   },
   

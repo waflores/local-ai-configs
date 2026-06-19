@@ -14,7 +14,7 @@ globalTTL: 0
 macros:
   # --- Infrastructure & Paths ---
   models_directory: /home/waflores/.lmstudio/models/lmstudio-community
-  cmdPrefix: /home/waflores/.local/share/inferhost/bin/llama-server
+  cmdPrefix: /home/waflores/DevFolder/ai/llama.cpp/build/bin/llama-server
   device: CUDA0
   # --- Default Performance Settings (override per-model if needed) ---
   threads: "-1" # -1 = use all available CPU threads
