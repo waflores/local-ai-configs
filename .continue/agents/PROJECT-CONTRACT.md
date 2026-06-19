@@ -13,7 +13,6 @@ This project orchestrates local LLM inference using `llama-swap` and `continue.d
 
 - `context-verification`: Security-focused context verification.
 - `nix`: Nix-based build system.
-- `llamastash`: Rust-based model proxy (experimental).
 
 ## Machine-Readable Authority Block
 
@@ -31,7 +30,7 @@ authority:
 
 - `ctxSize` must match model capacity (no OOM).
 - `llama-swap` uses `CUDA` for active models, `Vulkan` for swapped models.
-- `continue.dev` expects models at `/home/waflores/DevFolder/ai/local-config/inferhost/models`.
+- `continue.dev` expects models at `/home/waflores/.lmstudio/models`.
 
 ## Common Issues
 
@@ -41,5 +40,5 @@ authority:
 
 ## Hello World Path
 
-1. Start `llama-swap` with `./inferhost/bin/llama-swap --config /home/waflores/DevFolder/ai/local-config/inferhost/config.yaml`
+1. Start `llama-swap` with `/home/waflores/.nix-profile/bin/llama-swap -config /home/waflores/DevFolder/ai/local-config/llama-swap/config.yaml -watch-config`
 1. Install `continue.dev` and use `cn` to chat with models.

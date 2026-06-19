@@ -13,8 +13,13 @@ llama-swap is a model management tool that allows you to load and unload large l
 
 This project uses the `.continue` folder to define AI agent behavior. Agents should consult `.continue/agents/` for project-specific instructions.
 
+## Model Location
+
+Models are stored at `/home/waflores/.lmstudio/models`.
+
+See Root README.md for complete model inventory.
+
 ## Getting Started
 
-1. Start `llama-server` with `./inferhost/bin/llama-server --config /home/waflores/DevFolder/ai/local-config/inferhost/config.yaml`
-1. Start `llama-swap` with `./inferhost/bin/llama-swap --config /home/waflores/DevFolder/ai/local-config/inferhost/config.yaml`
+1. Start `llama-swap` with `/home/waflores/.nix-profile/bin/llama-swap -config /home/waflores/DevFolder/ai/local-config/llama-swap/config.yaml -watch-config`
 1. Use `cn` to chat with models.

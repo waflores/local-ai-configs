@@ -1,0 +1,136 @@
+{
+  "name": "llama-swap + continue.dev",
+  "version": "1.0.0",
+  "description": "Local LLM setup using llama-swap integrated with continue.dev VSCode extension",
+  
+  "authority": {
+    "folder": ".continue",
+    "priority": "high"
+  },
+  
+  "core_stack": {
+    "continue.dev": {
+      "description": "IDE agent for AI-assisted development",
+      "status": "active"
+    },
+    "llama-server": {
+      "description": "Inference engine",
+      "status": "active"
+    },
+    "llama-swap": {
+      "description": "Model management tool",
+      "status": "active"
+    }
+  },
+  
+  "model_location": "/home/waflores/.lmstudio/models",
+  
+  "configuration_paths": {
+    "llama_swap": "/home/waflores/DevFolder/ai/local-config/llama-swap/config.yaml",
+    "llama_server": "/home/waflores/DevFolder/ai/local-config/llama-swap/config.yaml"
+  },
+  
+  "gpu_strategy": {
+    "active_models": {
+      "device": "CUDA",
+      "device_id": "CUDA0",
+      "device_name": "NVIDIA GeForce RTX 5070 Laptop GPU"
+    },
+    "swapped_models": {
+      "device": "Vulkan",
+      "device_id": "Vulkan0",
+      "device_name": "Intel(R) Graphics (ARL)"
+    }
+  },
+  
+  "model_inventory": {
+    "code_specialized": [
+      "CodeLlama-7B-Instruct",
+      "Granite-4.0-h-tiny"
+    ],
+    "mistral_family": [
+      "Ministral-3B",
+      "Ministral-14B",
+      "Devstral-24B",
+      "Mistral-Nemo-13B"
+    ],
+    "qwen_family": [
+      "DeepSeek-R1-8B",
+      "Qwen3.5-9B",
+      "Qwen3.6-27B",
+      "Qwen3-VL-8B"
+    ],
+    "nvidia_models": [
+      "Nemotron-3-Nano-4B"
+    ],
+    "phi_family": [
+      "Phi-4-mini",
+      "Phi-4-reasoning-plus"
+    ],
+    "other_models": [
+      "LFM2-24B-A2B",
+      "gemma-4-E4B-it",
+      "olmOCR-2-7B"
+    ]
+  },
+  
+  "performance_targets": {
+    "model_swap_time": "< 2s",
+    "generation_speed_7b": "> 10 t/s",
+    "vram_utilization": "< 70%",
+    "context_window": "32K+"
+  },
+  
+  "agents": {
+    "folder": ".continue/agents",
+    "primary_contract": ".continue/agents/PROJECT-CONTRACT.md"
+  },
+  
+  "prompts": {
+    "folder": ".continue/prompts"
+  },
+  
+  "rules": {
+    "folder": ".continue/rules"
+  },
+  
+  "checks": {
+    "folder": ".continue/checks"
+  },
+  
+  "get_started": {
+    "step_1": "Consult .continue/agents/PROJECT-CONTRACT.md",
+    "step_2": "Start llama-swap with /home/waflores/.nix-profile/bin/llama-swap -config /home/waflores/DevFolder/ai/local-config/llama-swap/config.yaml -watch-config",
+    "step_3": "Use 'cn' to chat with models"
+  },
+  
+  "hardware": {
+    "cpu": "Intel Core Ultra 9 275HX (24 cores, up to 5.4 GHz)",
+    "gpu": "NVIDIA GeForce RTX 5070 Max-Q (~8 GB VRAM) + Intel Integrated Graphics (~23 GB shared)",
+    "ram": "~33 GB total (~20 GB currently used)",
+    "storage": "~1 TB total (~245 GB free)",
+    "os": "Ubuntu 26.04 LTS (Resolute Raccoon)"
+  },
+  
+  "available_devices": {
+    "CUDA0": {
+      "name": "NVIDIA GeForce RTX 5070 Laptop GPU",
+      "memory": "7707 MiB",
+      "free": "4 MiB"
+    },
+    "Vulkan0": {
+      "name": "Intel(R) Graphics (ARL)",
+      "memory": "23633 MiB",
+      "free": "11154 MiB"
+    },
+    "Vulkan1": {
+      "name": "NVIDIA GeForce RTX 5070 Laptop GPU",
+      "memory": "8151 MiB",
+      "free": "4 MiB"
+    },
+    "BLAS": {
+      "name": "OpenBLAS",
+      "type": "CPU offloading"
+    }
+  }
+}

@@ -1,5 +1,23 @@
 # Llama-Swap + Continue.dev Configuration Journey
 
+## 🤖 Machine-Readable Header
+
+```yaml
+project:
+  name: llama-swap + continue.dev
+  core_stack:
+    - continue.dev
+    - llama-server
+    - llama-swap
+  authority:
+    folder: ".continue"
+    priority: "high"
+  instructions:
+    - "Consult .continue/agents/ for project-specific AI agent instructions."
+    - "Consult .continue/config.json for project-specific configuration."
+    - "Consult .continue/prompts/ for project-specific prompts."
+```
+
 ## 🎯 Project Vision
 
 Create an optimized local LLM setup using **llama-swap** integrated with **continue.dev VSCode extension** to enhance coding productivity for Python, C, and C++ projects. The system will leverage the **NVIDIA RTX 5070 Max-Q** GPU with intelligent model swapping to maximize resource utilization.
@@ -22,6 +40,10 @@ Create an optimized local LLM setup using **llama-swap** integrated with **conti
 - **BLAS:** OpenBLAS (CPU offloading)
 
 ## 📦 Model Inventory
+
+### Model Location
+
+Models are stored at `/home/waflores/.lmstudio/models`.
 
 ### Code-Specialized Models
 
