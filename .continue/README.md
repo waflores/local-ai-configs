@@ -2,20 +2,17 @@
 
 ## Purpose
 
-The `.continue` folder is the **intent layer** for this project. It defines AI agent behavior, configuration, and prompts.
+The `.continue` folder is the **intent layer** for this llama-swap + continue.dev configuration project.
 
 ## Structure
 
-- `agents/`: AI agent definitions and instructions
-- `config.json`: Project-specific configuration
-- `prompts/`: Project-specific prompts
+- `agents/`: AI agent definitions and instructions for configuration tasks
 
 ## Authority
 
-Agents should consult this folder for project-specific instructions and configuration.
+AI agents should consult this folder for project-specific configuration instructions.
 
 ## Getting Started
 
-1. Consult `.continue/agents/PROJECT-CONTRACT.md` for project-specific instructions.
-1. Consult `.continue/config.json` for project-specific configuration.
-1. Consult `.continue/prompts/` for project-specific prompts.
+1. Consult `.continue/agents/PROJECT-CONTRACT.md` for project overview and critical rules
+1. Consult `.continue/agents/` for specific agent capabilities

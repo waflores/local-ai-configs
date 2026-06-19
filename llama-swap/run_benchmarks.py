@@ -201,7 +201,7 @@ def main():
         model_config["MODEL"] = model_name
         model_config["MODEL_PATH"] = (
             config.get(f"MODEL_PATH_{model_name}", "")
-            or f"/home/waflores/DevFolder/ai/local-config/inferhost/models/{model_name}"
+            or f"/home/waflores/.lmstudio/models/{model_name}"
         )
 
         result = run_benchmark(model_config)

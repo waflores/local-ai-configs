@@ -34,7 +34,7 @@ touch logs/test-session-YYYYMMDD-HHMMSS/iteration.log
 cp llama-swap/config.yaml tests/current-config.yaml
 
 # Edit with test parameters (use sed for automation)
-sed -i 's/ROOT_DIR: .*/ROOT_DIR: /home/waflores/DevFolder/ai/local-config/inferhost/models/g' tests/current-config.yaml
+sed -i 's/ROOT_DIR: .*/ROOT_DIR: /home/waflores/.lmstudio/models/g' tests/current-config.yaml
 ```
 
 ### Step 3: Run Test Case
@@ -72,7 +72,7 @@ sed -i 's/batch-size: .*/batch-size: 1/' tests/current-config.yaml
 
 ```yaml
 # tests/basic-load-test.yaml
-ROOT_DIR: /home/waflores/DevFolder/ai/local-config/inferhost/models
+ROOT_DIR: /home/waflores/.lmstudio/models
 BACKEND: cuda
 MODEL: "Qwen/Qwen2.5-1.5B-Instruct:Q4_K_M"
 MAX_CONCURRENT_REQUESTS: 1
@@ -98,7 +98,7 @@ ______________________________________________________________________
 
 ```yaml
 # tests/vram-opt-test.yaml
-ROOT_DIR: /home/waflores/DevFolder/ai/local-config/inferhost/models
+ROOT_DIR: /home/waflores/.lmstudio/models
 BACKEND: cuda
 MODEL: "Meta-Llama-3-8B-Instruct:Q4_K_M"
 MAX_CONCURRENT_REQUESTS: 1
@@ -125,7 +125,7 @@ ______________________________________________________________________
 
 ```yaml
 # tests/context-length-test.yaml
-ROOT_DIR: /home/waflores/DevFolder/ai/local-config/inferhost/models
+ROOT_DIR: /home/waflores/.lmstudio/models
 BACKEND: cuda
 MODEL: "Qwen/Qwen2.5-1.5B-Instruct:Q4_K_M"
 MAX_CONCURRENT_REQUESTS: 1
@@ -152,7 +152,7 @@ ______________________________________________________________________
 
 ```yaml
 # tests/batch-size-test.yaml
-ROOT_DIR: /home/waflores/DevFolder/ai/local-config/inferhost/models
+ROOT_DIR: /home/waflores/.lmstudio/models
 BACKEND: cuda
 MODEL: "Qwen/Qwen2.5-1.5B-Instruct:Q4_K_M"
 MAX_CONCURRENT_REQUESTS: 2
@@ -178,7 +178,7 @@ ______________________________________________________________________
 
 ```yaml
 # tests/model-swap-test.yaml
-ROOT_DIR: /home/waflores/DevFolder/ai/local-config/inferhost/models
+ROOT_DIR: /home/waflores/.lmstudio/models
 BACKEND: cuda
 MODEL: "Qwen/Qwen2.5-1.5B-Instruct:Q4_K_M"
 MAX_CONCURRENT_REQUESTS: 1
@@ -325,7 +325,7 @@ cuda-device-query
 cat /proc/driver/nvidia/gpu/0/vram_total
 
 # Verify model files exist
-ls -la /home/waflores/DevFolder/ai/local-config/inferhost/models/
+ls -la /home/waflores/.lmstudio/models/
 ```
 
 ______________________________________________________________________

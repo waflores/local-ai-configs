@@ -256,7 +256,7 @@ ______________________________________________________________________
 # llama-swap/config.yaml
 llama-swap:
   backend: "llama.cpp" # or "sglang" for higher throughput
-  root-dir: "/home/waflores/DevFolder/ai/local-config/inferhost/models"
+  root-dir: "/home/waflores/.lmstudio/models"
   swap-enabled: true
   swap-on-idle: 300
 
@@ -438,7 +438,7 @@ ______________________________________________________________________
 # llama-swap/config.yaml
 llama-swap:
   backend: "llama.cpp"
-  root-dir: "/home/waflores/DevFolder/ai/local-config/inferhost/models"
+  root-dir: "/home/waflores/.lmstudio/models"
   swap-enabled: true
   swap-on-idle: 300
 

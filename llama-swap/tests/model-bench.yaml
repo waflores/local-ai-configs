@@ -6,7 +6,7 @@
 #
 # Or for individual model tests:
 #   python run_benchmark.py --config tests/model-bench.yaml --model-name Meta-Llama-3.1-8B-Instruct
-model_root: "/home/waflores/DevFolder/ai/local-config/inferhost/models"
+model_root: "/home/waflores/.lmstudio/models"
 backend: "cuda"
 config_file: "/home/waflores/DevFolder/ai/local-config/llama-swap/config.yaml"
 # Benchmark parameters

@@ -6,7 +6,7 @@ set -euo pipefail
 
 # Configuration
 CONFIG_FILE="${CONFIG_FILE:-/home/waflores/DevFolder/ai/local-config/llama-swap/config.yaml}"
-MODEL_ROOT="/home/waflores/DevFolder/ai/local-config/inferhost/models"
+MODEL_ROOT="/home/waflores/.lmstudio/models"
 LOG_DIR="logs/benchmark"
 RESULTS_FILE="${LOG_DIR}/benchmark-results.md"
 TIMESTAMP=$(date +%Y%m%d-%H%M%S)
