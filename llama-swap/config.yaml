@@ -1,536 +1,6 @@
-# yaml-language-server: $schema=https://raw.githubusercontent.com/mostlygeek/llama-swap/refs/heads/main/config-schema.json
-# Health and logging
-healthCheckTimeout: 60
-# Note to AI Agents: do not change logLevel
-# Note to AI Agents: do not remove inline comments for settings
-logLevel: debug
-logToStdout: proxy
-# Port and TTL management
-startPort: 10001
 globalTTL: 0
-# ============================================
-# Global Settings (Shared across all models)
-# ============================================
-macros:
-  # --- Infrastructure & Paths ---
-  models_directory: /home/waflores/.lmstudio/models/lmstudio-community
-  cmdPrefix: /home/waflores/DevFolder/ai/llama.cpp/build/bin/llama-server
-  device: CUDA0
-  # --- Default Performance Settings (override per-model if needed) ---
-  threads: "-1" # -1 = use all available CPU threads
-  nGpuLayers: all # or specific number like "32"
-  flashAttn: auto # flash attention optimization
-  # --- Default Context & Cache (UPDATED from context-verification) ---
-  ctxSize: "131072" # 128K context (safe default, overridden per-model per recommendations)
-  nPredict: "-1" # -1 = unlimited prediction length
-  cacheRamSpillover: "4096"
-  # --- Reasoning Capabilities ---
-  reasoning: auto
-  reasoningBudget: "-1"
-  reasoningFormat: deepseek
-  # --- Feature Flags ---
-  jinja: "true"
-  tools: all
-  contextShift: "false"
-# ============================================
-# Models Configuration
-# ============================================
-models:
-  # --- Small Models (7B) - CUDA Active ---
-  Meta-Llama-3.1-8B-Instruct:
-    name: Llama 3.1 8B
-    ttl: 600
-    macros:
-      ctxSize: "27391" # Updated from context-verification: memory-safe limit
-      temp: "0.7"
-      top_p: "0.9"
-      top_k: "40"
-    cmd: |
-      ${cmdPrefix} \
-        --port ${PORT} \
-        --models-dir ${models_directory} \
-        --model ${models_directory}/Meta-Llama-3.1-8B-Instruct-GGUF/Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf \
-        --n-gpu-layers ${nGpuLayers} \
-        --threads ${threads} \
-        --flash-attn ${flashAttn} \
-        --jinja \
-        --tools ${tools} \
-        --device ${device} \
-        --ctx-size ${ctxSize} \
-        --n-predict ${nPredict} \
-        --temp ${temp} --top-k ${top_k} --top-p ${top_p}
-  CodeLlama-7B-Instruct:
-    name: CodeLlama 7B
-    ttl: 600
-    macros:
-      ctxSize: "16384" # Updated from context-verification: memory-safe limit
-      temp: "0.8"
-      top_p: "0.9"
-      top_k: "40"
-    cmd: |
-      ${cmdPrefix} \
-        --port ${PORT} \
-        --models-dir ${models_directory} \
-        --model ${models_directory}/CodeLlama-7B-Instruct-GGUF/codellama-7b-instruct.Q4_K_M.gguf \
-        --n-gpu-layers ${nGpuLayers} \
-        --threads ${threads} \
-        --flash-attn ${flashAttn} \
-        --jinja \
-        --tools ${tools} \
-        --device ${device} \
-        --ctx-size ${ctxSize} \
-        --n-predict ${nPredict} \
-        --temp ${temp} --top-k ${top_k} --top-p ${top_p}
-  # --- Qwen Series - CUDA Active ---
-  Qwen3.5-9B-GGUF:
-    name: Qwen3.5 9B
-    ttl: 600
-    macros:
-      ctxSize: "262144" # EXCLUDED per requirement: using memory-safe limit
-      # --- Default Model Parameters ---
-      temp: "0.6"
-      top_k: "20"
-      top_p: "0.95"
-      min_p: "0"
-    env:
-      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
-    # Command to start the model server
-    # Using | for multi-line with comments
-    cmd: |
-      ${cmdPrefix} \
-        --port ${PORT} \
-        --models-dir ${models_directory} \
-        --model ${models_directory}/Qwen3.5-9B-GGUF/Qwen3.5-9B-Q4_K_M.gguf \
-        --n-gpu-layers ${nGpuLayers} \
-        --threads ${threads} \
-        --flash-attn ${flashAttn} \
-        --jinja \
-        --tools ${tools} \
-        --device ${device} \
-        --ctx-size ${ctxSize} \
-        --n-predict ${nPredict} \
-        --context-shift \
-        --reasoning ${reasoning} \
-        --reasoning-format ${reasoningFormat} \
-        --reasoning-budget ${reasoningBudget} \
-        --cache-ram ${cacheRamSpillover} \
-        --temp ${temp} --top-k ${top_k} --top-p ${top_p} --min-p ${min_p}
-  Qwen3.6-27B-GGUF:
-    name: Qwen3.6 27B
-    ttl: 600
-    macros:
-      ctxSize: "1024"
-      temp: "0.7"
-      top_p: "0.9"
-      top_k: "40"
-    env:
-      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
-    cmd: |
-      ${cmdPrefix} \
-        --port ${PORT} \
-        --models-dir ${models_directory} \
-        --model ${models_directory}/Qwen3.6-27B-GGUF/Qwen3.6-27B-Q4_K_M.gguf \
-        --n-gpu-layers ${nGpuLayers} \
-        --threads ${threads} \
-        --flash-attn ${flashAttn} \
-        --jinja \
-        --tools ${tools} \
-        --device ${device} \
-        --ctx-size ${ctxSize} \
-        --n-predict ${nPredict} \
-        --temp ${temp} --top-k ${top_k} --top-p ${top_p}
-  Qwen3-4B-Thinking-2507-GGUF:
-    name: Qwen3 4B Thinking
-    ttl: 600
-    macros:
-      ctxSize: "123333"
-      temp: "0.7"
-      top_p: "0.9"
-      top_k: "40"
-    env:
-      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
-    cmd: |
-      ${cmdPrefix} \
-        --port ${PORT} \
-        --models-dir ${models_directory} \
-        --model ${models_directory}/Qwen3-4B-Thinking-2507-GGUF/Qwen3-4B-Thinking-2507-Q4_K_M.gguf \
-        --n-gpu-layers ${nGpuLayers} \
-        --threads ${threads} \
-        --flash-attn ${flashAttn} \
-        --jinja \
-        --tools ${tools} \
-        --device ${device} \
-        --ctx-size ${ctxSize} \
-        --n-predict ${nPredict} \
-        --temp ${temp} --top-k ${top_k} --top-p ${top_p}
-  # --- DeepSeek R1 ---
-  DeepSeek-R1-0528-Qwen3-8B-GGUF:
-    name: DeepSeek R1 8B
-    ttl: 600
-    macros:
-      ctxSize: "24893"
-      temp: "0.7"
-      top_p: "0.9"
-      top_k: "40"
-    env:
-      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
-    cmd: |
-      ${cmdPrefix} \
-        --port ${PORT} \
-        --models-dir ${models_directory} \
-        --model ${models_directory}/DeepSeek-R1-0528-Qwen3-8B-GGUF/DeepSeek-R1-0528-Qwen3-8B-Q4_K_M.gguf \
-        --n-gpu-layers ${nGpuLayers} \
-        --threads ${threads} \
-        --flash-attn ${flashAttn} \
-        --jinja \
-        --tools ${tools} \
-        --device ${device} \
-        --ctx-size ${ctxSize} \
-        --n-predict ${nPredict} \
-        --temp ${temp} --top-k ${top_k} --top-p ${top_p}
-  # --- Granite Hybrid ---
-  granite-4-h-tiny:
-    name: IBM Granite 4.0 Hybrid Tiny
-    ttl: 600
-    macros:
-      ctxSize: "48461"
-      cacheRamSpillover: "-1"
-    env:
-      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
-    cmd: |
-      ${cmdPrefix} \
-        --port ${PORT} \
-        --models-dir ${models_directory} \
-        --model ${models_directory}/granite-4.0-h-tiny-GGUF/granite-4.0-h-tiny-Q4_K_M.gguf \
-        --n-gpu-layers ${nGpuLayers} \
-        --threads ${threads} \
-        --flash-attn ${flashAttn} \
-        --jinja \
-        --tools ${tools} \
-        --device ${device} \
-        --ctx-size ${ctxSize} \
-        --n-predict ${nPredict} \
-        --context-shift
-  # --- Mistral Series ---
-  Ministral-3-3B-Instruct-2512-GGUF:
-    name: Ministral 3B
-    ttl: 600
-    macros:
-      ctxSize: "133333"
-      temp: "0.7"
-      top_p: "0.9"
-      top_k: "40"
-    cmd: |
-      ${cmdPrefix} \
-        --port ${PORT} \
-        --models-dir ${models_directory} \
-        --model ${models_directory}/Ministral-3-3B-Instruct-2512-GGUF/Ministral-3-3B-Instruct-2512-Q4_K_M.gguf \
-        --n-gpu-layers ${nGpuLayers} \
-        --threads ${threads} \
-        --flash-attn ${flashAttn} \
-        --jinja \
-        --tools ${tools} \
-        --device ${device} \
-        --ctx-size ${ctxSize} \
-        --n-predict ${nPredict} \
-        --temp ${temp} --top-k ${top_k} --top-p ${top_p}
-  Ministral-3-14B-Reasoning-2512-GGUF:
-    name: Ministral 14B Reasoning
-    ttl: 600
-    macros:
-      ctxSize: "1024"
-      temp: "0.7"
-      top_p: "0.9"
-      top_k: "40"
-    cmd: |
-      ${cmdPrefix} \
-        --port ${PORT} \
-        --models-dir ${models_directory} \
-        --model ${models_directory}/Ministral-3-14B-Reasoning-2512-GGUF/Ministral-3-14B-Reasoning-2512-Q4_K_M.gguf \
-        --n-gpu-layers ${nGpuLayers} \
-        --threads ${threads} \
-        --flash-attn ${flashAttn} \
-        --jinja \
-        --tools ${tools} \
-        --device ${device} \
-        --ctx-size ${ctxSize} \
-        --n-predict ${nPredict} \
-        --temp ${temp} --top-k ${top_k} --top-p ${top_p}
-  Mistral-Nemo-Instruct-2407-GGUF:
-    name: Mistral Nemo 12B
-    ttl: 600
-    macros:
-      ctxSize: "1024"
-      temp: "0.7"
-      top_p: "0.9"
-      top_k: "40"
-    cmd: |
-      ${cmdPrefix} \
-        --port ${PORT} \
-        --models-dir ${models_directory} \
-        --model ${models_directory}/Mistral-Nemo-Instruct-2407-GGUF/Mistral-Nemo-Instruct-2407-Q4_K_M.gguf \
-        --n-gpu-layers ${nGpuLayers} \
-        --threads ${threads} \
-        --flash-attn ${flashAttn} \
-        --jinja \
-        --tools ${tools} \
-        --device ${device} \
-        --ctx-size ${ctxSize} \
-        --n-predict ${nPredict} \
-        --temp ${temp} --top-k ${top_k} --top-p ${top_p}
-  # --- Phi Series ---
-  Phi-4-mini-reasoning-GGUF:
-    name: Phi-4 Mini Reasoning
-    ttl: 600
-    macros:
-      ctxSize: "123333"
-      temp: "0.7"
-      top_p: "0.9"
-      top_k: "40"
-    cmd: |
-      ${cmdPrefix} \
-        --port ${PORT} \
-        --models-dir ${models_directory} \
-        --model ${models_directory}/Phi-4-mini-reasoning-GGUF/Phi-4-mini-reasoning-Q4_K_M.gguf \
-        --n-gpu-layers ${nGpuLayers} \
-        --threads ${threads} \
-        --flash-attn ${flashAttn} \
-        --jinja \
-        --tools ${tools} \
-        --device ${device} \
-        --ctx-size ${ctxSize} \
-        --n-predict ${nPredict} \
-        --temp ${temp} --top-k ${top_k} --top-p ${top_p}
-  Phi-4-reasoning-plus-GGUF:
-    name: Phi-4 Reasoning Plus
-    ttl: 600
-    macros:
-      ctxSize: "1024"
-      temp: "0.7"
-      top_p: "0.9"
-      top_k: "40"
-    cmd: |
-      ${cmdPrefix} \
-        --port ${PORT} \
-        --models-dir ${models_directory} \
-        --model ${models_directory}/Phi-4-reasoning-plus-GGUF/Phi-4-reasoning-plus-Q4_K_M.gguf \
-        --n-gpu-layers ${nGpuLayers} \
-        --threads ${threads} \
-        --flash-attn ${flashAttn} \
-        --jinja \
-        --tools ${tools} \
-        --device ${device} \
-        --ctx-size ${ctxSize} \
-        --n-predict ${nPredict} \
-        --temp ${temp} --top-k ${top_k} --top-p ${top_p}
-  # --- Gemma ---
-  gemma-4-E4B-it-GGUF:
-    name: Gemma 4E Instruct
-    ttl: 600
-    macros:
-      ctxSize: "18000"
-      temp: "0.7"
-      top_p: "0.9"
-      top_k: "40"
-    cmd: |
-      ${cmdPrefix} \
-        --port ${PORT} \
-        --models-dir ${models_directory} \
-        --model ${models_directory}/gemma-4-E4B-it-GGUF/gemma-4-E4B-it-Q4_K_M.gguf \
-        --n-gpu-layers ${nGpuLayers} \
-        --threads ${threads} \
-        --flash-attn ${flashAttn} \
-        --jinja \
-        --tools ${tools} \
-        --device ${device} \
-        --ctx-size ${ctxSize} \
-        --n-predict ${nPredict} \
-        --temp ${temp} --top-k ${top_k} --top-p ${top_p}
-  # --- NVIDIA Nemotron ---
-  NVIDIA-Nemotron-3-Nano-4B-GGUF:
-    name: NVIDIA Nemotron 3 Nano 4B
-    ttl: 600
-    macros:
-      ctxSize: "113333"
-    env:
-      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
-    # Command to start the model server
-    # Using | for multi-line with comments
-    cmd: |
-      ${cmdPrefix} \
-        --port ${PORT} \
-        --models-dir ${models_directory} \
-        --model ${models_directory}/NVIDIA-Nemotron-3-Nano-4B-GGUF/NVIDIA-Nemotron-3-Nano-4B-Q4_K_M.gguf \
-        --n-gpu-layers ${nGpuLayers} \
-        --threads ${threads} \
-        --flash-attn ${flashAttn} \
-        --jinja \
-        --tools ${tools} \
-        --device ${device} \
-        --ctx-size ${ctxSize} \
-        --n-predict ${nPredict} \
-        --context-shift \
-        --reasoning ${reasoning} \
-        --reasoning-format ${reasoningFormat} \
-        --reasoning-budget ${reasoningBudget} \
-        --cache-ram ${cacheRamSpillover}
-  # --- Specialized Models ---
-  Devstral-Small-2-24B-Instruct-2512-GGUF:
-    name: Devstral 24B
-    ttl: 600
-    macros:
-      ctxSize: "1024"
-      temp: "0.7"
-      top_p: "0.9"
-      top_k: "40"
-    cmd: |
-      ${cmdPrefix} \
-        --port ${PORT} \
-        --models-dir ${models_directory} \
-        --model ${models_directory}/Devstral-Small-2-24B-Instruct-2512-GGUF/Devstral-Small-2-24B-Instruct-2512-Q4_K_M.gguf \
-        --n-gpu-layers ${nGpuLayers} \
-        --threads ${threads} \
-        --flash-attn ${flashAttn} \
-        --jinja \
-        --tools ${tools} \
-        --device ${device} \
-        --ctx-size ${ctxSize} \
-        --n-predict ${nPredict} \
-        --temp ${temp} --top-k ${top_k} --top-p ${top_p}
-  LFM2-24B-A2B-GGUF:
-    name: LFM2 24B A2B
-    ttl: 600
-    macros:
-      ctxSize: "1024"
-      temp: "0.7"
-      top_p: "0.9"
-      top_k: "40"
-    cmd: |
-      ${cmdPrefix} \
-        --port ${PORT} \
-        --models-dir ${models_directory} \
-        --model ${models_directory}/LFM2-24B-A2B-GGUF/LFM2-24B-A2B-Q4_K_M.gguf \
-        --n-gpu-layers ${nGpuLayers} \
-        --threads ${threads} \
-        --flash-attn ${flashAttn} \
-        --jinja \
-        --tools ${tools} \
-        --device ${device} \
-        --ctx-size ${ctxSize} \
-        --n-predict ${nPredict} \
-        --temp ${temp} --top-k ${top_k} --top-p ${top_p}
-  Qwen3-VL-8B-Instruct-GGUF:
-    name: Qwen3-VL 8B Vision
-    ttl: 600
-    macros:
-      ctxSize: "24893"
-      temp: "0.7"
-      top_p: "0.9"
-      top_k: "40"
-    env:
-      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
-    cmd: |
-      ${cmdPrefix} \
-        --port ${PORT} \
-        --models-dir ${models_directory} \
-        --model ${models_directory}/Qwen3-VL-8B-Instruct-GGUF/Qwen3-VL-8B-Instruct-Q4_K_M.gguf \
-        --n-gpu-layers ${nGpuLayers} \
-        --threads ${threads} \
-        --flash-attn ${flashAttn} \
-        --jinja \
-        --tools ${tools} \
-        --device ${device} \
-        --ctx-size ${ctxSize} \
-        --n-predict ${nPredict} \
-        --temp ${temp} --top-k ${top_k} --top-p ${top_p}
-  olmOCR-2-7B-1025-GGUF:
-    name: olmOCR 7B
-    ttl: 600
-    macros:
-      ctxSize: "32727"
-      temp: "0.7"
-      top_p: "0.9"
-      top_k: "40"
-    cmd: |
-      ${cmdPrefix} \
-        --port ${PORT} \
-        --models-dir ${models_directory} \
-        --model ${models_directory}/olmOCR-2-7B-1025-GGUF/olmOCR-2-7B-1025-Q4_K_M.gguf \
-        --n-gpu-layers ${nGpuLayers} \
-        --threads ${threads} \
-        --flash-attn ${flashAttn} \
-        --jinja \
-        --tools ${tools} \
-        --device ${device} \
-        --ctx-size ${ctxSize} \
-        --n-predict ${nPredict} \
-        --temp ${temp} --top-k ${top_k} --top-p ${top_p}
-  rnj-1-instruct-GGUF:
-    name: RNJ-1 Instruct
-    ttl: 600
-    macros:
-      ctxSize: "22500"
-      temp: "0.7"
-      top_p: "0.9"
-      top_k: "40"
-    cmd: |
-      ${cmdPrefix} \
-        --port ${PORT} \
-        --models-dir ${models_directory} \
-        --model ${models_directory}/rnj-1-instruct-GGUF/rnj-1-instruct-Q4_K_M.gguf \
-        --n-gpu-layers ${nGpuLayers} \
-        --threads ${threads} \
-        --flash-attn ${flashAttn} \
-        --jinja \
-        --tools ${tools} \
-        --device ${device} \
-        --ctx-size ${ctxSize} \
-        --n-predict ${nPredict} \
-        --temp ${temp} --top-k ${top_k} --top-p ${top_p}
-  zerank-2-gguf:
-    name: Zerank 2.0
-    ttl: 600
-    macros:
-      ctxSize: "-1"
-      device: Vulkan0
-    env:
-      - CUDA_VISIBLE_DEVICES=-1
-      - GGML_VK_VISIBLE_DEVICES=0
-    cmd: |
-      ${cmdPrefix} \
-        --port ${PORT} \
-        --models-dir ${models_directory} \
-        --model ${models_directory}/../mradermacher/zerank-2-GGUF/zerank-2.Q4_K_S.gguf \
-        --device ${device} \
-        --reranking --tools all --embedding --reasoning-budget 0 --reasoning off --gpu-layers -2
-  zerank-1-small-gguf:
-    name: Zerank 1 Small
-    ttl: 600
-    macros:
-      ctxSize: "40960"
-      temp: "0.7"
-      top_p: "0.9"
-      top_k: "40"
-    cmd: |
-      ${cmdPrefix} \
-        --port ${PORT} \
-        --models-dir ${models_directory} \
-        --model ${models_directory}/../mradermacher/zerank-1-small-GGUF/zerank-1-small.Q4_K_M.gguf \
-        --n-gpu-layers ${nGpuLayers} \
-        --threads ${threads} \
-        --flash-attn ${flashAttn} \
-        --jinja \
-        --tools ${tools} \
-        --device ${device} \
-        --ctx-size ${ctxSize} \
-        --n-predict ${nPredict} \
-        --temp ${temp} --top-k ${top_k} --top-p ${top_p}
-# ============================================
-# Groups Configuration
-# ============================================
 groups:
   swappable:
-    swap: true
     exclusive: true
     members:
       - Meta-Llama-3.1-8B-Instruct
@@ -553,9 +23,284 @@ groups:
       - rnj-1-instruct-GGUF
       - zerank-2-gguf
       - zerank-1-small-gguf
-# Recommended: Add performance monitoring
+    swap: true
+healthCheckTimeout: 60
+logLevel: debug
+logToStdout: proxy
+macros:
+  cacheRamSpillover: '4096'
+  cmdPrefix: /home/waflores/DevFolder/ai/llama.cpp/build/bin/llama-server
+  contextShift: 'false'
+  ctxSize: '131072'
+  device: CUDA0
+  flashAttn: auto
+  jinja: 'true'
+  models_directory: /home/waflores/.lmstudio/models/lmstudio-community
+  nGpuLayers: all
+  nPredict: '-1'
+  reasoning: auto
+  reasoningBudget: '-1'
+  reasoningFormat: deepseek
+  threads: '-1'
+  tools: all
+models:
+  CodeLlama-7B-Instruct:
+    cmd: "${cmdPrefix}   --port ${PORT}   --models-dir ${models_directory} --model ${models_directory}/CodeLlama-7B-Instruct-GGUF/codellama-7b-instruct.Q4_K_M.gguf --n-gpu-layers ${nGpuLayers}   --threads ${threads}   --flash-attn ${flashAttn}   --jinja   --tools ${tools}   --device ${device} --ctx-size ${ctxSize}   --n-predict ${nPredict}   --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+      - LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu
+    macros:
+      ctxSize: '16384'
+      temp: '0.8'
+      top_k: '40'
+      top_p: '0.9'
+    name: CodeLlama 7B
+    ttl: 600
+  DeepSeek-R1-0528-Qwen3-8B-GGUF:
+    cmd: "${cmdPrefix}   --port ${PORT}   --models-dir ${models_directory} --model ${models_directory}/DeepSeek-R1-0528-Qwen3-8B-GGUF/DeepSeek-R1-0528-Qwen3-8B-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers}   --threads ${threads}   --flash-attn ${flashAttn}   --jinja   --tools ${tools}   --device ${device} --ctx-size ${ctxSize}   --n-predict ${nPredict}   --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+      - LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu
+    macros:
+      ctxSize: '24893'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: DeepSeek R1 8B
+    ttl: 600
+  Devstral-Small-2-24B-Instruct-2512-GGUF:
+    cmd: "${cmdPrefix}   --port ${PORT}   --models-dir ${models_directory} --model ${models_directory}/Devstral-Small-2-24B-Instruct-2512-GGUF/Devstral-Small-2-24B-Instruct-2512-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers}   --threads ${threads}   --flash-attn ${flashAttn}   --jinja   --tools ${tools}   --device ${device} --ctx-size ${ctxSize}   --n-predict ${nPredict}   --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+      - LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu
+    macros:
+      ctxSize: '1024'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: Devstral 24B
+    ttl: 600
+  LFM2-24B-A2B-GGUF:
+    cmd: "${cmdPrefix}   --port ${PORT}   --models-dir ${models_directory} --model ${models_directory}/LFM2-24B-A2B-GGUF/LFM2-24B-A2B-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers}   --threads ${threads}   --flash-attn ${flashAttn}   --jinja   --tools ${tools}   --device ${device} --ctx-size ${ctxSize}   --n-predict ${nPredict}   --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+      - LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu
+    macros:
+      ctxSize: '1024'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: LFM2 24B A2B
+    ttl: 600
+  Meta-Llama-3.1-8B-Instruct:
+    cmd: "${cmdPrefix}   --port ${PORT}   --models-dir ${models_directory} --model ${models_directory}/Meta-Llama-3.1-8B-Instruct-GGUF/Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers}   --threads ${threads}   --flash-attn ${flashAttn}   --jinja   --tools ${tools}   --device ${device} --ctx-size ${ctxSize}   --n-predict ${nPredict}   --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+      - LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu
+    macros:
+      ctxSize: '27391'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: Llama 3.1 8B
+    ttl: 600
+  Ministral-3-14B-Reasoning-2512-GGUF:
+    cmd: "${cmdPrefix}   --port ${PORT}   --models-dir ${models_directory} --model ${models_directory}/Ministral-3-14B-Reasoning-2512-GGUF/Ministral-3-14B-Reasoning-2512-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers}   --threads ${threads}   --flash-attn ${flashAttn}   --jinja   --tools ${tools}   --device ${device} --ctx-size ${ctxSize}   --n-predict ${nPredict}   --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+      - LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu
+    macros:
+      ctxSize: '1024'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: Ministral 14B Reasoning
+    ttl: 600
+  Ministral-3-3B-Instruct-2512-GGUF:
+    cmd: "${cmdPrefix}   --port ${PORT}   --models-dir ${models_directory} --model ${models_directory}/Ministral-3-3B-Instruct-2512-GGUF/Ministral-3-3B-Instruct-2512-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers}   --threads ${threads}   --flash-attn ${flashAttn}   --jinja   --tools ${tools}   --device ${device} --ctx-size ${ctxSize}   --n-predict ${nPredict}   --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+      - LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu
+    macros:
+      ctxSize: '133333'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: Ministral 3B
+    ttl: 600
+  Mistral-Nemo-Instruct-2407-GGUF:
+    cmd: "${cmdPrefix}   --port ${PORT}   --models-dir ${models_directory} --model ${models_directory}/Mistral-Nemo-Instruct-2407-GGUF/Mistral-Nemo-Instruct-2407-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers}   --threads ${threads}   --flash-attn ${flashAttn}   --jinja   --tools ${tools}   --device ${device} --ctx-size ${ctxSize}   --n-predict ${nPredict}   --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+      - LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu
+    macros:
+      ctxSize: '1024'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: Mistral Nemo 12B
+    ttl: 600
+  NVIDIA-Nemotron-3-Nano-4B-GGUF:
+    cmd: "${cmdPrefix}   --port ${PORT}   --models-dir ${models_directory} --model ${models_directory}/NVIDIA-Nemotron-3-Nano-4B-GGUF/NVIDIA-Nemotron-3-Nano-4B-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers}   --threads ${threads}   --flash-attn ${flashAttn}   --jinja   --tools ${tools}   --device ${device} --ctx-size ${ctxSize}   --n-predict ${nPredict}   --context-shift --reasoning ${reasoning}   --reasoning-format ${reasoningFormat} --reasoning-budget ${reasoningBudget}   --cache-ram ${cacheRamSpillover}"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+      - LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu
+    macros:
+      ctxSize: '113333'
+    name: NVIDIA Nemotron 3 Nano 4B
+    ttl: 600
+  Phi-4-mini-reasoning-GGUF:
+    cmd: "${cmdPrefix}   --port ${PORT}   --models-dir ${models_directory} --model ${models_directory}/Phi-4-mini-reasoning-GGUF/Phi-4-mini-reasoning-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers}   --threads ${threads}   --flash-attn ${flashAttn}   --jinja   --tools ${tools}   --device ${device} --ctx-size ${ctxSize}   --n-predict ${nPredict}   --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+      - LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu
+    macros:
+      ctxSize: '123333'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: Phi-4 Mini Reasoning
+    ttl: 600
+  Phi-4-reasoning-plus-GGUF:
+    cmd: "${cmdPrefix}   --port ${PORT}   --models-dir ${models_directory} --model ${models_directory}/Phi-4-reasoning-plus-GGUF/Phi-4-reasoning-plus-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers}   --threads ${threads}   --flash-attn ${flashAttn}   --jinja   --tools ${tools}   --device ${device} --ctx-size ${ctxSize}   --n-predict ${nPredict}   --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+      - LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu
+    macros:
+      ctxSize: '1024'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: Phi-4 Reasoning Plus
+    ttl: 600
+  Qwen3-4B-Thinking-2507-GGUF:
+    cmd: "${cmdPrefix}   --port ${PORT}   --models-dir ${models_directory} --model ${models_directory}/Qwen3-4B-Thinking-2507-GGUF/Qwen3-4B-Thinking-2507-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers}   --threads ${threads}   --flash-attn ${flashAttn}   --jinja   --tools ${tools}   --device ${device} --ctx-size ${ctxSize}   --n-predict ${nPredict}   --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+      - LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu
+    macros:
+      ctxSize: '123333'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: Qwen3 4B Thinking
+    ttl: 600
+  Qwen3-VL-8B-Instruct-GGUF:
+    cmd: "${cmdPrefix}   --port ${PORT}   --models-dir ${models_directory} --model ${models_directory}/Qwen3-VL-8B-Instruct-GGUF/Qwen3-VL-8B-Instruct-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers}   --threads ${threads}   --flash-attn ${flashAttn}   --jinja   --tools ${tools}   --device ${device} --ctx-size ${ctxSize}   --n-predict ${nPredict}   --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+      - LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu
+    macros:
+      ctxSize: '24893'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: Qwen3-VL 8B Vision
+    ttl: 600
+  Qwen3.5-9B-GGUF:
+    cmd: "${cmdPrefix}   --port ${PORT}   --models-dir ${models_directory} --model ${models_directory}/Qwen3.5-9B-GGUF/Qwen3.5-9B-Q4_K_M.gguf n  --n-gpu-layers ${nGpuLayers}   --threads ${threads}   --flash-attn ${flashAttn}   --jinja   --tools ${tools}   --device ${device} --ctx-size ${ctxSize}   --n-predict ${nPredict}   --context-shift --reasoning ${reasoning}   --reasoning-format ${reasoningFormat} --reasoning-budget ${reasoningBudget}   --cache-ram ${cacheRamSpillover} --temp ${temp} --top-k ${top_k} --top-p ${top_p} --min-p ${min_p}"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+      - LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu
+    macros:
+      ctxSize: '262144'
+      min_p: '0'
+      temp: '0.6'
+      top_k: '20'
+      top_p: '0.95'
+    name: Qwen3.5 9B
+    ttl: 600
+  Qwen3.6-27B-GGUF:
+    cmd: "${cmdPrefix}   --port ${PORT}   --models-dir ${models_directory} --model ${models_directory}/Qwen3.6-27B-GGUF/Qwen3.6-27B-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers}   --threads ${threads}   --flash-attn ${flashAttn}   --jinja   --tools ${tools}   --device ${device} --ctx-size ${ctxSize}   --n-predict ${nPredict}   --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+      - LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu
+    macros:
+      ctxSize: '1024'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: Qwen3.6 27B
+    ttl: 600
+  gemma-4-E4B-it-GGUF:
+    cmd: "${cmdPrefix}   --port ${PORT}   --models-dir ${models_directory} --model ${models_directory}/gemma-4-E4B-it-GGUF/gemma-4-E4B-it-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers}   --threads ${threads}   --flash-attn ${flashAttn}   --jinja   --tools ${tools}   --device ${device} --ctx-size ${ctxSize}   --n-predict ${nPredict}   --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+      - LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu
+    macros:
+      ctxSize: '18000'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: Gemma 4E Instruct
+    ttl: 600
+  granite-4-h-tiny:
+    cmd: "${cmdPrefix}   --port ${PORT}   --models-dir ${models_directory} --model ${models_directory}/granite-4.0-h-tiny-GGUF/granite-4.0-h-tiny-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers}   --threads ${threads}   --flash-attn ${flashAttn}   --jinja   --tools ${tools}   --device ${device} --ctx-size ${ctxSize}   --n-predict ${nPredict}   --context-shift"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+      - LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu
+    macros:
+      cacheRamSpillover: '-1'
+      ctxSize: '48461'
+    name: IBM Granite 4.0 Hybrid Tiny
+    ttl: 600
+  olmOCR-2-7B-1025-GGUF:
+    cmd: "${cmdPrefix}   --port ${PORT}   --models-dir ${models_directory} --model ${models_directory}/olmOCR-2-7B-1025-GGUF/olmOCR-2-7B-1025-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers}   --threads ${threads}   --flash-attn ${flashAttn}   --jinja   --tools ${tools}   --device ${device} --ctx-size ${ctxSize}   --n-predict ${nPredict}   --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+      - LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu
+    macros:
+      ctxSize: '32727'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: olmOCR 7B
+    ttl: 600
+  rnj-1-instruct-GGUF:
+    cmd: "${cmdPrefix} --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/rnj-1-instruct-GGUF/rnj-1-instruct-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+      - LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu
+    macros:
+      ctxSize: '22500'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: RNJ-1 Instruct
+    ttl: 600
+  zerank-1-small-gguf:
+    cmd: "${cmdPrefix} --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/../mradermacher/zerank-1-small-GGUF/zerank-1-small.Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+      - LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu
+    macros:
+      ctxSize: '40960'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: Zerank 1 Small
+    ttl: 600
+  zerank-2-gguf:
+    cmd: "${cmdPrefix} --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/../mradermacher/zerank-2-GGUF/zerank-2.Q4_K_S.gguf --device ${device} --reranking --tools all --embedding --reasoning-budget 0 --reasoning off --gpu-layers -2"
+    env:
+      - CUDA_VISIBLE_DEVICES=-1
+      - GGML_VK_VISIBLE_DEVICES=0
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+      - LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu
+    macros:
+      ctxSize: '-1'
+      device: Vulkan0
+    name: Zerank 2.0
+    ttl: 600
 performance:
   disabled: false
   every: 15s
-# Show thinking field
 sendLoadingState: true
+startPort: 10001
