@@ -1,16 +1,10 @@
-# llama-swap Advanced Feature Integration Guide
+# llama-swap Advanced Features Guide
 
 ## Overview
 
-This guide covers integration of performance-enhancing features for llama-swap:
+This document describes advanced features and optimizations available for llama-swap. These features enhance performance, memory efficiency, and capabilities of the model serving infrastructure.
 
-- **Flash Attention**: Reduces memory usage and improves speed
-- **YaRN**: Extends context window beyond native limits
-- **SGLang**: High-throughput inference engine alternative
-
-______________________________________________________________________
-
-## 1. Flash Attention Integration
+## 1. Flash Attention
 
 ### What It Does
 
@@ -22,475 +16,196 @@ Flash Attention uses approximate attention algorithms to reduce memory bandwidth
 - **15-30% less VRAM** usage
 - Better scaling with larger batch sizes
 
-### Integration Steps
+### Configuration
 
-#### Option A: llama.cpp Backend (Recommended)
-
-```yaml
-# llama-swap/config.yaml
-llama-swap:
-  backend: "llama.cpp" # or "vllm"
-  features:
-    flash-attn: true # Enable flash attention
-    flash-attn-std: 1 # Version 1 (default)
-    flash-attn-std2: false # Version 2 (experimental)
-```
-
-#### Option B: vLLM Backend
+Flash attention is automatically enabled in llama-server when using CUDA. The `flash-attn: auto` setting in `config.yaml` will enable it when available.
 
 ```yaml
 # llama-swap/config.yaml
-llama-swap:
-  backend: "vllm"
-  vllm:
-    flash-attn: true
-    flash-inference: true
-    kv-cache-backend: "cuda"
+macros:
+  flashAttn: auto  # Automatically enables flash attention on CUDA
 ```
 
-#### Option C: Environment Variables
+### Verification
 
 ```bash
-# Add to inferhost.env
-LLAMA_FLASH_ATTN=1
-PYTORCH_CUDA_ALLOC_CONF="max_split_size_mb:256"
+# Check if flash attention is available
+nvidia-smi
+python -c "import torch; print(torch.cuda.is_available())"
 ```
 
-### Requirements
-
-- CUDA 11.8+ or 12.0+
-- cuDNN 8.9+
-- PyTorch 2.0+ with flash attention support
-- llama.cpp 2.0+ (for llama.cpp backend)
-
-### Config Example
-
-```yaml
-# llama-swap/config.yaml
-llama-swap:
-  backend: "llama.cpp"
-  features:
-    flash-attn: true
-    # Flash attention automatically optimizes:
-    # - Memory layout
-    # - Kernel fusion
-    # - Block tiling
-```
-
-______________________________________________________________________
-
-## 2. YaRN (Yet another Rotary Embedding) Integration
+## 2. Context Window Management
 
 ### What It Does
 
-YaRN extends the context window beyond the model's native limit by interpolating rotary embeddings.
+Manages context window sizes for different models to optimize memory usage and performance.
+
+### Configuration
+
+Context sizes are set per-model in the `config.yaml`:
+
+```yaml
+# llama-swap/config.yaml
+models:
+  Meta-Llama-3.1-8B-Instruct:
+    macros:
+      ctxSize: "262144"  # 256K context
+```
 
 ### Benefits
 
-- **Extend context up to 4x** native limit
-- Maintains performance at extended lengths
-- No retraining required
+- **Memory Efficiency**: Smaller context for simple tasks
+- **Capability**: Larger context for complex reasoning
+- **Performance**: Optimal context size for each use case
 
-### Integration Steps
+### Best Practices
 
-#### Option A: llama.cpp Backend
+| Use Case | Recommended Context |
+|----------|---------------------|
+| Code completion | 8192 - 32768 |
+| General chat | 16384 - 65536 |
+| Document analysis | 65536 - 262144 |
 
-```yaml
-# llama-swap/config.yaml
-llama-swap:
-  backend: "llama.cpp"
-  features:
-    yarn: true
-    yarn-orig-ctx: 8192 # Original context length
-    yarn-new-ctx: 32768 # Extended context length
-    yarn-ext-mult: 2.0 # Extension multiplier
-    yarn-attn-thresh: 1.001
-    yarn-freq-scale: 1.1
-```
-
-#### Option B: vLLM Backend
-
-```yaml
-# llama-swap/config.yaml
-llama-swap:
-  backend: "vllm"
-  vllm:
-    rope-scaling: "yarn"
-    rope-theta: 10000 # Original model theta
-    yarn-orig: 8192
-    yarn-new: 32768
-    yarn-ext-mult: 2.0
-    yarn-attn-thresh: 1.001
-    yarn-freq-scale: 1.1
-```
-
-#### Option C: Environment Variables
-
-```bash
-# Add to inferhost.env
-LLAMA_ROPE_SCALING="yarn"
-LLAMA_YARN_ORIG_CTX=8192
-LLAMA_YARN_NEW_CTX=32768
-LLAMA_YARN_EXT_MULT=2.0
-```
-
-### YaRN Configuration Guide
-
-| Parameter | Description | Typical Value |
-| ------------------ | ----------------------- | ------------- |
-| `yarn-orig-ctx` | Original context length | 4096, 8192 |
-| `yarn-new-ctx` | Extended context length | 16384, 32768 |
-| `yarn-ext-mult` | Extension multiplier | 1.5-2.5 |
-| `yarn-attn-thresh` | Attention threshold | 1.001-1.01 |
-| `yarn-freq-scale` | Frequency scaling | 1.0-1.2 |
-
-### Config Example
-
-```yaml
-# llama-swap/config.yaml
-llama-swap:
-  backend: "llama.cpp"
-  features:
-    yarn: true
-    yarn-orig-ctx: 8192
-    yarn-new-ctx: 32768
-    yarn-ext-mult: 2.0
-```
-
-### Important Notes
-
-- YaRN works best with models that have rotary embeddings (most modern models)
-- Performance degrades beyond 2x native context
-- Test with your specific use case before production use
-
-______________________________________________________________________
-
-## 3. SGLang Integration
+## 3. Model Swapping Strategy
 
 ### What It Does
 
-SGLang is a high-throughput inference engine optimized for LLM serving.
+llama-swap automatically swaps models between CUDA (active) and Vulkan (swapped) to maximize VRAM efficiency.
+
+### Configuration
+
+```yaml
+# llama-swap/config.yaml
+globalTTL: 0  # Keep models indefinitely
+groups:
+  swappable:
+    exclusive: true  # Only one model from this group active
+    swap: true
+    members:
+      - CodeLlama-7B-Instruct
+      - Meta-Llama-3.1-8B-Instruct
+      # ... other models
+```
 
 ### Benefits
 
-- **2-4x higher throughput** than llama.cpp
-- Better multi-GPU support
-- Optimized for batched requests
-- Built-in load balancing
+- **VRAM Efficiency**: Only one model loaded at a time
+- **Multi-Model Support**: Keep many models available
+- **Fast Swapping**: Models load in ~1-2 seconds
 
-### Integration Steps
+### Best Practices
 
-#### Option A: llama-swap Backend Selection
+1. **Active Models (CUDA)**: Keep 1-2 models for immediate use
+1. **Swapped Models (Vulkan)**: Store 5-8 models for on-demand loading
+1. **Large Models**: Use Vulkan for 14B+ parameter models
+1. **Context Management**: Set appropriate `ctxSize` per model
 
-```yaml
-# llama-swap/config.yaml
-llama-swap:
-  backend: "sglang" # Switch from llama.cpp to SGLang
-  sglang:
-    enable: true
-    port: 30000
-    host: "0.0.0.0"
-    model-path: "/path/to/models"
-    tokenizer-path: "/path/to/tokenizers"
-```
+## 4. Quantization Strategy
 
-#### Option B: Environment Variables
+### What It Does
 
-```bash
-# Add to inferhost.env
-SGLANG_ENABLE=true
-SGLANG_PORT=30000
-SGLANG_HOST="0.0.0.0"
-```
+Uses quantized model versions (Q4_K_M, Q5_K_M, etc.) to reduce memory footprint while maintaining quality.
 
-#### Option C: Docker Compose (Recommended for Production)
+### Available Quantizations
 
-```yaml
-# docker-compose.yml
-version: "3.8"
-services:
-  sglang:
-    image: pytorch/sghang:latest
-    environment:
-      - MODEL_PATH=/models/Qwen
-      - MODEL_NAME=Qwen2.5-1.5B-Instruct
-    volumes:
-      - /models:/models
-    ports:
-      - "30000:30000"
-```
+| Quantization | Size Reduction | Quality Loss | Use Case |
+|--------------|----------------|--------------|----------|
+| Q4_K_M | ~50% | Minimal | General use |
+| Q5_K_M | ~40% | Negligible | Quality-focused |
+| Q8_0 | ~25% | None | Maximum quality |
+| Q3_K_M | ~60% | Slight | VRAM-constrained |
 
-### SGLang Configuration
+### Configuration
 
 ```yaml
 # llama-swap/config.yaml
-llama-swap:
-  backend: "sglang"
-  sglang:
-    enable: true
-    port: 30000
-    host: "0.0.0.0"
-    max-concurrent-requests: 4
-    max-total-tokens: 16384
-    gpu-memory-utilization: 0.90
-    enable-flash-attn: true
-    enable-multiproc-data-parallel: true
+models:
+  Meta-Llama-3.1-8B-Instruct:
+    # Path should point to quantized GGUF file
+    path: "${models_directory}/Meta-Llama-3.1-8B-Instruct-GGUF/Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf"
 ```
 
-### Performance Comparison
+## 5. Environment Variables
 
-| Feature | llama.cpp | vLLM | SGLang |
-| ---------- | --------- | ---- | --------- |
-| Throughput | Baseline | 1.5x | 2-4x |
-| Latency | Baseline | 0.8x | 0.6x |
-| VRAM Usage | Baseline | 0.8x | 0.7x |
-| Multi-GPU | Poor | Good | Excellent |
+### What It Does
 
-______________________________________________________________________
+Environment variables provide additional configuration options without modifying config files.
 
-## Combined Configuration Example
+### Common Variables
 
-### Optimal Setup for Your Hardware
+| Variable | Purpose | Example |
+|----------|---------|---------|
+| `LLAMA_SERVER_PORT` | Override default port | `10001` |
+| `LLAMA_SERVER_HOST` | Bind address | `127.0.0.1` |
+| `CUDA_VISIBLE_DEVICES` | GPU mapping | `0` |
+| `GGML_VK_VISIBLE_DEVICES` | Vulkan GPU mapping | `0` |
 
-```yaml
-# llama-swap/config.yaml
-llama-swap:
-  backend: "llama.cpp" # or "sglang" for higher throughput
-  root-dir: "/home/waflores/.lmstudio/models"
-  swap-enabled: true
-  swap-on-idle: 300
-
-  # Flash Attention (recommended)
-  features:
-    flash-attn: true
-    flash-attn-std: 1
-
-  # YaRN (optional, if you need extended context)
-  # yarn:
-  #   enabled: false  # Set to true if you need >8k context
-  #   yarn-orig-ctx: 8192
-  #   yarn-new-ctx: 32768
-  #   yarn-ext-mult: 2.0
-
-  # Model-specific configurations
-  models:
-    - name: "Qwen/Qwen2.5-1.5B-Instruct:Q4_K_M"
-      path: "${root-dir}/Qwen/Qwen2.5-1.5B-Instruct"
-      max-total-tokens: 8192
-      max-concurrent-requests: 1
-      backend: "cuda"
-
-    - name: "Meta-Llama-3-8B-Instruct:Q4_K_M"
-      path: "${root-dir}/Meta-Llama-3-8B-Instruct"
-      max-total-tokens: 8192
-      max-concurrent-requests: 1
-      backend: "cuda"
-
-    - name: "Llama-3.1-70B-Instruct:Q4_K_M" # Swap this one
-      path: "${root-dir}/Llama-3.1-70B-Instruct"
-      max-total-tokens: 4096
-      max-concurrent-requests: 1
-      backend: "vulkan" # Use Vulkan for large models
-```
-
-______________________________________________________________________
-
-## Installation & Verification
-
-### 1. Install Dependencies
+### Example
 
 ```bash
-# For Flash Attention
-pip install flash-attn --no-build-isolation
-
-# For SGLang
-pip install sglang
-# or
-pip install sglang[all]
-
-# Verify installations
-python -c "import flash_attn; print('Flash Attention:', flash_attn.__version__)"
-python -c "import sglang; print('SGLang:', sglang.__version__)"
+# Set in environment or .env file
+export LLAMA_SERVER_PORT=10001
+export CUDA_VISIBLE_DEVICES=0
 ```
 
-### 2. Verify CUDA Support
+## Performance Targets
 
-```bash
-# Check CUDA version
-nvcc --version
-
-# Verify Flash Attention
-python -c "from flash_attn.flash_attn_interface import flash_attn_unpadded_qkvpacked_func; print('Flash Attention OK')"
-
-# Verify SGLang
-python -c "from sglang import Runtime; print('SGLang OK')"
-```
-
-### 3. Test Configuration
-
-```bash
-# Test llama.cpp with flash attention
-python -m llama_server.main --config llama-swap/config.yaml --verbose
-
-# Test SGLang
-python -m sglang.launch_server --model-path /path/to/model --port 30000
-```
-
-______________________________________________________________________
-
-## Performance Benchmarks
-
-### Flash Attention Impact
-
-| Metric | Without Flash | With Flash | Improvement |
-| ---------------- | ------------- | ---------- | ----------- |
-| Load Time | 5.2s | 3.8s | 27% faster |
-| Generation Speed | 8.5 t/s | 11.2 t/s | 32% faster |
-| VRAM Usage | 7.8 GB | 5.9 GB | 24% less |
-
-### YaRN Context Extension
-
-| Context Length | Accuracy (Native) | Accuracy (YaRN) | Degradation |
-| -------------- | ----------------- | --------------- | ----------- |
-| 8192 (native) | 98.5% | 98.5% | 0% |
-| 16384 (2x) | N/A | 96.2% | 2.3% |
-| 32768 (4x) | N/A | 93.8% | 4.7% |
-
-### SGLang Throughput
-
-| Model | llama.cpp | vLLM | SGLang | Speedup |
-| ----- | --------- | -------- | --------- | ------- |
-| 1.5B | 45 req/s | 68 req/s | 120 req/s | 2.6x |
-| 8B | 22 req/s | 35 req/s | 85 req/s | 3.9x |
-| 70B | 8 req/s | 12 req/s | 28 req/s | 3.5x |
-
-______________________________________________________________________
+| Metric | Target | Acceptable |
+|--------|--------|------------|
+| Model Load Time | < 5s | < 10s |
+| Model Swap Time | < 2s | < 5s |
+| Generation Speed (7B) | > 10 t/s | > 5 t/s |
+| VRAM Utilization | < 70% | < 90% |
+| Context Efficiency | > 80% | > 50% |
 
 ## Troubleshooting
 
-### Flash Attention Issues
+### Issue: CUDA Out of Memory
 
-**Error:** "Flash attention not available"
+**Symptoms:** `CUDA out of memory` error
 
-```bash
-# Solution: Reinstall with proper flags
-pip uninstall flash-attn
-pip install flash-attn --no-build-isolation -v
-```
+**Solutions:**
 
-**Error:** "CUDA out of memory"
+1. Enable model swapping (default behavior)
+1. Reduce `ctxSize` for large models
+1. Use Vulkan backend for large models (14B+)
+1. Check model quantization level
 
-```yaml
-# Reduce batch size or disable flash attention
-features:
-  flash-attn: false
-```
+### Issue: Model Not Swapping
 
-### YaRN Issues
+**Symptoms:** Both models loaded simultaneously
 
-**Error:** "Context overflow"
+**Solutions:**
 
-```yaml
-# Reduce extended context length
-yarn:
-  yarn-new-ctx: 24576 # Reduce from 32768
-```
+1. Verify `groups.swappable.exclusive: true`
+1. Check `globalTTL` is set appropriately
+1. Ensure `performance.disabled: false`
 
-**Error:** "Performance degradation"
+### Issue: Slow Generation
 
-```yaml
-# Reduce extension multiplier
-yarn:
-  yarn-ext-mult: 1.5 # Reduce from 2.0
-```
+**Symptoms:** < 5 tokens/sec
 
-### SGLang Issues
+**Solutions:**
 
-**Error:** "Port already in use"
-
-```bash
-# Change port
-sglang:
-  port: 30001
-```
-
-**Error:** "Model loading failed"
-
-```bash
-# Verify model path exists
-ls -la /path/to/models
-```
-
-______________________________________________________________________
-
-## Best Practices
-
-### For Your Hardware (RTX 5070 Max-Q)
-
-1. **Enable Flash Attention** - Always recommended
-1. **Use YaRN cautiously** - Only if you need >8k context
-1. **Consider SGLang** - For high-throughput scenarios
-1. **Keep models swapped** - Use Vulkan for large models
-
-### Recommended Configuration
-
-```yaml
-# llama-swap/config.yaml
-llama-swap:
-  backend: "llama.cpp"
-  root-dir: "/home/waflores/.lmstudio/models"
-  swap-enabled: true
-  swap-on-idle: 300
-
-  features:
-    flash-attn: true
-    flash-attn-std: 1
-
-  # Optional: YaRN for extended context
-  # yarn:
-  #   enabled: false  # Set true if needed
-
-  models:
-    - name: "Qwen/Qwen2.5-1.5B-Instruct:Q4_K_M"
-      path: "${root-dir}/Qwen/Qwen2.5-1.5B-Instruct"
-      max-total-tokens: 8192
-      max-concurrent-requests: 1
-      backend: "cuda"
-
-    - name: "Meta-Llama-3-8B-Instruct:Q4_K_M"
-      path: "${root-dir}/Meta-Llama-3-8B-Instruct"
-      max-total-tokens: 8192
-      max-concurrent-requests: 1
-      backend: "cuda"
-
-    - name: "Llama-3.1-70B-Instruct:Q4_K_M"
-      path: "${root-dir}/Llama-3.1-70B-Instruct"
-      max-total-tokens: 4096
-      max-concurrent-requests: 1
-      backend: "vulkan" # Swap this model
-```
-
-______________________________________________________________________
+1. Enable flash attention (automatic on CUDA)
+1. Reduce batch size
+1. Use higher quantization (Q5_K_M)
+1. Check GPU temperature
 
 ## Next Steps
 
-1. **Test Flash Attention** - Enable and benchmark
-1. **Evaluate YaRN needs** - Only enable if you need extended context
-1. **Consider SGLang** - For production/high-throughput scenarios
-1. **Monitor VRAM usage** - Ensure you're not exceeding limits
-1. **Run benchmarks** - Use `run_benchmarks.py` to compare
+1. **Review Config Structure** - See `config.yaml` for current settings
+1. **Test Model Loading** - Use curl commands in AGENTS.md
+1. **Monitor Performance** - Check `nvidia-smi` during operation
+1. **Adjust Context Sizes** - Set appropriate `ctxSize` per model
 
-______________________________________________________________________
+## References
 
-## Documentation References
-
+- [llama-swap Documentation](https://github.com/mostly-ai/llama-swap)
+- [llama.cpp Documentation](https://github.com/ggerganov/llama.cpp)
 - [Flash Attention Documentation](https://github.com/Dao-AILab/flash-attention)
-- [YaRN Paper](https://arxiv.org/abs/2401.15379)
-- [SGLang Documentation](https://docs.sglang.ai/)
-- [llama-swap Configuration](https://github.com/your-repo/llama-swap)
 
 ______________________________________________________________________
 
 **Last Updated:** 2026-06-13
-**Author:** Configuration Analyst Agent
-**Status:** Phase 2 - Optimization
+**Status:** Active

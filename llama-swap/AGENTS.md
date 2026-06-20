@@ -1,335 +1,273 @@
-# CONFIG-TUNING-GUIDE.md
+# llama-swap Configuration Testing Agent
 
 ## Purpose
 
-This document provides a structured, reproducible testing framework for lesser intelligent AI agents to iterate on llama-swap configuration values.
+This agent handles testing and validation of llama-swap configurations. It provides structured testing workflows for verifying model loading, swapping, and performance.
 
-## Prerequisites Checklist
+## Responsibilities
 
-Before starting any tests, ensure:
+- Run model load/unload tests
+- Validate VRAM usage and constraints
+- Test context window handling
+- Verify model swapping behavior
+- Collect performance metrics
+- Document test results
 
-- [ ] **llama-swap is installed** in the target environment
-- [ ] **Model files are downloaded** to the specified root directory
-- [ ] **CUDA drivers** are installed and accessible
-- [ ] **Environment variables** are set (see `inferhost.env`)
-- [ ] **Python dependencies** (pip install llama-swap) are installed
+## Testing Commands
 
-## Standard Testing Workflow
-
-### Step 1: Initialize Test Session
-
-```bash
-# Navigate to project root
-cd /home/waflores/DevFolder/ai/local-config
-
-# Create test session log
-mkdir -p logs/test-session-YYYYMMDD-HHMMSS
-touch logs/test-session-YYYYMMDD-HHMMSS/iteration.log
-```
-
-### Step 2: Load Configuration Template
+### Run All Models Test
 
 ```bash
-# Copy base config to test location
-cp llama-swap/config.yaml tests/current-config.yaml
+# Test all configured models
+/home/waflores/bin/llama-swap \
+  --config /home/waflores/DevFolder/ai/local-config/llama-swap/config.yaml \
+  --listen 127.0.0.1:10001
 
-# Edit with test parameters (use sed for automation)
-sed -i 's/ROOT_DIR: .*/ROOT_DIR: /home/waflores/.lmstudio/models/g' tests/current-config.yaml
+# Verify health endpoint
+curl http://127.0.0.1:10001/health
+
+# List available models
+curl http://127.0.0.1:10001/v1/models
 ```
 
-### Step 3: Run Test Case
+### Test Single Model
 
 ```bash
-# Execute single test case
-python -m llama_server.main --config tests/current-config.yaml --verbose
-
-# Or run benchmark script
-python tests/run_benchmark.py --config tests/current-config.yaml --model-name test-model
+# Load specific model
+curl -X POST http://127.0.0.1:10001/v1/models \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Meta-Llama-3.1-8B-Instruct",
+    "path": "/home/waflores/.lmstudio/models/lmstudio-community/Meta-Llama-3.1-8B-Instruct-GGUF",
+    "ttl": 600
+  }'
 ```
 
-### Step 4: Capture Results
+### Test Model Swap
 
 ```bash
-# Log to iteration file
-echo "=== Test Run $(date) ===" >> logs/test-session-YYYYMMDD-HHMMSS/iteration.log
-echo "Config: tests/current-config.yaml" >> logs/test-session-YYYYMMDD-HHMMSS/iteration.log
+# Load first model
+curl -X POST http://127.0.0.1:10001/v1/models \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Meta-Llama-3.1-8B-Instruct",
+    "path": "/home/waflores/.lmstudio/models/lmstudio-community/Meta-Llama-3.1-8B-Instruct-GGUF/Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf",
+    "ttl": 600
+  }'
+
+# Load second model (should swap first)
+curl -X POST http://127.0.0.1:10001/v1/models \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "CodeLlama-7B-Instruct",
+    "path": "/home/waflores/.lmstudio/models/lmstudio-community/CodeLlama-7B-Instruct-GGUF",
+    "ttl": 600
+  }'
 ```
 
-### Step 5: Analyze and Iterate
+### Test Inference
 
 ```bash
-# Check for errors
-grep -i "error\|exception\|failed" logs/test-session-YYYYMMDD-HHMMSS/iteration.log
-
-# If successful, increment parameter and retest
-# Example: Increase batch-size by 1
-sed -i 's/batch-size: .*/batch-size: 1/' tests/current-config.yaml
+# Test chat completion
+curl -X POST http://127.0.0.1:10001/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "Meta-Llama-3.1-8B-Instruct",
+    "messages": [
+      {
+        "role": "user",
+        "content": "What is 2+2?"
+      }
+    ],
+    "max_tokens": 100
+  }'
 ```
 
-## Test Case Templates
+## Test Cases
 
-### Template 1: Basic Model Load Test
+### Test Case 1: Model Load
 
 ```yaml
-# tests/basic-load-test.yaml
-ROOT_DIR: /home/waflores/.lmstudio/models
-BACKEND: cuda
-MODEL: "Qwen/Qwen2.5-1.5B-Instruct:Q4_K_M"
-MAX_CONCURRENT_REQUESTS: 1
-MAX_TOTAL_TOKENS: 4096
-MODEL_PATH: "${ROOT_DIR}/Qwen/Qwen2.5-1.5B-Instruct"
+# tests/model-load.yaml
+test_name: "model_load"
+model: "Meta-Llama-3.1-8B-Instruct"
+expected_vram_mb: 5120
+expected_load_time_seconds: 10
 ```
 
-**Expected Behavior:**
-
-- Model loads into VRAM within 5 seconds
-- First token generated within 2 seconds
-- No VRAM overflow errors
-
-**Success Criteria:**
-
-- [ ] No errors in logs
-- [ ] Model appears in llama-swap model list
-- [ ] Generation completes without hanging
-
-______________________________________________________________________
-
-### Template 2: VRAM Optimization Test
+### Test Case 2: Model Unload
 
 ```yaml
-# tests/vram-opt-test.yaml
-ROOT_DIR: /home/waflores/.lmstudio/models
-BACKEND: cuda
-MODEL: "Meta-Llama-3-8B-Instruct:Q4_K_M"
-MAX_CONCURRENT_REQUESTS: 1
-MAX_TOTAL_TOKENS: 8192
-MAX_VRAM: 8192  # 8GB VRAM
-MODEL_PATH: "${ROOT_DIR}/Meta-Llama-3-8B-Instruct"
+# tests/model-unload.yaml
+test_name: "model_unload"
+model: "Meta-Llama-3.1-8B-Instruct"
+expected_free_vram_mb: 7500
 ```
 
-**Expected Behavior:**
-
-- Model fits within VRAM constraints
-- No OOM (Out of Memory) errors
-- Generation speed > 5 tokens/sec
-
-**Success Criteria:**
-
-- [ ] No OOM errors
-- [ ] Generation completes
-- [ ] Speed meets minimum threshold
-
-______________________________________________________________________
-
-### Template 3: Context Length Test
+### Test Case 3: Model Swap
 
 ```yaml
-# tests/context-length-test.yaml
-ROOT_DIR: /home/waflores/.lmstudio/models
-BACKEND: cuda
-MODEL: "Qwen/Qwen2.5-1.5B-Instruct:Q4_K_M"
-MAX_CONCURRENT_REQUESTS: 1
-MAX_TOTAL_TOKENS: 16384  # Test with 16k context
-CONTEXT_WINDOW: 8192
-MODEL_PATH: "${ROOT_DIR}/Qwen/Qwen2.5-1.5B-Instruct"
+# tests/model-swap.yaml
+test_name: "model_swap"
+models:
+  - "Meta-Llama-3.1-8B-Instruct"
+  - "CodeLlama-7B-Instruct"
+expected_concurrent_models: 1
 ```
 
-**Expected Behavior:**
-
-- Handles long context without errors
-- No memory fragmentation issues
-- Generation quality maintained
-
-**Success Criteria:**
-
-- [ ] No context overflow errors
-- [ ] Generation completes
-- [ ] Output is coherent
-
-______________________________________________________________________
-
-### Template 4: Batch Size Test
+### Test Case 4: Inference Latency
 
 ```yaml
-# tests/batch-size-test.yaml
-ROOT_DIR: /home/waflores/.lmstudio/models
-BACKEND: cuda
-MODEL: "Qwen/Qwen2.5-1.5B-Instruct:Q4_K_M"
-MAX_CONCURRENT_REQUESTS: 2
-MAX_TOTAL_TOKENS: 4096
-MODEL_PATH: "${ROOT_DIR}/Qwen/Qwen2.5-1.5B-Instruct"
+# tests/inference-latency.yaml
+test_name: "inference_latency"
+model: "Meta-Llama-3.1-8B-Instruct"
+prompt: "Count from 1 to 10"
+expected_tokens_per_second: 10
 ```
 
-**Expected Behavior:**
-
-- Handles multiple concurrent requests
-- No request queuing delays
-- Consistent generation speed
-
-**Success Criteria:**
-
-- [ ] Multiple requests processed
-- [ ] No request failures
-- [ ] Speed remains consistent
-
-______________________________________________________________________
-
-### Template 5: Model Swap Test
+### Test Case 5: Context Window
 
 ```yaml
-# tests/model-swap-test.yaml
-ROOT_DIR: /home/waflores/.lmstudio/models
-BACKEND: cuda
-MODEL: "Qwen/Qwen2.5-1.5B-Instruct:Q4_K_M"
-MAX_CONCURRENT_REQUESTS: 1
-MAX_TOTAL_TOKENS: 4096
-MODEL_PATH: "${ROOT_DIR}/Qwen/Qwen2.5-1.5B-Instruct"
-SWAP_ENABLED: true
-SWAP_ON_IDLE: 300  # Swap after 5 minutes of inactivity
+# tests/context-window.yaml
+test_name: "context_window"
+model: "Meta-Llama-3.1-8B-Instruct"
+context_size: 262144
+expected_max_tokens: 8192
 ```
 
-**Expected Behavior:**
-
-- Model swaps out after idle period
-- Model loads back on next request
-- No data loss during swap
-
-**Success Criteria:**
-
-- [ ] Model swaps out (VRAM freed)
-- [ ] Model loads back on request
-- [ ] No corruption errors
-
-## Parameter Tuning Checklist
-
-| Parameter | Range to Test | Impact | Priority |
-|-----------|---------------|--------|----------|
-| `MAX_TOTAL_TOKENS` | 4096, 8192, 16384 | Memory usage | High |
-| `MAX_CONCURRENT_REQUESTS` | 1, 2, 4 | Throughput | Medium |
-| `CONTEXT_WINDOW` | 2048, 4096, 8192 | Context handling | High |
-| `MAX_VRAM` | 6144, 7168, 8192 | VRAM allocation | Critical |
-| `SWAP_ON_IDLE` | 300, 600, 900 | Swap frequency | Low |
-
-## Common Issues and Solutions
-
-### Issue: "CUDA out of memory"
-
-**Cause:** Model too large for VRAM
-**Solution:**
-
-1. Reduce `MAX_TOTAL_TOKENS` by 50%
-1. Use lower quantization (Q3_K_M instead of Q4_K_M)
-1. Enable swap for this model
-
-### Issue: "Context overflow"
-
-**Cause:** Context window too large for model
-**Solution:**
-
-1. Reduce `MAX_TOTAL_TOKENS`
-1. Use smaller model for shorter contexts
-
-### Issue: "Slow generation"
-
-**Cause:** Batch size too high or VRAM constrained
-**Solution:**
-
-1. Reduce `MAX_CONCURRENT_REQUESTS`
-1. Increase `MAX_VRAM` (if available)
-1. Use higher quantization (Q5_K_M)
-
-### Issue: "Model fails to swap"
-
-**Cause:** Insufficient disk space or swap disabled
-**Solution:**
-
-1. Enable `SWAP_ENABLED: true`
-1. Check disk space in model root folder
-1. Verify swap path is writable
-
-## Result Logging Template
+## Result Logging Format
 
 ```markdown
-## Iteration Log: [Date]
+## Test Results: [Date]
 
-### Configuration Tested
-- File: `tests/current-config.yaml`
-- Model: `Qwen/Qwen2.5-1.5B-Instruct:Q4_K_M`
+### Configuration
+- Config File: `llama-swap/config.yaml`
+- Backend: CUDA0
 
-### Parameters
-- MAX_TOTAL_TOKENS: 4096
-- MAX_CONCURRENT_REQUESTS: 1
-- MAX_VRAM: 8192
-- CONTEXT_WINDOW: 8192
+### Tests Run
 
-### Results
-- **Status:** [ ] PASS / [ ] FAIL
-- **Load Time:** X seconds
-- **Generation Speed:** X tokens/sec
-- **VRAM Used:** X / 8192 MB
+#### Model Load
+- **Model:** Meta-Llama-3.1-8B-Instruct
+- **Status:** ✅ PASS / ❌ FAIL
+- **Load Time:** X.XXs (expected: < 10s)
+- **VRAM Used:** X.XX GB (expected: < 5.12 GB)
 - **Errors:** None / [List errors]
 
-### Observations
-- [What worked]
-- [What didn't work]
-- [Unexpected behavior]
+#### Model Swap
+- **Status:** ✅ PASS / ❌ FAIL
+- **Concurrent Models:** X (expected: 1)
+- **VRAM After Swap:** X.XX GB
+- **Errors:** None / [List errors]
 
-### Next Steps
-- [Parameter to adjust]
-- [Value to test next]
+#### Inference
+- **Status:** ✅ PASS / ❌ FAIL
+- **Tokens/sec:** X.XX (expected: > 10)
+- **Latency:** X.XXs
+- **Errors:** None / [List errors]
 
----
+### Summary
+- **Total Tests:** X
+- **Passed:** X
+- **Failed:** X
+- **Notes:** [Any observations]
 ```
 
-## Success Metrics
-
-### Minimum Performance Targets
+## Performance Targets
 
 | Metric | Target | Acceptable |
 |--------|--------|------------|
 | Model Load Time | < 5s | < 10s |
-| First Token | < 2s | < 5s |
-| Generation Speed | > 10 t/s | > 5 t/s |
+| Model Unload Time | < 2s | < 5s |
+| Swap Operation | < 2s | < 5s |
+| Inference Speed | > 10 t/s | > 5 t/s |
 | VRAM Utilization | < 70% | < 90% |
-| Context Efficiency | > 80% | > 50% |
-
-### Quality Targets
-
-| Metric | Target |
-|--------|--------|
-| Error Rate | 0% | < 5% |
 | Context Retention | 100% | > 95% |
-| Swap Integrity | 100% | > 99% |
 
-## Iteration Protocol
+## Common Issues
 
-1. **Start with Template 1** (Basic Load) - ensure model loads
-1. **Run Template 2** (VRAM) - verify memory constraints
-1. **Run Template 3** (Context) - test context handling
-1. **Run Template 4** (Batch) - test concurrency
-1. **Run Template 5** (Swap) - test swapping behavior
-1. **Adjust parameters** based on results
-1. **Log findings** using Result Logging Template
-1. **Repeat** until all targets met
+### Issue: Model Load Timeout
+
+**Symptoms:** Model takes > 10s to load
+
+**Solutions:**
+
+1. Check model file integrity
+1. Verify CUDA device is accessible
+1. Reduce quantization (Q4_K_M → Q3_K_M)
+1. Increase `healthCheckTimeout` in config
+
+### Issue: VRAM Overflow
+
+**Symptoms:** CUDA out of memory errors
+
+**Solutions:**
+
+1. Reduce model context size
+1. Enable model swapping
+1. Use Vulkan backend for swapped models
+1. Check `macros.ctxSize` value
+
+### Issue: Model Not Swapping
+
+**Symptoms:** Both models loaded simultaneously
+
+**Solutions:**
+
+1. Verify `groups.swappable.exclusive: true`
+1. Check `models.<model>.ttl` is set
+1. Ensure `performance.disabled: false`
+
+### Issue: Inference Errors
+
+**Symptoms:** Generation fails or produces errors
+
+**Solutions:**
+
+1. Verify model path is correct
+1. Check `macros.device` is CUDA0
+1. Verify `flash-attn` setting
+1. Check model quantization compatibility
 
 ## Environment Setup
 
 ```bash
 # Source environment variables
-source /home/waflores/DevFolder/ai/local-config/inferhost/inferhost.env
+source /home/waflores/DevFolder/ai/local-config/other_experiments/inferhost/inferhost.env
 
 # Verify CUDA is accessible
-cuda-device-query
+nvidia-smi
 
 # Check VRAM available
 cat /proc/driver/nvidia/gpu/0/vram_total
 
 # Verify model files exist
-ls -la /home/waflores/.lmstudio/models/
+ls -la /home/waflores/.lmstudio/models/lmstudio-community/
+```
+
+## Integration with continue.dev
+
+The testing agent integrates with continue.dev for:
+
+- Inline code suggestions
+- Chat with codebase
+- Documentation generation
+
+Configure continue.dev to use llama-swap models:
+
+```json
+// .continue/config.json
+{
+  "models": [
+    {
+      "provider": "llama-swap",
+      "name": "Meta-Llama-3.1-8B-Instruct",
+      "host": "http://127.0.0.1:10001"
+    }
+  ]
+}
 ```
 
 ______________________________________________________________________
 
 **Last Updated:** 2026-06-13
-**Author:** Configuration Analyst Agent
 **Status:** Phase 1 - Foundation
