@@ -32,7 +32,7 @@ macros:
   cmdPrefix: /home/waflores/DevFolder/ai/llama.cpp/build/bin/llama-server
   contextShift: 'false'
   ctxSize: '131072'
-  device: CUDA0
+  device: "CUDA0"
   flashAttn: auto
   jinja: 'true'
   models_directory: /home/waflores/.lmstudio/models/lmstudio-community
@@ -201,7 +201,6 @@ models:
     cmd: "${cmdPrefix} --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/Qwen3.5-9B-GGUF/Qwen3.5-9B-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --context-shift --reasoning ${reasoning} --reasoning-format ${reasoningFormat} --reasoning-budget ${reasoningBudget} --cache-ram ${cacheRamSpillover} --temp ${temp} --top-k ${top_k} --top-p ${top_p} --min-p ${min_p}"
     env:
       - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
-      - LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu
     macros:
       ctxSize: '262144'
       min_p: '0'
