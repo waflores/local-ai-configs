@@ -1,26 +1,25 @@
-# Llama-Swap + Continue.dev Configuration Journey
+# llama-swap Configuration - High-Performance Local LLM Inference
 
 ## 🤖 Machine-Readable Header
 
 ```yaml
 project:
-  name: llama-swap + continue.dev
+  name: llama-swap
   core_stack:
-    - continue.dev
     - llama-server
     - llama-swap
   authority:
-    folder: ".continue"
+    folder: "llama-swap"
     priority: "high"
   instructions:
-    - "Consult .continue/agents/ for project-specific AI agent instructions."
-    - "Consult .continue/config.json for project-specific configuration."
-    - "Consult .continue/prompts/ for project-specific prompts."
+    - "Use llama-swap as the primary interface for all AI agent interactions"
+    - "Consult SKILL.md for agent commands and capabilities"
+    - "Refer to llama-swap/config.yaml for model configuration"
 ```
 
 ## 🎯 Project Vision
 
-Create an optimized local LLM setup using **llama-swap** integrated with **continue.dev VSCode extension** to enhance coding productivity for Python, C, and C++ projects. The system will leverage the **NVIDIA RTX 5070 Max-Q** GPU with intelligent model swapping to maximize resource utilization.
+High-performance local LLM inference system using **llama-swap** with intelligent model swapping on the **NVIDIA RTX 5070 Max-Q** GPU. This system provides raw inference performance with 22 models available for on-demand loading and swapping.
 
 ## 🖥️ Hardware Overview
 
@@ -45,57 +44,53 @@ Create an optimized local LLM setup using **llama-swap** integrated with **conti
 
 Models are stored at `/home/waflores/.lmstudio/models`.
 
-### Code-Specialized Models
+**Total Models:** 22 models across various architectures
+
+### Full Model Inventory
 
 | Model | Parameters | Size (Q4_K_M) | Use Case |
 |-------|------------|---------------|----------|
 | CodeLlama-7B-Instruct | 7B | ~4 GB | Python, general coding |
-| Granite-4.0-h-tiny | 7B | ~4 GB | IBM's code model |
+| Meta-Llama-3.1-8B-Instruct | 8B | ~5 GB | General tasks |
+| Qwen3.5-9B-GGUF | 9B | ~5.6 GB | General tasks |
+| Qwen3.6-27B-GGUF | 27B | ~16.5 GB | Advanced tasks |
+| DeepSeek-R1-0528-Qwen3-8B-GGUF | 8B | ~5 GB | Reasoning |
+| Ministral-3-3B-Instruct-2512-GGUF | 3B | ~2 GB | Fast completions |
+| Ministral-3-14B-Reasoning-2512-GGUF | 14B | ~8 GB | Reasoning tasks |
+| Mistral-Nemo-Instruct-2407-GGUF | 13B | ~6.5 GB | Balanced performance |
+| Phi-4-mini-reasoning-GGUF | 3B | ~2.5 GB | Lightweight tasks |
+| Phi-4-reasoning-plus-GGUF | 13B | ~9 GB | Advanced reasoning |
+| gemma-4-E4B-it-GGUF | 8B | ~5.3 GB | General tasks |
+| NVIDIA-Nemotron-3-Nano-4B-GGUF | 4B | ~2.8 GB | NVIDIA-optimized |
+| Devstral-Small-2-24B-Instruct-2512-GGUF | 24B | ~14 GB | Advanced reasoning |
+| LFM2-24B-A2B-GGUF | 24B | ~14.4 GB | Embeddings |
+| Qwen3-VL-8B-Instruct-GGUF | 8B | ~5 GB | Vision-language |
+| olmOCR-2-7B-1025-GGUF | 8B | ~4.7 GB | OCR tasks |
+| granite-4-h-tiny | 7B | ~4 GB | IBM's code model |
+| zerank-1-small-gguf | - | - | Reranking |
+| zerank-2-gguf | - | - | Embeddings |
+| rnj-1-instruct-GGUF | - | - | General tasks |
 
-### Mistral Family
+### Hardware Overview
 
-| Model | Parameters | Size (Q4_K_M) | Use Case |
-|-------|------------|---------------|----------|
-| Ministral-3B | 3B | ~2 GB | Fast completions |
-| Ministral-14B | 14B | ~8 GB | Reasoning tasks |
-| Devstral-24B | 24B | ~14 GB | Advanced reasoning |
-| Mistral-Nemo-13B | 13B | ~6.5 GB | Balanced performance |
+| Component | Specification |
+|-----------|---------------|
+| **CPU** | Intel Core Ultra 9 275HX (24 cores, up to 5.4 GHz) |
+| **GPU** | NVIDIA GeForce RTX 5070 Max-Q (~8 GB VRAM) + Intel Integrated Graphics (~23 GB shared) |
+| **RAM** | ~33 GB total (~20 GB currently used) |
+| **Storage** | ~1 TB total (~245 GB free) |
+| **OS** | Ubuntu 26.04 LTS (Resolute Raccoon) |
 
-### Qwen Family
+### Available Devices in llama-server
 
-| Model | Parameters | Size (Q4_K_M) | Use Case |
-|-------|------------|---------------|----------|
-| DeepSeek-R1-8B | 8B | ~5 GB | Reasoning |
-| Qwen3.5-9B | 9B | ~5.6 GB | General tasks |
-| Qwen3.6-27B | 27B | ~16.5 GB | Advanced tasks |
-| Qwen3-VL-8B | 8B | ~5 GB | Vision-language |
+- **CUDA0:** NVIDIA GeForce RTX 5070 Laptop GPU (7707 MiB, 4 MiB free) - Active inference
+- **Vulkan0:** Intel(R) Graphics (ARL) (23633 MiB, 11154 MiB free) - Model storage
+- **Vulkan1:** NVIDIA GeForce RTX 5070 Laptop GPU (8151 MiB, 4 MiB free) - Fallback
+- **BLAS:** OpenBLAS (CPU offloading)
 
-### NVIDIA Models
+### Goals & Objectives
 
-| Model | Parameters | Size (Q4_K_M) | Use Case |
-|-------|------------|---------------|----------|
-| Nemotron-3-Nano-4B | 4B | ~2.8 GB | Optimized for NVIDIA |
-
-### Phi Family
-
-| Model | Parameters | Size (Q4_K_M) | Use Case |
-|-------|------------|---------------|----------|
-| Phi-4-mini | 3B | ~2.5 GB | Lightweight tasks |
-| Phi-4-reasoning-plus | 13B | ~9 GB | Advanced reasoning |
-
-### Other Models
-
-| Model | Parameters | Size | Use Case |
-|-------|------------|------|----------|
-| LFM2-24B-A2B | 24B | ~14.4 GB | Embeddings |
-| gemma-4-E4B-it | 8B | ~5.3 GB | General tasks |
-| olmOCR-2-7B | 8B | ~4.7 GB | OCR tasks |
-
-**Total Models:** 22 models across various architectures
-
-## 🎯 Goals & Objectives
-
-### Primary Goals
+#### Primary Goals
 
 1. **Optimize Resource Utilization**
 
@@ -103,13 +98,11 @@ Models are stored at `/home/waflores/.lmstudio/models`.
    - Use Vulkan (Intel) for model swapping and storage
    - Balance VRAM usage across models
 
-1. **Enable Advanced continue.dev Features**
+1. **Enable High-Performance Inference**
 
-   - Code completion (inline suggestions)
-   - Chat with codebase
-   - Natural language to code generation
-   - Documentation generation
-   - Refactoring suggestions
+   - Raw inference performance with minimal overhead
+   - Intelligent model swapping for maximum VRAM efficiency
+   - Support for complex reasoning and code generation tasks
 
 1. **Support Multiple Programming Languages**
 
@@ -117,111 +110,83 @@ Models are stored at `/home/waflores/.lmstudio/models`.
    - C/C++ (secondary)
    - Cross-language understanding
 
-### Performance Targets
+#### Performance Targets
 
-- **Latency:** < 2s for model swap operations
-- **Throughput:** > 10 tokens/sec for 7B models
+- **Model Load Time:** < 5s
+- **Model Unload Time:** < 2s
+- **Swap Operation:** < 2s
+- **Throughput (7B models):** > 10 tokens/sec
+- **VRAM Utilization:** < 70%
 - **Context Window:** Support 32K+ tokens for complex tasks
 
-## 🚀 Strategy Overview
-
-### Model Swapping Strategy
+## 🚀 Model Swapping Strategy
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                    Model Swapping                        │
+│              High-Performance Inference                   │
 ├─────────────────────────────────────────────────────────┤
-│  Active Models (CUDA)    │  Swapped Models (Vulkan)     │
-│  ┌────────────────────┐  │  ┌─────────────────────────┐ │
-│  │ CodeLlama-7B       │  │  │ Ministral-3B            │ │
-│  │ (Python coding)     │◄─┼──┼──► Available on-demand  │ │
-│  └────────────────────┘  │  │                         │ │
-│  ┌────────────────────┐  │  │                         │ │
-│  │ Nemotron-4B        │  │  │ Phi-4-mini              │ │
-│  │ (Fast completions)  │  │  └─────────────────────────┘ │
-│  └────────────────────┘  │                               │
-│                         │  ┌─────────────────────────┐  │
-│  ┌────────────────────┐  │  │ Qwen3.5-9B             │ │
-│  │ Granite-7B         │  │  │ (C/C++ projects)       │ │
-│  │ (C/C++ projects)   │  │  └─────────────────────────┘ │
-│  └────────────────────┘  │                               │
+│  Active (CUDA0 - RTX 5070)         │  Swapped (Vulkan)   │
+│  ┌──────────────────────────┐      │  ┌─────────────────┐ │
+│  │ CodeLlama-7B             │      │  │ Ministral-3B    │ │
+│  │ (Python coding)           │◄────┼──┼─── Available    │ │
+│  └──────────────────────────┘      │  │ on-demand       │ │
+│  ┌──────────────────────────┐      │  │                 │ │
+│  │ Meta-Llama-3.1-8B        │      │  │ Phi-4-mini      │ │
+│  │ (General tasks)           │      │  └─────────────────┘ │
+│  └──────────────────────────┘      │                       │
+│                                    │  ┌─────────────────┐  │
+│  ┌──────────────────────────┐      │  │ Qwen3.5-9B     │ │
+│  │ Qwen3.5-9B               │      │  │ (General tasks)│ │
+│  │ (General tasks)           │      │  └─────────────────┘ │
+│  └──────────────────────────┘      │                       │
 └─────────────────────────────────────────────────────────┘
 ```
 
-### Resource Allocation Strategy
+### Resource Allocation
 
 - **Active Models (CUDA):** Keep 1-2 models loaded for immediate use
-- **Swapped Models (Vulkan):** Store 5-8 models for on-demand loading
-- **RAM Spillover:** Use system RAM (~20 GB free) for additional models
-- **Context Management:** Use smaller context windows for simple tasks
+- **Swapped Models (Vulkan):** Store all 22 models for on-demand loading
+- **RAM Spillover:** Use system RAM for additional capacity
+- **Context Management:** Configurable context windows per model
 
-## 📋 Configuration Roadmap
+## 📋 Configuration Status
 
 ### Phase 1: Foundation (Current)
 
 - [x] Hardware analysis
-- [x] Model inventory assessment
-- [ ] Basic llama-swap configuration
-- [ ] continue.dev integration
-- [ ] Initial model loading strategy
+- [x] Model inventory assessment (22 models)
+- [x] Basic llama-swap configuration (`llama-swap/config.yaml`)
+- [x] Performance benchmarking infrastructure
+- [x] Agent skills documentation (`SKILL.md`)
 
-### Phase 2: Optimization
+## 📊 Documentation
 
-- [ ] CUDA/Vulkan integration testing
-- [ ] Model swapping performance benchmarks
-- [ ] Context window optimization
-- [ ] Quantization strategy refinement
+### Configuration Files
 
-### Phase 3: Advanced Features
+- **`llama-swap/config.yaml`** - Main model configuration
+- **`SKILL.md`** - Agent commands and capabilities
+- **`README.md`** - This file - Project overview
+- **`AGENTS.md`** - Testing agent responsibilities
 
-- [ ] Multi-model concurrent loading
-- [ ] Smart model selection based on task
-- [ ] C/C++ specific optimizations
-- [ ] Vision-language model integration
+### Benchmarks
 
-### Phase 4: Production
+- **`llama-swap/run_benchmarks.py`** - Performance testing
+- **`llama-swap/run_llama_bench.sh`** - Shell script wrapper
+- **`llama-swap/benchmarks/`** - Results directory
 
-- [ ] Performance monitoring
-- [ ] Resource usage optimization
-- [ ] Documentation completion
-- [ ] Best practices compilation
+### Documentation Standards
 
-## 📊 Documentation Structure
-
-### Technical Deep-Dives
-
-- Configuration examples
-- Architecture decisions
-- Performance analysis
-- Troubleshooting guides
-
-### Performance Benchmarks
-
-- Model loading times
-- Generation speeds
-- Memory usage patterns
-- Swap operation timings
-
-### Iteration Logs
-
-- What was tried
-- What worked
-- What didn't work and why
-- Lessons learned
-
-### Quick Start Guides
-
-- Common use cases
-- Model selection guides
-- Configuration templates
+- Clear problem statements
+- Configuration details
+- Expected vs actual results
+- Actionable recommendations
 
 ## 🔧 Technical Stack
 
 | Component | Technology | Purpose |
 |-----------|------------|---------|
-| **Inference Engine** | llama.cpp / vLLM | Model serving |
+| **Inference Engine** | llama.cpp | Model serving |
 | **Swapping** | llama-swap | Model management |
-| **IDE Integration** | continue.dev VSCode | Code intelligence |
 | **GPU Backend** | CUDA (RTX 5070) | Primary inference |
 | **Secondary GPU** | Vulkan (Intel) | Model storage |
 | **CPU Offload** | OpenBLAS | Fallback computation |
@@ -250,7 +215,7 @@ Models are stored at `/home/waflores/.lmstudio/models`.
 
 ## 🔄 Iteration Process
 
-This project will be documented iteratively. Each session will:
+This project evolves iteratively. Each session:
 
 1. **Review** previous configurations and results
 1. **Experiment** with new configurations
@@ -262,10 +227,10 @@ This project will be documented iteratively. Each session will:
 
 | Version | Date | Changes |
 |---------|------|---------|
-| 0.1.0 | Initial | Hardware analysis, model inventory, vision document |
+| 1.0 | 2026-06-20 | Initial configuration with 22 models, benchmarking infrastructure |
 
 ______________________________________________________________________
 
-*Last updated: 2026*
+*Last updated: 2026-06-20*
 *Status: Phase 1 - Foundation*
-*Next milestone: Basic llama-swap configuration*
+*Next milestone: Performance benchmarking*

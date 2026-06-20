@@ -1,8 +1,8 @@
-# llama-swap Configuration Testing Agent
+# llama-swap Configuration Agent
 
 ## Purpose
 
-This agent handles testing and validation of llama-swap configurations. It provides structured testing workflows for verifying model loading, swapping, and performance.
+This agent handles configuration, testing, and validation of llama-swap. It provides structured workflows for model management, performance benchmarking, and system health monitoring.
 
 ## Responsibilities
 
@@ -12,41 +12,34 @@ This agent handles testing and validation of llama-swap configurations. It provi
 - Verify model swapping behavior
 - Collect performance metrics
 - Document test results
+- Manage system health and availability
+- Provide configuration recommendations
 
-## Testing Commands
+## Quick Reference
 
-### Run All Models Test
+### Start llama-swap
 
 ```bash
-# Test all configured models
 /home/waflores/bin/llama-swap \
   --config /home/waflores/DevFolder/ai/local-config/llama-swap/config.yaml \
   --listen 127.0.0.1:10001
+```
 
-# Verify health endpoint
+### Verify Health
+
+```bash
 curl http://127.0.0.1:10001/health
+```
 
-# List available models
+### List Models
+
+```bash
 curl http://127.0.0.1:10001/v1/models
 ```
 
-### Test Single Model
+### Load Model
 
 ```bash
-# Load specific model
-curl -X POST http://127.0.0.1:10001/v1/models \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Meta-Llama-3.1-8B-Instruct",
-    "path": "/home/waflores/.lmstudio/models/lmstudio-community/Meta-Llama-3.1-8B-Instruct-GGUF",
-    "ttl": 600
-  }'
-```
-
-### Test Model Swap
-
-```bash
-# Load first model
 curl -X POST http://127.0.0.1:10001/v1/models \
   -H "Content-Type: application/json" \
   -d '{
@@ -54,60 +47,55 @@ curl -X POST http://127.0.0.1:10001/v1/models \
     "path": "/home/waflores/.lmstudio/models/lmstudio-community/Meta-Llama-3.1-8B-Instruct-GGUF/Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf",
     "ttl": 600
   }'
-
-# Load second model (should swap first)
-curl -X POST http://127.0.0.1:10001/v1/models \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "CodeLlama-7B-Instruct",
-    "path": "/home/waflores/.lmstudio/models/lmstudio-community/CodeLlama-7B-Instruct-GGUF",
-    "ttl": 600
-  }'
 ```
 
-### Test Inference
+### Run Inference
 
 ```bash
-# Test chat completion
 curl -X POST http://127.0.0.1:10001/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "Meta-Llama-3.1-8B-Instruct",
+    "model": "CodeLlama-7B-Instruct",
     "messages": [
       {
         "role": "user",
-        "content": "What is 2+2?"
+        "content": "Write a Python function to sort an array"
       }
     ],
     "max_tokens": 100
   }'
 ```
 
+### Run Benchmarks
+
+```bash
+/home/waflores/DevFolder/ai/local-config/llama-swap/run_benchmarks.py \
+  --model CodeLlama-7B-Instruct \
+  --output benchmarks/results.json
+```
+
 ## Test Cases
 
-### Test Case 1: Model Load
+### Model Load Test
 
 ```yaml
-# tests/model-load.yaml
 test_name: "model_load"
 model: "Meta-Llama-3.1-8B-Instruct"
 expected_vram_mb: 5120
-expected_load_time_seconds: 10
+expected_load_time_seconds: 5
 ```
 
-### Test Case 2: Model Unload
+### Model Unload Test
 
 ```yaml
-# tests/model-unload.yaml
 test_name: "model_unload"
 model: "Meta-Llama-3.1-8B-Instruct"
 expected_free_vram_mb: 7500
 ```
 
-### Test Case 3: Model Swap
+### Model Swap Test
 
 ```yaml
-# tests/model-swap.yaml
 test_name: "model_swap"
 models:
   - "Meta-Llama-3.1-8B-Instruct"
@@ -115,20 +103,18 @@ models:
 expected_concurrent_models: 1
 ```
 
-### Test Case 4: Inference Latency
+### Inference Latency Test
 
 ```yaml
-# tests/inference-latency.yaml
 test_name: "inference_latency"
 model: "Meta-Llama-3.1-8B-Instruct"
 prompt: "Count from 1 to 10"
 expected_tokens_per_second: 10
 ```
 
-### Test Case 5: Context Window
+### Context Window Test
 
 ```yaml
-# tests/context-window.yaml
 test_name: "context_window"
 model: "Meta-Llama-3.1-8B-Instruct"
 context_size: 262144
@@ -149,7 +135,7 @@ expected_max_tokens: 8192
 #### Model Load
 - **Model:** Meta-Llama-3.1-8B-Instruct
 - **Status:** ✅ PASS / ❌ FAIL
-- **Load Time:** X.XXs (expected: < 10s)
+- **Load Time:** X.XXs (expected: < 5s)
 - **VRAM Used:** X.XX GB (expected: < 5.12 GB)
 - **Errors:** None / [List errors]
 
@@ -231,43 +217,20 @@ expected_max_tokens: 8192
 ## Environment Setup
 
 ```bash
-# Source environment variables
-source /home/waflores/DevFolder/ai/local-config/other_experiments/inferhost/inferhost.env
-
 # Verify CUDA is accessible
 nvidia-smi
 
 # Check VRAM available
-cat /proc/driver/nvidia/gpu/0/vram_total
+nvidia-smi --query-gpu=memory_total,memory_free --format=csv
 
 # Verify model files exist
 ls -la /home/waflores/.lmstudio/models/lmstudio-community/
 ```
 
-## Integration with continue.dev
-
-The testing agent integrates with continue.dev for:
-
-- Inline code suggestions
-- Chat with codebase
-- Documentation generation
-
-Configure continue.dev to use llama-swap models:
-
-```json
-// .continue/config.json
-{
-  "models": [
-    {
-      "provider": "llama-swap",
-      "name": "Meta-Llama-3.1-8B-Instruct",
-      "host": "http://127.0.0.1:10001"
-    }
-  ]
-}
-```
+## Integration
 
 ______________________________________________________________________
 
-**Last Updated:** 2026-06-13
-**Status:** Phase 1 - Foundation
+**Last Updated:** 2026-06-20\
+**Status:** Production-ready\
+**Version:** 1.0
