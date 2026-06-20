@@ -1,0 +1,7 @@
+{
+  "name": "memory",
+  "entityType": "directory",
+  "observations": [
+    "Created for memory MCP server"
+  ]
+}
