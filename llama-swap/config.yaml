@@ -134,8 +134,10 @@ models:
     env:
       - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
     macros:
-      ctxSize: '113333'
+      ctxSize: '290000'
+      reasoningFormat: auto
     name: NVIDIA Nemotron 3 Nano 4B
+    tools: true
   Phi-4-mini-reasoning-GGUF:
     cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/Phi-4-mini-reasoning-GGUF/Phi-4-mini-reasoning-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
     env:

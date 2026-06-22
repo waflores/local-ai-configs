@@ -9,6 +9,7 @@ This document defines the agents (humans and AI) involved in this configuration 
 ### Lead Developer (Will)
 
 **Role:** Primary researcher and configuration architect
+
 **Responsibilities:**
 
 - Define project vision and goals
@@ -27,6 +28,7 @@ This document defines the agents (humans and AI) involved in this configuration 
 ### Research Assistant
 
 **Role:** Technical research and experimentation
+
 **Responsibilities:**
 
 - Investigate llama-swap configuration options
@@ -75,6 +77,7 @@ This document defines the agents (humans and AI) involved in this configuration 
 ### Configuration Analyst
 
 **Role:** Analyze and recommend llama-swap configurations
+
 **Capabilities:**
 
 - Parse hardware specifications
@@ -91,6 +94,7 @@ This document defines the agents (humans and AI) involved in this configuration 
 ### Performance Benchmarking Agent
 
 **Role:** Measure and compare model performance
+
 **Capabilities:**
 
 - Run speed tests for different models
@@ -109,6 +113,7 @@ This document defines the agents (humans and AI) involved in this configuration 
 ### Documentation Agent
 
 **Role:** Maintain and update project documentation
+
 **Capabilities:**
 
 - Write technical deep-dives
@@ -126,6 +131,7 @@ This document defines the agents (humans and AI) involved in this configuration 
 ### Code Analysis Agent
 
 **Role:** Analyze code generation quality
+
 **Capabilities:**
 
 - Evaluate generated code quality
@@ -201,7 +207,7 @@ This document defines the agents (humans and AI) involved in this configuration 
 
 ### Configuration Iteration Cycle
 
-```
+```mermaid
 ┌─────────────────────────────────────────────────────────────┐
 │                    Configuration Cycle                       │
 ├─────────────────────────────────────────────────────────────┤
@@ -231,28 +237,26 @@ This document defines the agents (humans and AI) involved in this configuration 
 
 ### Decision Making Process
 
-#### Configuration Decisions
-
-**Level 1 - Quick Decisions (Immediate)**
+#### Level 1 - Quick Decisions (Immediate)
 
 - Model selection for specific tasks
 - Context window sizing
 - Temperature settings
-- **Agents:** Research + Lead approval
+  **Agents:** Research + Lead approval
 
-**Level 2 - Medium Decisions (Short-term)**
+## Level 2 - Medium Decisions (Short-term)
 
 - Model swapping strategies
 - Resource allocation changes
 - Quantization level adjustments
-- **Agents:** Research + Benchmark + Lead approval
+  **Agents:** Research + Benchmark + Lead approval
 
-**Level 3 - Major Decisions (Long-term)**
+## Level 3 - Major Decisions (Long-term)
 
 - Backend selection (llama.cpp vs vLLM)
 - Architecture changes
 - Significant resource reallocation
-- **Agents:** All agents + Lead decision
+  **Agents:** All agents + Lead decision
 
 ## 🎯 Agent Communication Channels
 
@@ -274,72 +278,70 @@ The `.continue/` directory serves as the **intent layer**, capturing institution
 - **Performance optimization strategies** - Resource management guidelines
 - **Security considerations** - API key handling, model swapping safety
 
-**Agent Tool Discovery**
+### Agent Tool Discovery
 
 When agents need to find tools and information, they should search in this order:
 
-1. **`.continue/` directory** - Contains agent definitions, rules, and checks:
+1. **.continue/ directory** - Contains agent definitions, rules, and checks:
 
-   - **`agents/`** - Agent definitions (breaking-change-detector, dependency-security-review, error-message-quality, input-validation, test-coverage)
-   - **`rules/`** - Rule definitions for various coding standards and practices
-   - **`checks/`** - Quality checks (anti-slop, react-best-practices, security-audit, stale-comments, update-agents-md, update-continue-docs, setup-scripts)
-   - **`prompts/`** - Prompt templates and examples
+   - agents/ - Agent definitions (breaking-change-detector, dependency-security-review, error-message-quality, input-validation, test-coverage)
+   - rules/ - Rule definitions for various coding standards and practices
+   - checks/ - Quality checks (anti-slop, react-best-practices, security-audit, stale-comments, update-agents-md, update-continue-docs, setup-scripts)
+   - prompts/ - Prompt templates and examples
 
-1. **`AGENTS.md`** - Primary intent layer file with:
+1. AGENTS.md - Primary intent layer file with:
 
    - Agent roles and responsibilities
    - Configuration workflow definitions
    - Performance tracking targets
    - Collaboration guidelines
 
-1. **`README.md`** - Project vision, goals, and roadmap
+1. README.md - Project vision, goals, and roadmap
 
-1. **Iteration logs** - Historical configuration changes and results
+1. Iteration logs - Historical configuration changes and results
 
-1. **Configuration files** - llama-swap and continue.dev settings
+1. Configuration files - llama-swap and continue.dev settings
 
 ### Skill File Locations
 
-**continue.dev** looks for `SKILL.md` files in the following locations:
+continue.dev looks for SKILL.md files in the following locations:
 
-1. **Project Root Directory** (Primary)
+1. Project Root Directory (Primary)
 
-   ```
+   ```text
    <project-root>/SKILL.md
    ```
 
-   This is the main location for project-specific AI agent commands.
+1. Per-Project Configuration
 
-1. **Per-Project Configuration**
-   Skills can also be registered in:
-
-   ```
+   ```text
    <project-root>/.continue/config.json
    ```
 
-   or through the Continue.dev settings UI.
+1. Extension Package (for custom skills)
 
-1. **Extension Package** (for custom skills)
-   Custom skills can be loaded from:
-
-   ```
+   ```text
    ~/.continue/packages/
    ```
 
-   or installed as npm packages.
-
 **How Skills Work:**
 
-- Create a `SKILL.md` file with markdown content
+- Create a SKILL.md file with markdown content
+
 - Document commands using `## Commands` sections
+
 - Example:
-  ```markdown
+
+  ```text
   ## Commands
+
   - /benchmark
   - /swap-model
   - /config-analyze
   ```
+
 - continue.dev parses the file and makes commands available in the chat interface
+
 - Skills are automatically associated with the current project context
 
 ### Performance Reports
@@ -357,7 +359,7 @@ When agents need to find tools and information, they should search in this order
 ## 📋 Agent Responsibilities Matrix
 
 | Task | Lead | Research | Config | Benchmark | Doc |
-|------|------|----------|--------|-----------|-----|
+| ---------------- | ---- | -------- | ------ | --------- | --- |
 | Define vision | ✅ | | | | |
 | Select models | ✅ | | | | |
 | Configure system | ✅ | | ✅ | | |
@@ -368,31 +370,25 @@ When agents need to find tools and information, they should search in this order
 
 ## 🚀 Agent Capabilities
 
-### Lead Developer
+### Lead Developer (AI)
 
 - **Strategic:** Vision setting, goal definition
 - **Technical:** Configuration, deployment
 - **Evaluative:** Performance assessment, decision making
 
-### Research Assistant
+### Research Assistant (AI)
 
 - **Investigative:** Configuration research, best practices
 - **Analytical:** Performance analysis, comparison
 - **Documentary:** Technical writing, deep-dives
 
-### Configuration Analyst
+### Configuration Analyst (Capabilities)
 
 - **Hardware-aware:** GPU/CPU resource management
 - **Model-aware:** Architecture understanding
 - **Optimization:** Quantization, context management
 
-### Performance Benchmarking Agent
-
-- **Measurement:** Speed, latency, memory tracking
-- **Analysis:** Pattern recognition, bottleneck identification
-- **Reporting:** Clear, actionable metrics
-
-### Documentation Agent
+### Documentation Analyst (Performance)
 
 - **Writing:** Clear, concise documentation
 - **Organization:** Structured information presentation
@@ -453,7 +449,7 @@ When agents need to find tools and information, they should search in this order
 ### Metrics Dashboard
 
 | Metric | Target | Current | Status |
-|--------|--------|---------|--------|
+| --------------------- | -------- | ------- | ------ |
 | Model Swap Time | < 2s | TBD | ⏳ |
 | Generation Speed (7B) | > 10 t/s | TBD | ⏳ |
 | VRAM Utilization | < 70% | TBD | ⏳ |
@@ -509,9 +505,9 @@ When agents need to find tools and information, they should search in this order
 
 ### Knowledge Sources
 
-- **Primary:** This project documentation
-- **Secondary:** llama-swap docs, continue.dev docs
-- **Tertiary:** llama.cpp documentation, community forums
+- Primary: This project documentation
+- Secondary: llama-swap docs, continue.dev docs
+- Tertiary: llama.cpp documentation, community forums
 
 ## 🌟 Success Criteria
 
@@ -600,8 +596,8 @@ When agents need to find tools and information, they should search in this order
 - Deep-dives create reference material
 - Troubleshooting guides help future sessions
 
-______________________________________________________________________
+Last updated: 2026
+Status: Phase 1 - Foundation
+Next milestone: First configuration iteration
 
-*Last updated: 2026*
-*Status: Phase 1 - Foundation*
-*Next milestone: First configuration iteration*
+AGENTS.md has 607 lines total.
