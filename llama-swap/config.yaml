@@ -1,3 +1,5 @@
+# add this modeline for validation in vscode
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mostlygeek/llama-swap/refs/heads/main/config-schema.json
 globalTTL: 0
 groups:
   swappable:
@@ -26,7 +28,8 @@ groups:
     swap: true
 healthCheckTimeout: 60
 logLevel: debug
-logToStdout: proxy
+logTimeFormat: rfc3339
+logToStdout: both
 apiKeys:
   - "8675309"
 macros:
@@ -56,7 +59,6 @@ models:
       top_k: '40'
       top_p: '0.9'
     name: CodeLlama 7B
-    ttl: 600
   DeepSeek-R1-0528-Qwen3-8B-GGUF:
     cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/DeepSeek-R1-0528-Qwen3-8B-GGUF/DeepSeek-R1-0528-Qwen3-8B-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
     env:
@@ -67,7 +69,6 @@ models:
       top_k: '40'
       top_p: '0.9'
     name: DeepSeek R1 8B
-    ttl: 600
   Devstral-Small-2-24B-Instruct-2512-GGUF:
     cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/Devstral-Small-2-24B-Instruct-2512-GGUF/Devstral-Small-2-24B-Instruct-2512-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
     env:
@@ -78,7 +79,6 @@ models:
       top_k: '40'
       top_p: '0.9'
     name: Devstral 24B
-    ttl: 600
   LFM2-24B-A2B-GGUF:
     cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/LFM2-24B-A2B-GGUF/LFM2-24B-A2B-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
     env:
@@ -89,7 +89,6 @@ models:
       top_k: '40'
       top_p: '0.9'
     name: LFM2 24B A2B
-    ttl: 600
   Meta-Llama-3.1-8B-Instruct:
     cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/Meta-Llama-3.1-8B-Instruct-GGUF/Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
     env:
@@ -100,7 +99,6 @@ models:
       top_k: '40'
       top_p: '0.9'
     name: Llama 3.1 8B
-    ttl: 600
   Ministral-3-14B-Reasoning-2512-GGUF:
     cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/Ministral-3-14B-Reasoning-2512-GGUF/Ministral-3-14B-Reasoning-2512-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
     env:
@@ -111,7 +109,6 @@ models:
       top_k: '40'
       top_p: '0.9'
     name: Ministral 14B Reasoning
-    ttl: 600
   Ministral-3-3B-Instruct-2512-GGUF:
     cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/Ministral-3-3B-Instruct-2512-GGUF/Ministral-3-3B-Instruct-2512-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
     env:
@@ -122,7 +119,6 @@ models:
       top_k: '40'
       top_p: '0.9'
     name: Ministral 3B
-    ttl: 600
   Mistral-Nemo-Instruct-2407-GGUF:
     cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/Mistral-Nemo-Instruct-2407-GGUF/Mistral-Nemo-Instruct-2407-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
     env:
@@ -133,7 +129,6 @@ models:
       top_k: '40'
       top_p: '0.9'
     name: Mistral Nemo 12B
-    ttl: 600
   NVIDIA-Nemotron-3-Nano-4B-GGUF:
     cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/NVIDIA-Nemotron-3-Nano-4B-GGUF/NVIDIA-Nemotron-3-Nano-4B-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --context-shift --reasoning ${reasoning} --reasoning-format ${reasoningFormat} --reasoning-budget ${reasoningBudget} --cache-ram ${cacheRamSpillover}"
     env:
@@ -141,7 +136,6 @@ models:
     macros:
       ctxSize: '113333'
     name: NVIDIA Nemotron 3 Nano 4B
-    ttl: 600
   Phi-4-mini-reasoning-GGUF:
     cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/Phi-4-mini-reasoning-GGUF/Phi-4-mini-reasoning-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
     env:
@@ -152,7 +146,6 @@ models:
       top_k: '40'
       top_p: '0.9'
     name: Phi-4 Mini Reasoning
-    ttl: 600
   Phi-4-reasoning-plus-GGUF:
     cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/Phi-4-reasoning-plus-GGUF/Phi-4-reasoning-plus-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
     env:
@@ -163,7 +156,6 @@ models:
       top_k: '40'
       top_p: '0.9'
     name: Phi-4 Reasoning Plus
-    ttl: 600
   Qwen3-4B-Thinking-2507-GGUF:
     cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/Qwen3-4B-Thinking-2507-GGUF/Qwen3-4B-Thinking-2507-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
     env:
@@ -174,7 +166,6 @@ models:
       top_k: '40'
       top_p: '0.9'
     name: Qwen3 4B Thinking
-    ttl: 600
   Qwen3-VL-8B-Instruct-GGUF:
     cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/Qwen3-VL-8B-Instruct-GGUF/Qwen3-VL-8B-Instruct-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
     env:
@@ -185,7 +176,6 @@ models:
       top_k: '40'
       top_p: '0.9'
     name: Qwen3-VL 8B Vision
-    ttl: 600
   Qwen3.5-9B-GGUF:
     cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/Qwen3.5-9B-GGUF/Qwen3.5-9B-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --context-shift --reasoning ${reasoning} --reasoning-format ${reasoningFormat} --reasoning-budget ${reasoningBudget} --cache-ram ${cacheRamSpillover} --temp ${temp} --top-k ${top_k} --top-p ${top_p} --min-p ${min_p}"
     env:
@@ -197,7 +187,7 @@ models:
       top_k: '20'
       top_p: '0.95'
     name: Qwen3.5 9B
-    ttl: 600
+    tools: true
   Qwen3.6-27B-GGUF:
     cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/Qwen3.6-27B-GGUF/Qwen3.6-27B-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
     env:
@@ -208,7 +198,6 @@ models:
       top_k: '40'
       top_p: '0.9'
     name: Qwen3.6 27B
-    ttl: 600
   gemma-4-E4B-it-GGUF:
     cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/gemma-4-E4B-it-GGUF/gemma-4-E4B-it-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
     env:
@@ -219,16 +208,14 @@ models:
       top_k: '40'
       top_p: '0.9'
     name: Gemma 4E Instruct
-    ttl: 600
   granite-4-h-tiny:
     cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/granite-4.0-h-tiny-GGUF/granite-4.0-h-tiny-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --context-shift"
     env:
       - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
     macros:
       cacheRamSpillover: '-1'
-      ctxSize: '48461'
+      ctxSize: '400000'
     name: IBM Granite 4.0 Hybrid Tiny
-    ttl: 600
   olmOCR-2-7B-1025-GGUF:
     cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/olmOCR-2-7B-1025-GGUF/olmOCR-2-7B-1025-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
     env:
@@ -239,7 +226,6 @@ models:
       top_k: '40'
       top_p: '0.9'
     name: olmOCR 7B
-    ttl: 600
   rnj-1-instruct-GGUF:
     cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/rnj-1-instruct-GGUF/rnj-1-instruct-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
     env:
@@ -250,7 +236,6 @@ models:
       top_k: '40'
       top_p: '0.9'
     name: RNJ-1 Instruct
-    ttl: 600
   zerank-1-small-gguf:
     cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/../mradermacher/zerank-1-small-GGUF/zerank-1-small.Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
     env:
@@ -261,7 +246,6 @@ models:
       top_k: '40'
       top_p: '0.9'
     name: Zerank 1 Small
-    ttl: 600
   zerank-2-gguf:
     cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/../mradermacher/zerank-2-GGUF/zerank-2.Q4_K_S.gguf --device ${device} --reranking --tools all --embedding --reasoning-budget 0 --reasoning off --gpu-layers -2"
     env:
@@ -272,7 +256,6 @@ models:
       ctxSize: '-1'
       device: Vulkan0
     name: Zerank 2.0
-    ttl: 600
 performance:
   disabled: false
   every: 15s
