@@ -190,6 +190,18 @@ models:
       top_p: '0.95'
     name: Qwen3.5 9B
     tools: true
+  Qwythos-9B-Claude-Mythos-5-1M-GGUF:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/../empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF/Qwythos-9B-Claude-Mythos-5-1M-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --context-shift --reasoning ${reasoning} --reasoning-format ${reasoningFormat} --reasoning-budget ${reasoningBudget} --cache-ram ${cacheRamSpillover} --temp ${temp} --top-k ${top_k} --top-p ${top_p} --min-p ${min_p}"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+    macros:
+      ctxSize: '131072'
+      min_p: '0'
+      temp: '0.6'
+      top_k: '20'
+      top_p: '0.95'
+    name: Qwythos 9B Claude Mythos 5 1M GGUF
+    tools: true
   Qwen3.6-27B-GGUF:
     cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/Qwen3.6-27B-GGUF/Qwen3.6-27B-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
     env:
@@ -205,11 +217,19 @@ models:
     env:
       - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
     macros:
-      ctxSize: '18000'
+      ctxSize: '262144'
       temp: '0.7'
       top_k: '40'
       top_p: '0.9'
     name: Gemma 4E Instruct
+  granite-4.1-8b-GGUF:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/../ibm-granite/granite-4.1-8b-GGUF/granite-4.1-8b-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --context-shift"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+    macros:
+      cacheRamSpillover: '-1'
+      ctxSize: '100000'
+    name: IBM Granite 4.1
   granite-4-h-tiny:
     cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/granite-4.0-h-tiny-GGUF/granite-4.0-h-tiny-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --context-shift"
     env:
@@ -258,6 +278,18 @@ models:
       ctxSize: '-1'
       device: Vulkan0
     name: Zerank 2.0
+  FastContext-1.0-4B-SFT-Q4_K_M-GGUF:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/../mitkox/FastContext-1.0-4B-SFT-Q4_K_M-GGUF/fastcontext-1.0-4b-sft-q4_k_m.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --context-shift --reasoning ${reasoning} --reasoning-format ${reasoningFormat} --reasoning-budget ${reasoningBudget} --cache-ram ${cacheRamSpillover} --temp ${temp} --top-k ${top_k} --top-p ${top_p} --min-p ${min_p}"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+    macros:
+      ctxSize: '65536'
+      min_p: '0'
+      temp: '0.6'
+      top_k: '20'
+      top_p: '0.95'
+    name: FastContext 1.0 4B
+    tools: true
 performance:
   disabled: false
   every: 15s
