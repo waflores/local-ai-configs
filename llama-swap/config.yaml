@@ -190,6 +190,18 @@ models:
       top_p: '0.95'
     name: Qwen3.5 9B
     tools: true
+  Bonsai-27B-GGUF:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/Bonsai-27B-GGUF/Bonsai-27B-Q1_0.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --context-shift --reasoning ${reasoning} --reasoning-format ${reasoningFormat} --reasoning-budget ${reasoningBudget} --cache-ram ${cacheRamSpillover} --temp ${temp} --top-k ${top_k} --top-p ${top_p} --min-p ${min_p} --mmproj ${models_directory}/Bonsai-27B-GGUF/mmproj-Bonsai-27B-BF16.gguf"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+    macros:
+      ctxSize: '262144'
+      min_p: '0'
+      temp: '0.7'
+      top_k: '20'
+      top_p: '0.95'
+    name: PrismML Bonsai 27B
+    tools: true
   Qwythos-9B-Claude-Mythos-5-1M-GGUF:
     cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/../empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF/Qwythos-9B-Claude-Mythos-5-1M-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --context-shift --reasoning ${reasoning} --reasoning-format ${reasoningFormat} --reasoning-budget ${reasoningBudget} --cache-ram ${cacheRamSpillover} --temp ${temp} --top-k ${top_k} --top-p ${top_p} --min-p ${min_p}"
     env:
