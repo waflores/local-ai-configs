@@ -206,6 +206,6 @@ rm -rf /home/waflores/DevFolder/ai/local-config/llamastash/logs/
 
 ## Status
 
-**Installation Status:** Complete\
-**Integration Version:** 1.0\
+**Installation Status:** Complete
+**Integration Version:** 1.0
 **Last Verified:** 2024

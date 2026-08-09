@@ -91,7 +91,7 @@ curl http://127.0.0.1:8080/metrics
 | Web UI | `http://localhost:8080/ui` | Model playground |
 | Health | `http://localhost:8080/health` | Health check |
 | Models | `http://localhost:8080/v1/models` | List models |
-| Logs | `/logs/stream` | Live logs |
+| Logs | `http://localhost:8080/v1/logs/stream` | Live logs |
 | Metrics | `http://localhost:8080/metrics` | Prometheus |
 
 ## Quick Troubleshooting
@@ -159,6 +159,6 @@ curl http://127.0.0.1:8080/metrics | grep "llama_server_requests_total"
 
 ## Status
 
-**Setup Status:** Ready\
-**Integration Version:** 1.0\
+**Setup Status:** Ready
+**Integration Version:** 1.0
 **Last Updated:** 2024

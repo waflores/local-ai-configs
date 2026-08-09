@@ -220,6 +220,6 @@ curl http://127.0.0.1:8080/health
 
 ## Status
 
-**Configuration System:** Complete\
-**Integration Version:** 1.0\
+**Configuration System:** Complete
+**Integration Version:** 1.0
 **Last Updated:** 2024

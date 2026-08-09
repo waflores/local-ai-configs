@@ -231,6 +231,6 @@ ls -la /home/waflores/.lmstudio/models/lmstudio-community/
 
 ______________________________________________________________________
 
-**Last Updated:** 2026-06-20\
-**Status:** Production-ready\
+**Last Updated:** 2026-06-20
+**Status:** Production-ready
 **Version:** 1.0

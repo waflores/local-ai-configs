@@ -130,6 +130,6 @@ This project uses the **Agent Skills** format for extending AI agent capabilitie
 
 ## Status
 
-**Integration Version:** 1.0\
-**Last Updated:** 2024\
+**Integration Version:** 1.0
+**Last Updated:** 2024
 **Status:** Ready for deployment

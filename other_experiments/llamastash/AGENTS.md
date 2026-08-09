@@ -202,6 +202,6 @@ Each skill folder contains:
 
 ______________________________________________________________________
 
-**Status:** Integration ready for deployment\
-**Last Updated:** 2024\
+**Status:** Integration ready for deployment
+**Last Updated:** 2024
 **Integration Version:** 1.0
