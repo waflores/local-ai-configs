@@ -110,7 +110,7 @@ models:
       top_p: '0.9'
     name: Ministral 3B
   Mistral-Nemo-Instruct-2407-GGUF:
-    cmd: "${cmdPrefix} --no-webui --port ${PORT} --model ${models_directory}/Mistral-Nemo-Instruct-2407-GGUF/Mistral-Nemo-Instruct-2407-Q4_K_M.gguf -lv 4 --tools ${tools} --fit-target 0"
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --model ${models_directory}/Mistral-Nemo-Instruct-2407-GGUF/Mistral-Nemo-Instruct-2407-Q3_K_L.gguf -lv 4 --tools ${tools} --fit-target 0"
     macros:
       ctxSize: '1024'
       temp: '0.7'
