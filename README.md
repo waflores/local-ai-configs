@@ -244,4 +244,6 @@ llama-fit-params --model ~/.lmstudio/models/empero-ai/Qwythos-9B-Claude-Mythos-5
 
 # This example code seems to not be performant - but an example nonetheless
 llama-gguf ~/.lmstudio/models/empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF/Qwythos-9B-Claude-Mythos-5-1M-Q4_K_M.gguf r n
+
+find ~/.lmstudio/models/ -path '*/mmproj*' -prune -o -name '*.gguf' -print -exec llama-fit-params -lv 1 --model "{}" --fit-target 0 \;
 ```
