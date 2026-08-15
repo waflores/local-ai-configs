@@ -234,3 +234,14 @@ ______________________________________________________________________
 *Last updated: 2026-06-20*
 *Status: Phase 1 - Foundation*
 *Next milestone: Performance benchmarking*
+
+## Notes
+
+We can size up the models by running this command:
+
+```bash
+llama-fit-params --model ~/.lmstudio/models/empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF/Qwythos-9B-Claude-Mythos-5-1M-Q4_K_M.gguf -lv 5 --log-colors off 2>&1 > /dev/null | grep -vP '^\S*\s+D'
+
+# This example code seems to not be performant - but an example nonetheless
+llama-gguf ~/.lmstudio/models/empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF/Qwythos-9B-Claude-Mythos-5-1M-Q4_K_M.gguf r n
+```
