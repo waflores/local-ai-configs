@@ -154,7 +154,7 @@ models:
       top_p: '0.9'
     name: Qwen3-VL 8B Vision
   Qwen3.5-9B-GGUF:
-    cmd: "${cmdPrefix} --no-webui --port ${PORT} --model ${models_directory}/Qwen3.5-9B-GGUF/Qwen3.5-9B-Q4_K_M.gguf -lv 4 --tools ${tools}"
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --model ${models_directory}/Qwen3.5-9B-GGUF/Qwen3.5-9B-Q4_K_M.gguf -lv 4 --tools ${tools} --fit-target 0"
     macros:
       ctxSize: '262144'
       min_p: '0'
@@ -174,7 +174,7 @@ models:
     name: PrismML Bonsai 27B
     tools: true
   Qwythos-9B-Claude-Mythos-5-1M-GGUF:
-    cmd: "${cmdPrefix} --no-webui --port ${PORT} --model ${models_directory}/../empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF/Qwythos-9B-Claude-Mythos-5-1M-Q4_K_M.gguf -lv 4 --tools ${tools}"
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --model ${models_directory}/../empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF/Qwythos-9B-Claude-Mythos-5-1M-Q4_K_M.gguf -lv 4 --tools ${tools} --parallel 1 --no-warmup --cache-ram 0 --fit-target 0"
     macros:
       ctxSize: '131072'
       min_p: '0'
