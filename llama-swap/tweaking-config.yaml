@@ -1,0 +1,261 @@
+# add this modeline for validation in vscode
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mostlygeek/llama-swap/refs/heads/main/config-schema.json
+globalTTL: 0
+groups:
+  swappable:
+    exclusive: true
+    members:
+      - Meta-Llama-3.1-8B-Instruct
+      - CodeLlama-7B-Instruct
+      - Qwen3.5-9B-GGUF
+      - Qwen3.6-27B-GGUF
+      - Qwen3-4B-Thinking-2507-GGUF
+      - DeepSeek-R1-0528-Qwen3-8B-GGUF
+      - Ministral-3-3B-Instruct-2512-GGUF
+      - Ministral-3-14B-Reasoning-2512-GGUF
+      - Mistral-Nemo-Instruct-2407-GGUF
+      - Phi-4-mini-reasoning-GGUF
+      - Phi-4-reasoning-plus-GGUF
+      - gemma-4-E4B-it-GGUF
+      - NVIDIA-Nemotron-3-Nano-4B-GGUF
+      - Devstral-Small-2-24B-Instruct-2512-GGUF
+      - LFM2-24B-A2B-GGUF
+      - Qwen3-VL-8B-Instruct-GGUF
+      - olmOCR-2-7B-1025-GGUF
+      - rnj-1-instruct-GGUF
+      - zerank-2-gguf
+      - zerank-1-small-gguf
+    swap: true
+healthCheckTimeout: 60
+logLevel: debug
+logTimeFormat: rfc3339
+logToStdout: both
+apiKeys:
+  - "8675309"
+macros:
+  cacheRamSpillover: '4096'
+  cmdPrefix: /home/waflores/DevFolder/ai/llama.cpp/build/bin/llama-server
+  prismmlcmdPrefix: /home/waflores/DevFolder/ai/prismml-llama.cpp/build/bin/llama-server
+  contextShift: 'false'
+  ctxSize: '131072'
+  device: "CUDA0"
+  flashAttn: auto
+  jinja: 'true'
+  models_directory: /home/waflores/.lmstudio/models/lmstudio-community
+  nGpuLayers: all
+  nPredict: '-1'
+  reasoning: auto
+  reasoningBudget: '-1'
+  reasoningFormat: deepseek
+  threads: '-1'
+  tools: all
+models:
+  CodeLlama-7B-Instruct:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --model ${models_directory}/CodeLlama-7B-Instruct-GGUF/codellama-7b-instruct.Q4_K_M.gguf --tools ${tools}"
+    macros:
+      ctxSize: '16384'
+      temp: '0.8'
+      top_k: '40'
+      top_p: '0.9'
+    name: CodeLlama 7B
+  DeepSeek-R1-0528-Qwen3-8B-GGUF:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --model ${models_directory}/DeepSeek-R1-0528-Qwen3-8B-GGUF/DeepSeek-R1-0528-Qwen3-8B-Q4_K_M.gguf --tools ${tools}"
+    macros:
+      ctxSize: '24893'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: DeepSeek R1 8B
+  Devstral-Small-2-24B-Instruct-2512-GGUF:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --model ${models_directory}/Devstral-Small-2-24B-Instruct-2512-GGUF/Devstral-Small-2-24B-Instruct-2512-Q4_K_M.gguf --tools ${tools}"
+    macros:
+      ctxSize: '1024'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: Devstral 24B
+  LFM2-24B-A2B-GGUF:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --model ${models_directory}/LFM2-24B-A2B-GGUF/LFM2-24B-A2B-Q4_K_M.gguf --tools ${tools}"
+    macros:
+      ctxSize: '1024'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: LFM2 24B A2B
+  Meta-Llama-3.1-8B-Instruct:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --model ${models_directory}/Meta-Llama-3.1-8B-Instruct-GGUF/Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf --tools ${tools}"
+    macros:
+      ctxSize: '27391'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: Llama 3.1 8B
+  Ministral-3-14B-Reasoning-2512-GGUF:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --model ${models_directory}/Ministral-3-14B-Reasoning-2512-GGUF/Ministral-3-14B-Reasoning-2512-Q4_K_M.gguf --tools ${tools}"
+    macros:
+      ctxSize: '1024'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: Ministral 14B Reasoning
+  Ministral-3-3B-Instruct-2512-GGUF:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --model ${models_directory}/Ministral-3-3B-Instruct-2512-GGUF/Ministral-3-3B-Instruct-2512-Q4_K_M.gguf --tools ${tools}"
+    macros:
+      ctxSize: '133333'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: Ministral 3B
+  Mistral-Nemo-Instruct-2407-GGUF:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --model ${models_directory}/Mistral-Nemo-Instruct-2407-GGUF/Mistral-Nemo-Instruct-2407-Q4_K_M.gguf --tools ${tools}"
+    macros:
+      ctxSize: '1024'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: Mistral Nemo 12B
+  NVIDIA-Nemotron-3-Nano-4B-GGUF:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --model ${models_directory}/NVIDIA-Nemotron-3-Nano-4B-GGUF/NVIDIA-Nemotron-3-Nano-4B-Q8_0.gguf --tools ${tools}"
+    macros:
+      ctxSize: '290000'
+      reasoningFormat: auto
+    name: NVIDIA Nemotron 3 Nano 4B
+    tools: true
+  Phi-4-mini-reasoning-GGUF:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --model ${models_directory}/Phi-4-mini-reasoning-GGUF/Phi-4-mini-reasoning-Q4_K_M.gguf --tools ${tools}"
+    macros:
+      ctxSize: '123333'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: Phi-4 Mini Reasoning
+  Phi-4-reasoning-plus-GGUF:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --model ${models_directory}/Phi-4-reasoning-plus-GGUF/Phi-4-reasoning-plus-Q4_K_M.gguf --tools ${tools}"
+    macros:
+      ctxSize: '1024'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: Phi-4 Reasoning Plus
+  Qwen3-4B-Thinking-2507-GGUF:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --model ${models_directory}/Qwen3-4B-Thinking-2507-GGUF/Qwen3-4B-Thinking-2507-Q4_K_M.gguf --tools ${tools}"
+    macros:
+      ctxSize: '123333'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: Qwen3 4B Thinking
+  Qwen3-VL-8B-Instruct-GGUF:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --model ${models_directory}/Qwen3-VL-8B-Instruct-GGUF/Qwen3-VL-8B-Instruct-Q4_K_M.gguf --tools ${tools}"
+    macros:
+      ctxSize: '24893'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: Qwen3-VL 8B Vision
+  Qwen3.5-9B-GGUF:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --model ${models_directory}/Qwen3.5-9B-GGUF/Qwen3.5-9B-Q4_K_M.gguf --tools ${tools}"
+    macros:
+      ctxSize: '262144'
+      min_p: '0'
+      temp: '0.6'
+      top_k: '20'
+      top_p: '0.95'
+    name: Qwen3.5 9B
+    tools: true
+  Bonsai-27B-GGUF:
+    cmd: "${prismmlcmdPrefix} --no-webui --port ${PORT} --model ${models_directory}/Bonsai-27B-GGUF/Bonsai-27B-Q1_0.gguf --tools ${tools}"
+    macros:
+      ctxSize: '262144'
+      min_p: '0'
+      temp: '0.7'
+      top_k: '20'
+      top_p: '0.95'
+    name: PrismML Bonsai 27B
+    tools: true
+  Qwythos-9B-Claude-Mythos-5-1M-GGUF:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --model ${models_directory}/../empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF/Qwythos-9B-Claude-Mythos-5-1M-Q4_K_M.gguf --tools ${tools}"
+    macros:
+      ctxSize: '131072'
+      min_p: '0'
+      temp: '0.6'
+      top_k: '20'
+      top_p: '0.95'
+    name: Qwythos 9B Claude Mythos 5 1M GGUF
+    tools: true
+  Qwen3.6-27B-GGUF:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --model ${models_directory}/Qwen3.6-27B-GGUF/Qwen3.6-27B-Q4_K_M.gguf --tools ${tools}"
+    macros:
+      ctxSize: '1024'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: Qwen3.6 27B
+  gemma-4-E4B-it-GGUF:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --model ${models_directory}/gemma-4-E4B-it-GGUF/gemma-4-E4B-it-Q4_K_M.gguf --tools ${tools}"
+    macros:
+      ctxSize: '262144'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: Gemma 4E Instruct
+  granite-4.1-8b-GGUF:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --model ${models_directory}/../ibm-granite/granite-4.1-8b-GGUF/granite-4.1-8b-Q4_K_M.gguf --tools ${tools}"
+    macros:
+      cacheRamSpillover: '-1'
+      ctxSize: '100000'
+    name: IBM Granite 4.1
+  granite-4-h-tiny:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --model ${models_directory}/granite-4.0-h-tiny-GGUF/granite-4.0-h-tiny-Q4_K_M.gguf --tools ${tools}"
+    macros:
+      cacheRamSpillover: '-1'
+      ctxSize: '400000'
+    name: IBM Granite 4.0 Hybrid Tiny
+  olmOCR-2-7B-1025-GGUF:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --model ${models_directory}/olmOCR-2-7B-1025-GGUF/olmOCR-2-7B-1025-Q4_K_M.gguf --tools ${tools}"
+    macros:
+      ctxSize: '32727'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: olmOCR 7B
+  rnj-1-instruct-GGUF:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --model ${models_directory}/rnj-1-instruct-GGUF/rnj-1-instruct-Q4_K_M.gguf --tools ${tools}"
+    macros:
+      ctxSize: '22500'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: RNJ-1 Instruct
+  zerank-1-small-gguf:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --model ${models_directory}/../mradermacher/zerank-1-small-GGUF/zerank-1-small.Q4_K_M.gguf --tools ${tools}"
+    macros:
+      ctxSize: '40960'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: Zerank 1 Small
+  zerank-2-gguf:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --model ${models_directory}/../mradermacher/zerank-2-GGUF/zerank-2.Q4_K_S.gguf --tools all"
+    env:
+      - CUDA_VISIBLE_DEVICES=-1
+      - GGML_VK_VISIBLE_DEVICES=0
+    macros:
+      ctxSize: '-1'
+      device: Vulkan0
+    name: Zerank 2.0
+  FastContext-1.0-4B-SFT-Q4_K_M-GGUF:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --model ${models_directory}/../mitkox/FastContext-1.0-4B-SFT-Q4_K_M-GGUF/fastcontext-1.0-4b-sft-q4_k_m.gguf --tools ${tools}"
+    macros:
+      ctxSize: '65536'
+      min_p: '0'
+      temp: '0.6'
+      top_k: '20'
+      top_p: '0.95'
+    name: FastContext 1.0 4B
+    tools: true
+performance:
+  disabled: false
+  every: 15s
+sendLoadingState: true
+startPort: 10001
