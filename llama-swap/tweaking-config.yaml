@@ -119,7 +119,7 @@ models:
     name: Mistral Nemo 12B
   NVIDIA-Nemotron-3-Nano-4B-GGUF:
     # We can be 193536
-    cmd: "${cmdPrefix} --no-webui --port ${PORT} --model ${models_directory}/NVIDIA-Nemotron-3-Nano-4B-GGUF/NVIDIA-Nemotron-3-Nano-4B-Q8_0.gguf -lv 4 --tools ${tools} --fit-target 0"
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --model ${models_directory}/NVIDIA-Nemotron-3-Nano-4B-GGUF/NVIDIA-Nemotron-3-Nano-4B-Q8_0.gguf -lv 4 --tools ${tools} --fit-target 0 --jinja"
     macros:
       ctxSize: '290000'
       reasoningFormat: auto

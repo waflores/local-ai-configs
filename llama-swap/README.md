@@ -143,3 +143,11 @@ ______________________________________________________________________
 
 **Last Updated:** 2026-06-13
 **Status:** Active
+
+## Unsloth Resources
+
+https://unsloth.ai/docs/models/qwen3.5
+https://unsloth.ai/docs/integrations/hermes-agent
+https://unsloth.ai/docs/models/tutorials/llama-4-how-to-run-and-fine-tune
+https://unsloth.ai/docs/basics/dynamic-3.0-ggufs
+https://unsloth.ai/docs/models/qwen3.8
