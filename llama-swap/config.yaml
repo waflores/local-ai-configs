@@ -304,6 +304,8 @@ models:
       top_p: '0.95'
     name: FastContext 1.0 4B
     tools: true
+# llama-server --model /home/waflores/.lmstudio/models/openbmb/MiniCPM5-2B-GGUF/MiniCPM5-2B-Q4_K_M.gguf --host 127.0.0.1 --port 44425 --api-key DBshr_Q2qiqAEhagaH5eLSbnBL5UZhGSir_WoABxCV8 --verbosity 5 --no-webui --jinja --chat-template-file /home/waflores/.lmstudio/.internal/temp/lmstudio-chat-template-w7NTaN/chat-template.jinja --ctx-size 131072 --n-gpu-layers 999999 --n-cpu-moe 0 --main-gpu 0 --tensor-split 0 --split-mode layer --ctx-checkpoints 32 --batch-size 2048 --ubatch-size 512 --threads 9 --parallel 4 --cache-type-k f16 --cache-type-v f16 --flash-attn on --kv-offload --kv-unified --load-mode mmap+mlock
+# lama-server --model /home/waflores/.lmstudio/models/unsloth/SmolLM2-360M-Instruct-GGUF/SmolLM2-360M-Instruct-F16.gguf --host 127.0.0.1 --port 33973 --api-key qjjOv1fAqX1hZui7XIP3smI1ZYX5EXgpd_N82Z84Q3w --verbosity 5 --no-webui --jinja --chat-template-file /home/waflores/.lmstudio/.internal/temp/lmstudio-chat-template-OJ37FQ/chat-template.jinja --ctx-size 8192 --n-gpu-layers 999999 --n-cpu-moe 0 --main-gpu 0 --tensor-split 0 --split-mode layer --ctx-checkpoints 32 --batch-size 2048 --ubatch-size 512 --threads 9 --parallel 4 --cache-type-k f16 --cache-type-v f16 --flash-attn on --kv-offload --kv-unified --load-mode mmap+mlock
 performance:
   disabled: false
   every: 15s

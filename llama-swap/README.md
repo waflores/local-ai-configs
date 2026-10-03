@@ -151,3 +151,7 @@ https://unsloth.ai/docs/integrations/hermes-agent
 https://unsloth.ai/docs/models/tutorials/llama-4-how-to-run-and-fine-tune
 https://unsloth.ai/docs/basics/dynamic-3.0-ggufs
 https://unsloth.ai/docs/models/qwen3.8
+
+## Example Benchmark
+
+https://github.com/ggml-org/llama.cpp/discussions/15013
