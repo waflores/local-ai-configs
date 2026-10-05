@@ -273,7 +273,7 @@ models:
       top_p: '0.9'
     name: RNJ-1 Instruct
   zerank-1-small-gguf:
-    cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/../mradermacher/zerank-1-small-GGUF/zerank-1-small.Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/../mradermacher/zerank-1-small-GGUF/zerank-1-small.Q8_0.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
     env:
       - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
     macros:
@@ -285,12 +285,9 @@ models:
   zerank-2-gguf:
     cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/../mradermacher/zerank-2-GGUF/zerank-2.Q4_K_S.gguf --device ${device} --reranking --tools all --embedding --reasoning-budget 0 --reasoning off --gpu-layers -2"
     env:
-      - CUDA_VISIBLE_DEVICES=-1
-      - GGML_VK_VISIBLE_DEVICES=0
       - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
     macros:
       ctxSize: '-1'
-      device: Vulkan0
     name: Zerank 2.0
   FastContext-1.0-4B-SFT-Q4_K_M-GGUF:
     cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/../mitkox/FastContext-1.0-4B-SFT-Q4_K_M-GGUF/fastcontext-1.0-4b-sft-q4_k_m.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --context-shift --reasoning ${reasoning} --reasoning-format ${reasoningFormat} --reasoning-budget ${reasoningBudget} --cache-ram ${cacheRamSpillover} --temp ${temp} --top-k ${top_k} --top-p ${top_p} --min-p ${min_p}"
