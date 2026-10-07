@@ -23,7 +23,7 @@ import sys
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, Tuple, List
+from typing import Any
 
 # Add llama-throughput-lab to path
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -33,7 +33,7 @@ THROUGHPUT_LAB = Path(SCRIPT_DIR.parent.parent, "llama-throughput-lab")
 CONFIG_FILE = Path(SCRIPT_DIR, "config.yaml")
 
 
-def load_llama_swap_config() -> Dict[str, Any]:
+def load_llama_swap_config() -> dict[str, Any]:
     """Load the llama-swap configuration file."""
     import yaml
 
@@ -41,14 +41,14 @@ def load_llama_swap_config() -> Dict[str, Any]:
         return yaml.safe_load(f)
 
 
-def get_model_info(config: Dict[str, Any], model_name: str) -> Dict[str, Any]:
+def get_model_info(config: dict[str, Any], model_name: str) -> dict[str, Any]:
     """Extract model-specific configuration."""
     if model_name in config.get("models", {}):
         return config["models"][model_name]
     return {}
 
 
-def parse_model_name(name: str) -> Tuple[int, str]:
+def parse_model_name(name: str) -> tuple[int, str]:
     """Parse model name to extract size and type.
 
     Examples:
@@ -106,12 +106,12 @@ def parse_model_name(name: str) -> Tuple[int, str]:
     return (size, model_type)
 
 
-def get_default_params(model_name: str) -> Dict[str, Any]:
+def get_default_params(model_name: str) -> dict[str, Any]:
     """Get default parameters based on model type and size."""
     size, model_type = parse_model_name(model_name)
 
     # Base parameters
-    defaults: Dict[str, Any] = {
+    defaults: dict[str, Any] = {
         "temp": 0.7,
         "top_k": 40,
         "top_p": 0.9,
@@ -203,23 +203,24 @@ def get_default_params(model_name: str) -> Dict[str, Any]:
     return defaults
 
 
-def analyze_current_config(config: Dict[str, Any], model_name: str) -> Dict[str, Any]:
+def analyze_current_config(config: dict[str, Any], model_name: str) -> dict[str, Any]:
     """Analyze current configuration and identify issues."""
     model_info = get_model_info(config, model_name)
     defaults = get_default_params(model_name)
 
-    issues: List[str] = []
-    recommendations: List[str] = []
+    issues: list[str] = []
+    recommendations: list[str] = []
 
     if model_info:
         current_macros = model_info.get("macros", {})
 
         # Check context size
-        current_ctx = current_macros.get("ctxSize", defaults["ctxSize"])
+        current_ctx = model_info.get("macros", {}).get("ctxSize", defaults["ctxSize"])
         recommended_ctx = defaults["ctxSize"]
         if current_ctx != recommended_ctx:
-            if isinstance(current_ctx, (int, float)) and isinstance(
-                recommended_ctx, (int, float)
+            if (
+                isinstance(current_ctx, (int, float))
+                and isinstance(recommended_ctx, (int, float))
             ):
                 if current_ctx > recommended_ctx * 2:
                     issues.append(
@@ -239,8 +240,9 @@ def analyze_current_config(config: Dict[str, Any], model_name: str) -> Dict[str,
         # Check temperature
         current_temp = current_macros.get("temp", defaults["temp"])
         recommended_temp = defaults["temp"]
-        if isinstance(current_temp, (int, float)) and isinstance(
-            recommended_temp, (int, float)
+        if (
+            isinstance(current_temp, (int, float))
+            and isinstance(recommended_temp, (int, float))
         ):
             if abs(current_temp - recommended_temp) > 0.1:
                 recommendations.append(
@@ -254,26 +256,20 @@ def analyze_current_config(config: Dict[str, Any], model_name: str) -> Dict[str,
         recommended_top_k = defaults["top_k"]
         recommended_top_p = defaults["top_p"]
 
-        if isinstance(current_top_k, (int, float)) and isinstance(
-            recommended_top_k, (int, float)
-        ):
-            if current_top_k != recommended_top_k:
-                recommendations.append(
-                    f"Consider adjusting top_k to {recommended_top_k}"
-                )
-        elif isinstance(current_top_k, str) and isinstance(recommended_top_k, str):
-            if current_top_k != recommended_top_k:
-                recommendations.append(
-                    f"Consider adjusting top_k to {recommended_top_k}"
-                )
+        if (
+            isinstance(current_top_k, (int, float))
+            and isinstance(recommended_top_k, (int, float))
+            or isinstance(current_top_k, str)
+            and isinstance(recommended_top_k, str)
+        ) and current_top_k != recommended_top_k:
+            recommendations.append(f"Consider adjusting top_k to {recommended_top_k}")
 
-        if isinstance(current_top_p, (int, float)) and isinstance(
-            recommended_top_p, (int, float)
+        if (
+            isinstance(current_top_p, (int, float))
+            and isinstance(recommended_top_p, (int, float))
+            and current_top_p != recommended_top_p
         ):
-            if current_top_p != recommended_top_p:
-                recommendations.append(
-                    f"Consider adjusting top_p to {recommended_top_p}"
-                )
+            recommendations.append(f"Consider adjusting top_p to {recommended_top_p}")
 
     return {
         "issues": issues,
@@ -285,14 +281,14 @@ def analyze_current_config(config: Dict[str, Any], model_name: str) -> Dict[str,
 
 def run_throughput_test(
     model_name: str, prompt: str, n_predict: int, temperature: float, output_dir: Path
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Run a single throughput test using llama-throughput-lab patterns."""
     results = {
         "model": model_name,
         "prompt": prompt,
         "n_predict": n_predict,
         "temperature": temperature,
-        "timestamp": datetime.now().isoformat(),
+        "timestamp": datetime.now().astimezone().isoformat(),
         "throughput_tps": None,
         "latency_ms": None,
         "errors": None,
@@ -368,7 +364,7 @@ def run_throughput_test(
                 # Simple throughput calculation
                 results["throughput_tps"] = (i + 1) / elapsed if elapsed > 0 else None
             else:
-                results["errors"] = f"Request {i+1} failed: {result.stderr[:100]}"
+                results["errors"] = f"Request {i + 1} failed: {result.stderr[:100]}"
 
         if results["throughput_tps"]:
             results["latency_ms"] = (
@@ -393,8 +389,8 @@ def run_throughput_test(
 
 
 def run_config_comparison(
-    config: Dict[str, Any], model_name: str, output_dir: Path
-) -> Dict[str, Any]:
+    config: dict[str, Any], model_name: str, output_dir: Path
+) -> dict[str, Any]:
     """Run configuration comparison with different parameter sets."""
     analysis = analyze_current_config(config, model_name)
 
@@ -404,7 +400,7 @@ def run_config_comparison(
 
     comparison = {
         "model": model_name,
-        "timestamp": datetime.now().isoformat(),
+        "timestamp": datetime.now().astimezone().isoformat(),
         "current_config": analysis["current"],
         "recommended_config": analysis["recommended"],
         "issues": analysis["issues"],
@@ -431,12 +427,12 @@ def run_config_comparison(
 
 
 def run_full_benchmark(
-    config: Dict[str, Any], model_name: str, output_dir: Path
-) -> Dict[str, Any]:
+    config: dict[str, Any], model_name: str, output_dir: Path
+) -> dict[str, Any]:
     """Run a full benchmark suite for a model."""
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"Running full benchmark for: {model_name}")
-    print(f"{'='*60}\n")
+    print(f"{'=' * 60}\n")
 
     # Run configuration analysis
     analysis = run_config_comparison(config, model_name, output_dir)
@@ -467,7 +463,7 @@ def run_full_benchmark(
     return {
         "benchmark": {
             "model": model_name,
-            "timestamp": datetime.now().isoformat(),
+            "timestamp": datetime.now().astimezone().isoformat(),
             "config_analysis": analysis["comparison"],
             "throughput_tests": all_results,
         }
@@ -475,8 +471,8 @@ def run_full_benchmark(
 
 
 def generate_optimized_config(
-    config: Dict[str, Any], model_name: str, benchmark_results: Dict[str, Any]
-) -> Dict[str, Any]:
+    config: dict[str, Any], model_name: str, benchmark_results: dict[str, Any]
+) -> dict[str, Any]:
     """Generate optimized configuration based on benchmark results."""
     analysis = run_config_comparison(config, model_name, Path("/tmp"))
 

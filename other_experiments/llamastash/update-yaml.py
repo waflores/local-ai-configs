@@ -1,5 +1,7 @@
+from collections.abc import Mapping
+from typing import Any
+
 import yaml
-from typing import Any, Mapping
 
 
 def load_yaml(file_path: str) -> Mapping[str, Any]:

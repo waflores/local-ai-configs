@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+"""llm-bench: Benchmark suite for llama-swap models."""
 """
 llama-bench: Benchmark suite for llama-swap models
 Tests all models and collects performance metrics

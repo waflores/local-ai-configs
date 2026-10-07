@@ -15,7 +15,7 @@ Usage:
 import argparse
 import json
 from pathlib import Path
-from typing import Any, Dict, List, TypedDict
+from typing import Any, TypedDict
 
 # Add llama-throughput-lab to path
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -25,7 +25,7 @@ THROUGHPUT_LAB = Path(SCRIPT_DIR.parent.parent, "llama-throughput-lab")
 CONFIG_FILE = Path(SCRIPT_DIR.parent, "config.yaml")
 
 
-def load_llama_swap_config() -> Dict[str, Any]:
+def load_llama_swap_config() -> dict[str, Any]:
     """Load the llama-swap configuration file."""
     import yaml
 
@@ -33,7 +33,7 @@ def load_llama_swap_config() -> Dict[str, Any]:
         return yaml.safe_load(f)
 
 
-def get_model_info(config: Dict[str, Any], model_name: str) -> Dict[str, Any]:
+def get_model_info(config: dict[str, Any], model_name: str) -> dict[str, Any]:
     """Extract model-specific configuration."""
     if model_name in config.get("models", {}):
         return config["models"][model_name]
@@ -87,11 +87,11 @@ def parse_model_name(name: str) -> tuple[int, str]:
     return (size, model_type)
 
 
-def get_default_params(model_name: str) -> Dict[str, Any]:
+def get_default_params(model_name: str) -> dict[str, Any]:
     """Get default parameters based on model type and size."""
     size, model_type = parse_model_name(model_name)
 
-    defaults: Dict[str, Any] = {
+    defaults: dict[str, Any] = {
         "temp": 0.7,
         "top_k": 40,
         "top_p": 0.9,
@@ -184,16 +184,16 @@ def get_default_params(model_name: str) -> Dict[str, Any]:
 
 
 def analyze_all_models(
-    config: Dict[str, Any], output_dir: Path
-) -> List[Dict[str, Any]]:
+    config: dict[str, Any], output_dir: Path
+) -> list[dict[str, Any]]:
     """Analyze all models in the configuration."""
-    results: List[Dict[str, Any]] = []
+    results: list[dict[str, Any]] = []
 
-    for model_name in config.get("models", {}).keys():
+    for model_name in config.get("models", {}):
         model_info = get_model_info(config, model_name)
         defaults = get_default_params(model_name)
 
-        analysis: Dict[str, Any] = {
+        analysis: dict[str, Any] = {
             "model": model_name,
             "name": model_info.get("name", ""),
             "current_macros": model_info.get("macros", {}),
@@ -232,9 +232,8 @@ def analyze_all_models(
         recommended_temp = defaults["temp"]
         if isinstance(current_temp, (int, float)) and isinstance(
             recommended_temp, (int, float)
-        ):
-            if abs(current_temp - recommended_temp) > 0.1:
-                analysis["recommendations"].append(
+        ) and abs(current_temp - recommended_temp) > 0.1:
+            analysis["recommendations"].append(
                     f"Consider adjusting temperature from {current_temp} to {recommended_temp}"
                 )
 
@@ -245,26 +244,24 @@ def analyze_all_models(
         recommended_top_k = defaults["top_k"]
         recommended_top_p = defaults["top_p"]
 
-        if isinstance(current_top_k, (int, float)) and isinstance(
-            recommended_top_k, (int, float)
-        ):
-            if current_top_k != recommended_top_k:
-                analysis["recommendations"].append(
-                    f"Consider adjusting top_k to {recommended_top_k}"
-                )
-        elif isinstance(current_top_k, str) and isinstance(recommended_top_k, str):
-            if current_top_k != recommended_top_k:
-                analysis["recommendations"].append(
-                    f"Consider adjusting top_k to {recommended_top_k}"
-                )
+        if (
+            isinstance(current_top_k, (int, float))
+            and isinstance(recommended_top_k, (int, float))
+            or isinstance(current_top_k, str)
+            and isinstance(recommended_top_k, str)
+        ) and current_top_k != recommended_top_k:
+            analysis["recommendations"].append(
+                f"Consider adjusting top_k to {recommended_top_k}"
+            )
 
-        if isinstance(current_top_p, (int, float)) and isinstance(
-            recommended_top_p, (int, float)
+        if (
+            isinstance(current_top_p, (int, float))
+            and isinstance(recommended_top_p, (int, float))
+            and current_top_p != recommended_top_p
         ):
-            if current_top_p != recommended_top_p:
-                analysis["recommendations"].append(
-                    f"Consider adjusting top_p to {recommended_top_p}"
-                )
+            analysis["recommendations"].append(
+                f"Consider adjusting top_p to {recommended_top_p}"
+            )
 
         # Add model-specific notes
         model_notes = get_model_notes(model_name)
@@ -276,10 +273,10 @@ def analyze_all_models(
     return results
 
 
-def get_model_notes(model_name: str) -> List[str]:
+def get_model_notes(model_name: str) -> list[str]:
     """Get model-specific notes and recommendations."""
     name_lower = model_name.lower()
-    notes: List[str] = []
+    notes: list[str] = []
 
     # Size-based notes
     size_str = ""
@@ -347,7 +344,7 @@ class OptimizedConfig(TypedDict, total=False):
     models: dict[str, Any]
 
 
-def generate_optimized_config(config: Dict[str, Any], output_dir: Path) -> Path:
+def generate_optimized_config(config: dict[str, Any], output_dir: Path) -> Path:
     """Generate optimized configuration file."""
     analyses = analyze_all_models(config, output_dir)
 
@@ -468,9 +465,9 @@ def main():
             with open(analysis_file, "w") as f:
                 json.dump(analysis, f, indent=2)
 
-        print(f"\n{'='*60}")
+        print(f"\n{'=' * 60}")
         print(f"Analysis complete for {len(analyses)} models")
-        print(f"{'='*60}\n")
+        print(f"{'=' * 60}\n")
 
         # Print summary
         print("Model Analysis Summary:")
@@ -491,9 +488,9 @@ def main():
                 for note in notes[:3]:  # Show first 3 notes
                     print(f"    - {note}")
 
-        print(f"\n{'='*60}")
+        print(f"\n{'=' * 60}")
         print(f"Results saved to: {output_dir}")
-        print(f"{'='*60}")
+        print(f"{'=' * 60}")
 
     elif args.generate_config:
         output_file = generate_optimized_config(config, output_dir)

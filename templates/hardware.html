@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="grid cols-2">
+  <div class="panel">
+    <h2>Hardware Specs</h2>
+    {% if hardware %}
+      <div class="card">
+        <div class="row"><span class="label">GPU</span><span class="value">{{ hardware.gpu_name }}</span></div>
+        <div class="row"><span class="label">VRAM total</span><span class="value num">{{ "%.1f"|format(hardware.gpu_memory_gb) }} GB</span></div>
+        <div class="row"><span class="label">VRAM free</span><span class="value num">{{ "%.1f"|format(hardware.gpu_free_gb) }} GB</span></div>
+        <div class="row"><span class="label">System RAM</span><span class="value num">{{ "%.1f"|format(hardware.system_ram_gb) }} GB</span></div>
+        <div class="row"><span class="label">CPU cores</span><span class="value">{{ hardware.cpu_cores }}</span></div>
+        <div class="row"><span class="label">System disk</span><span class="value num">{{ "%.1f"|format(hardware.system_disk_gb) }} GB</span></div>
+      </div>
+    {% else %}
+      <p class="mono">Could not detect hardware (nvidia-smi, free, or nproc unavailable).</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="grid cols-2">
+  <div class="panel">
+    <h2>Hardware</h2>
+    {% if hardware %}
+      <div class="card">
+        <div class="row"><span class="label">GPU</span><span class="value">{{ hardware.gpu_name }}</span></div>
+        <div class="row"><span class="label">VRAM</span><span class="value num">{{ "%.1f"|format(hardware.gpu_memory_gb) }} GB total, {{ "%.1f"|format(hardware.gpu_free_gb) }} GB free</span></div>
+        <div class="row"><span class="label">RAM</span><span class="value num">{{ "%.1f"|format(hardware.system_ram_gb) }} GB</span></div>
+        <div class="row"><span class="label">CPU</span><span class="value">{{ hardware.cpu_cores }} cores</span></div>
+      </div>
+    {% else %}
+      <p class="mono">Could not detect hardware (nvidia-smi, free, or nproc unavailable).</p>
+    {% endif %}
+  </div>
+
+  <div class="panel">
+  <h2>Configuration Summary</h2>
+  {% if cfg %}
+    <div class="card">
+      <div class="row"><span class="label">Generated</span><span class="value mono">{{ cfg.generated_at }}</span></div>
+      <div class="row"><span class="label">Models</span><span class="value">{{ cfg.models|length }}</span></div>
+      <div class="row"><span class="label">Profiles</span><span class="value">{{ cfg.profiles|length }}</span></div>
+      <div class="row"><span class="label">VRAM total (GB)</span><span class="value num">{{ "%.1f"|format(cfg.total_vram_gb) }}</span></div>
+      <div class="row"><span class="label">VRAM free (GB)</span><span class="value num">{{ "%.1f"|format(cfg.free_vram_gb) }}</span></div>
+      <div class="row"><span class="label">Fit status</span>
+       {% set counts = {'fits': 0, 'fits_with_capping': 0, 'over_vram': 0, 'not_found': 0} %}
+       {% for p in cfg.profiles %}{% set _ = counts.__setitem__(p.fit_status, counts[p.fit_status] + 1) %}{% endfor %}
+       <span class="value">
+         <span class="tag good">fits {{ counts.fits }}</span>
+         <span class="tag warn">capped {{ counts.fits_with_capping }}</span>
+         <span class="tag bad">over VRAM {{ counts.over_vram }}</span>
+         <span class="tag muted">missing {{ counts.not_found }}</span>
+       </span>
+      </div>
+    </div>
+  {% else %}
+    <p class="mono">Could not build configurations ({{ error }}).</p>
+  {% endif %}
+  </div>
+</div>
+
+<div class="panel" style="margin-top:16px;">
+  <h2>Quick Actions</h2>
+  <div class="grid cols-2" style="gap:10px;">
+    <a href="/configs" class="card" style="text-decoration:none; color:inherit; display:block;">
+      <span class="label" style="display:block;">All configurations</span>
+      <span class="value">Generate and inspect hardware-aware profiles for every model</span>
+    </a>
+    <a href="/configs/export.json" class="card" style="text-decoration:none; color:inherit; display:block;">
+      <span class="label" style="display:block;">JSON export</span>
+      <span class="value">Download the generated configurations as JSON</span>
+    </a>
+  </div>
+</div>
+{% endblock %}

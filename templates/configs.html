@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="panel">
+  <h2>Hardware-Aware Configurations</h2>
+
+  {% if error %}
+    <div class="card" style="border-color:#f85149; background:rgba(248,81,73,0.08);">
+      <p class="mono" style="margin:0;"><strong>Failed to build configurations:</strong></p>
+      <p class="mono" style="margin:4px 0 0; color:#f85149;">{{ error }}</p>
+    </div>
+  {% elif cfg %}
+    <div class="card condensed" style="flex-direction:column; gap:8px;">
+      <div>
+        <div class="row" style="justify-content:space-between; flex-wrap:wrap; gap:6px;">
+          <span class="label">Generated</span>
+          <span class="value mono">{{ cfg.generated_at }}</span>
+        </div>
+        <div class="row" style="justify-content:space-between; flex-wrap:wrap; gap:6px;">
+          <span class="label">Models / profiles</span>
+          <span class="value">{{ cfg.models|length }} / {{ cfg.profiles|length }}</span>
+        </div>
+        <div class="row" style="justify-content:space-between; flex-wrap:wrap; gap:6px;">
+          <span class="label">VRAM total</span>
+          <span class="value num">{{ "%.1f"|format(cfg.total_vram_gb) }} GB</span>
+        </div>
+        <div class="row" style="justify-content:space-between; flex-wrap:wrap; gap:6px;">
+          <span class="label">VRAM free (for next swap)</span>
+          <span class="value num">{{ "%.1f"|format(cfg.free_vram_gb) }} GB</span>
+        </div>
+        <div class="row" style="justify-content:space-between; flex-wrap:wrap; gap:6px;">
+          <span class="label">Fit status</span>
+          {% set counts = {'fits': 0, 'fits_with_capping': 0, 'over_vram': 0, 'not_found': 0} %}
+          {% for p in cfg.profiles %}{% set _ = counts.__setitem__(p.fit_status, counts[p.fit_status] + 1) %}{% endfor %}
+          <span class="value">
+            <span class="tag good">fits {{ counts.fits }}</span>
+            <span class="tag warn">capped {{ counts.fits_with_capping }}</span>
+            <span class="tag bad">over VRAM {{ counts.over_vram }}</span>
+            <span class="tag muted">missing {{ counts.not_found }}</span>
+          </span>
+        </div>
+      </div>
+
+      {% if cfg.profiles %}
+      <table style="margin-top:12px;">
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th>Size (GB)</th>
+            <th>Context</th>
+            <th>KV (GB)</th>
+            <th>Quant</th>
+            <th>Fit</th>
+            <th>Path</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in cfg.profiles %}
+          <tr>
+            <td>{{ p.model_name }}</td>
+            <td class="num">{{ "%.1f"|format(p.size_gb) }}</td>
+            <td class="num">{{ p.ctx_size }}</td>
+            <td class="num">{{ "%.2f"|format(p.kv_gb) }}</td>
+            <td><span class="tag">{{ p.quantization }}</span></td>
+            <td><span class="tag {% if p.fit_status == 'fits' %}good{% elif p.fit_status == 'fits_with_capping' %}warn{% elif p.fit_status == 'over_vram' %}bad{% else %}muted{% endif %}">{{ p.fit_status }}</span></td>
+            <td class="mono" style="font-size:12px;">{{ p.path[:54] if p.path else '(inferred)' }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <div class="panel" style="margin-top:16px;">
+    <h2>Actions</h2>
+    <div class="grid cols-2" style="gap:10px;">
+      <a href="/configs/export.json" class="card" style="text-decoration:none; color:inherit; display:block;">
+        <span class="label" style="display:block;">JSON export</span>
+        <span class="value">Download all generated configurations as JSON.</span>
+      </a>
+      <form method="post" action="/reload" style="display:flex; gap:8px; align-items:center;">
+        <button type="submit" class="card" style="text-decoration:none; color:inherit; display:inline-flex; align-items:center; gap:6px; cursor:pointer;">
+          <span class="label" style="display:block;">Reload data</span>
+          <span class="value">Re-read models + hardware from disk</span>
+        </button>
+      </form>
+    </div>
+  </div>
+{% endblock %}

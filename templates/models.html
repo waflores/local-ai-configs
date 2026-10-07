@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="panel">
+  <h2>Models ({{ models|length }})</h2>
+  <p class="mono" style="margin:0 0 10px;">
+    Source: <code>context-verification/</code> + <code>llama-swap/config.yaml</code> &middot;
+    Model dir: <code>/home/waflores/.lmstudio/models/lmstudio-community</code>
+  </p>
+  {% if models %}
+    <table>
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th>Size (GB)</th>
+          <th>Context (declared)</th>
+          <th>Memory-safe ctx</th>
+          <th>Quant</th>
+          <th>Path</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for m in models %}
+        <tr>
+          <td>{{ m.full_name }}</td>
+          <td class="num">{{ "%.1f"|format(m.size_gb) }}</td>
+          <td class="num">{{ m.context_length }}</td>
+          <td class="num">{{ m.memory_safe_context }}</td>
+          <td><span class="tag">{{ m.quantization }}</span></td>
+          <td class="mono" style="font-size:12px;">{{ m.path[:50] if m.path else '(inferred)' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="mono">No models found.</p>
+  {% endif %}
+</div>
+{% endblock %}
