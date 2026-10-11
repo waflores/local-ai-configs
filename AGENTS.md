@@ -268,10 +268,11 @@ This document defines the agents (humans and AI) involved in this configuration 
 - **Configuration Files:** Actual llama-swap settings
 - **SKILL.md:** AI agent commands and capabilities (see [Skill File Locations](#skill-file-locations))
 - **docs/nix-formatting.md:** Nix formatting infrastructure (treefmt-nix, nix fmt, ruff)
+- **.agents/:** Generic AI agent definitions and project instructions (renamed from .continue)
 
 ### Intent Layer Files
 
-The `.continue/` directory serves as the **intent layer**, capturing institutional knowledge that isn't visible in code:
+The `.agents/` directory serves as the **intent layer**, capturing institutional knowledge that isn't visible in code:
 
 - **System boundaries and ownership** - What each agent owns and doesn't own
 - **Invariants and contracts** - Configuration patterns that must hold
@@ -283,12 +284,12 @@ The `.continue/` directory serves as the **intent layer**, capturing institution
 
 When agents need to find tools and information, they should search in this order:
 
-1. **.continue/ directory** - Contains agent definitions, rules, and checks:
+1. **`.agents/` directory** - Contains agent definitions, rules, and checks:
 
-   - agents/ - Agent definitions (breaking-change-detector, dependency-security-review, error-message-quality, input-validation, test-coverage)
-   - rules/ - Rule definitions for various coding standards and practices
-   - checks/ - Quality checks (anti-slop, react-best-practices, security-audit, stale-comments, update-agents-md, update-continue-docs, setup-scripts)
-   - prompts/ - Prompt templates and examples
+   - `agents/` - Agent definitions (breaking-change-detector, dependency-security-review, error-message-quality, input-validation, test-coverage)
+   - `rules/` - Rule definitions for various coding standards and practices
+   - `checks/` - Quality checks (anti-slop, react-best-practices, security-audit, stale-comments, update-agents-md, update-continue-docs, setup-scripts)
+   - `prompts/` - Prompt templates and examples
 
 1. AGENTS.md - Primary intent layer file with:
 
@@ -301,31 +302,7 @@ When agents need to find tools and information, they should search in this order
 
 1. Iteration logs - Historical configuration changes and results
 
-1. Configuration files - llama-swap and continue.dev settings
-
-### Skill File Locations
-
-continue.dev looks for SKILL.md files in the following locations:
-
-1. Project Root Directory (Primary)
-
-   ```text
-   <project-root>/SKILL.md
-   ```
-
-1. Per-Project Configuration
-
-   ```text
-   <project-root>/.continue/config.json
-   ```
-
-1. Extension Package (for custom skills)
-
-   ```text
-   ~/.continue/packages/
-   ```
-
-**How Skills Work:**
+1. Configuration files - llama-swap and LLM manager settings
 
 - Create a SKILL.md file with markdown content
 

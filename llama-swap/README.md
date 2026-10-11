@@ -11,7 +11,7 @@ llama-swap is a model management tool that allows you to load and unload large l
 
 ## Authority
 
-This project uses the `.continue` folder to define AI agent behavior. Agents should consult `.continue/agents/` for project-specific instructions.
+This project uses the `.agents` folder to define AI agent behavior. Agents should consult `.agents/agents/` for project-specific instructions.
 
 ## Model Location
 

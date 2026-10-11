@@ -2,12 +2,13 @@
 
 ## Purpose
 
-This project orchestrates local LLM inference using `llama-swap` and `continue.dev`.
+This project orchestrates local LLM inference using `llama-swap` and `llama-server`.
 
 ## Core Stack
 
-- `continue.dev`: IDE agent for AI-assisted development.
-- `llama-swap`: Model orchestration layer for `llama-server`.
+- `llama-server`: Inference engine
+- `llama-swap`: Model orchestration layer
+- `nix`: Dependency and build system
 
 ## Other Experiments
 
@@ -18,19 +19,19 @@ This project orchestrates local LLM inference using `llama-swap` and `continue.d
 
 ```yaml
 authority:
-  folder: ".continue"
+  folder: ".agents"
   priority: "high"
   instructions:
-    - "Consult .continue/agents/ for project-specific AI agent instructions."
-    - "Consult .continue/config.json for project-specific configuration."
-    - "Consult .continue/prompts/ for project-specific prompts."
+    - "Consult .agents/agents/ for project-specific AI agent instructions."
+    - "Consult .agents/config.json for project-specific configuration."
+    - "Consult .agents/prompts/ for project-specific prompts."
 ```
 
 ## Critical Rules
 
 - `ctxSize` must match model capacity (no OOM).
 - `llama-swap` uses `CUDA` for active models, `Vulkan` for swapped models.
-- `continue.dev` expects models at `/home/waflores/.lmstudio/models`.
+- `llama-server` expects models at `/home/waflores/.lmstudio/models`.
 
 ## Common Issues
 

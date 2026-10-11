@@ -211,7 +211,7 @@ Models are stored at `/home/waflores/.lmstudio/models`.
 ## 📚 Related Resources
 
 - [llama-swap Documentation](https://github.com/mostly-ai/llama-swap)
-- [continue.dev Documentation](https://docs.continue.dev)
+- [llama-swap Documentation](https://github.com/mostly-ai/llama-swap)
 - [llama.cpp Documentation](https://github.com/ggerganov/llama.cpp)
 
 ## 🔄 Iteration Process
