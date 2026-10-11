@@ -268,6 +268,7 @@ This document defines the agents (humans and AI) involved in this configuration 
 - **Configuration Files:** Actual llama-swap settings
 - **SKILL.md:** AI agent commands and capabilities (see [Skill File Locations](#skill-file-locations))
 - **docs/nix-formatting.md:** Nix formatting infrastructure (treefmt-nix, nix fmt, ruff)
+- **docs/monorepo.md:** Monorepo reorganization plan (directory structure, phases, nix outputs)
 - **.agents/:** Generic AI agent definitions and project instructions (renamed from .continue)
 
 ### Intent Layer Files
@@ -284,12 +285,12 @@ The `.agents/` directory serves as the **intent layer**, capturing institutional
 
 When agents need to find tools and information, they should search in this order:
 
-1. **`.agents/` directory** - Contains agent definitions, rules, and checks:
+- **.agents/** directory — Contains agent definitions, rules, and checks:
 
-   - `agents/` - Agent definitions (breaking-change-detector, dependency-security-review, error-message-quality, input-validation, test-coverage)
-   - `rules/` - Rule definitions for various coding standards and practices
-   - `checks/` - Quality checks (anti-slop, react-best-practices, security-audit, stale-comments, update-agents-md, update-continue-docs, setup-scripts)
-   - `prompts/` - Prompt templates and examples
+  - `agents/` - Agent definitions (PROJECT-CONTRACT.md, breaking-change-detector.md, dependency-security-review.md, error-message-quality.md, input-validation.md, test-coverage.md)
+  - `config.json` - Machine-readable project authority and configuration
+  - `environment.json` - Environment configuration
+  - `README.md` - Intent layer documentation
 
 1. AGENTS.md - Primary intent layer file with:
 
@@ -298,7 +299,7 @@ When agents need to find tools and information, they should search in this order
    - Performance tracking targets
    - Collaboration guidelines
 
-1. README.md - Project vision, goals, and roadmap
+1. README.md - Project vision, goals, roadmap
 
 1. Iteration logs - Historical configuration changes and results
 

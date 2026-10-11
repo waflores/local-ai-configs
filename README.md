@@ -3,19 +3,63 @@
 ## 🤖 Machine-Readable Header
 
 ```yaml
-project:
+config:
   name: llama-swap
   core_stack:
     - llama-server
     - llama-swap
+    - nix
   authority:
-    folder: "llama-swap"
+    folder: ".agents"
     priority: "high"
   instructions:
     - "Use llama-swap as the primary interface for all AI agent interactions"
     - "Consult SKILL.md for agent commands and capabilities"
     - "Refer to llama-swap/config.yaml for model configuration"
 ```
+
+## 🎯 Project Vision
+
+High-performance local LLM inference system using **llama-swap** with intelligent model swapping on the **NVIDIA RTX 5070 Max-Q** GPU. This system provides raw inference performance with 22 models available for on-demand loading and swapping.
+
+## 🖥️ Hardware Overview
+
+| Component | Specification |
+|-----------|---------------|
+| **CPU** | Intel Core Ultra 9 275HX (24 cores, up to 5.4 GHz) |
+| **GPU** | NVIDIA GeForce RTX 5070 Max-Q (~8 GB VRAM) + Intel Integrated Graphics (~23 GB shared) |
+| **RAM** | ~33 GB total (~20 GB currently used) |
+
+## 📁 Repository Structure
+
+This is a monorepo centered on managing `llama-swap` configurations for a local LLM, with `nix` managing third-party dependencies where possible.
+
+```text
+local-config/
+├── .agents/                  # Generic AI agent definitions
+├── llama-swap/               # llama-swap config + benchmark scripts
+├── llm_manager/              # Python package (Flask web app)
+├── other_experiments/        # Experimental: inferhost, llamastash
+├── context-verification/     # Model verification JSON metadata
+├── nix/                      # treefmt-nix module + formatter bridge
+├── docs/                     # Documentation (nix-formatting.md, monorepo.md)
+├── flake.nix                 # Single flake entry point
+└── pyproject.toml            # Python project metadata (uv/uv2nix)
+```
+
+## ⚙️ Configuration
+
+| File | Purpose |
+|------|---------|
+| `flake.nix` | Single flake entry point; restricted to `x86_64-linux` only |
+| `pyproject.toml` | Python project metadata (name, version, dependencies) |
+| `nix/treefmt.nix` | treefmt-nix module — declares formatters (ruff, ruff-format, nixfmt, etc.) |
+| `nix/formatter.nix` | Bridge evaluator for treefmt-nix |
+| `nix/packages/default.nix` | Blueprint packages output (`packages.local-config`) |
+| `nix/devshells/default.nix` | Blueprint devShells output |
+| `nix/pyproject.nix` | `buildPythonPackage` builder for the Python package |
+| `.agents/` | Generic AI agent definitions and project intent layer |
+| `llama-swap/config.yaml` | llama-swap model configuration |
 
 ## 🎯 Project Vision
 
@@ -210,8 +254,6 @@ Models are stored at `/home/waflores/.lmstudio/models`.
 
 ## 📚 Related Resources
 
-- [llama-swap Documentation](https://github.com/mostly-ai/llama-swap)
-- [llama-swap Documentation](https://github.com/mostly-ai/llama-swap)
 - [llama.cpp Documentation](https://github.com/ggerganov/llama.cpp)
 
 ## 🔄 Iteration Process

@@ -16,8 +16,8 @@ The project has grown organically over several sessions with no clear structure:
 
 ```text
 local-config/
-├── .agents/              # Generic AI agent definitions (renamed from .continue)
-├── llama-swap/           # llama-swap config + benchmark scripts
+├── .agents/                 # Generic AI agent definitions (renamed from .continue)
+├── llama-swap/              # llama-swap config + benchmark scripts
 ├── llm_manager/          # Python package (Flask web app)
 ├── other_experiments/    # Experimental: inferhost, llamastash
 ├── context-verification/ # Model verification JSON metadata
@@ -190,11 +190,14 @@ None — the tree is fully reorganizable.
 
 **Verified:** `nix flake show` → exit 0; `nix flake check` → exit 0; `nix fmt` → exit 0, 0 files changed (idempotent); `ruff format --check` → clean; `ruff check` → all checks passed; `python3 -m py_compile` → all files OK.
 
-### Phase 4 — Documentation
+1. **README.md** — added a **Configuration** section listing the key files: flake.nix,
+   pyproject.toml, nix/ (treefmt.nix, formatter.nix, pyproject.nix,
+   packages/default.nix, devshells/default.nix, checks/), .agents/, llama-swap/.
 
-1. Write `docs/monorepo.md` with the final structure
-1. Update `README.md` top-level overview
-1. Update `AGENTS.md` docs listing
+1. **AGENTS.md** — updated the agent tool discovery order and intent layer file list
+   to reference `.agents/` (agents/, config.json, README.md, environment.json)
+   instead of .continue/; added `docs/monorepo.md` and `docs/nix-formatting.md` to
+   the documentation updates list.
 
 ## Risks
 
