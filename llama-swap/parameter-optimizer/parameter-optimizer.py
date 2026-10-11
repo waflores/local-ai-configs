@@ -217,25 +217,25 @@ def analyze_current_config(config: dict[str, Any], model_name: str) -> dict[str,
         # Check context size
         current_ctx = model_info.get("macros", {}).get("ctxSize", defaults["ctxSize"])
         recommended_ctx = defaults["ctxSize"]
-        if current_ctx != recommended_ctx:
-            if (
-                isinstance(current_ctx, (int, float))
-                and isinstance(recommended_ctx, (int, float))
-            ):
-                if current_ctx > recommended_ctx * 2:
-                    issues.append(
-                        f"Context size ({current_ctx}) is much larger than recommended ({recommended_ctx})"
-                    )
-                    recommendations.append(
-                        f"Reduce context size to {recommended_ctx} for better VRAM efficiency"
-                    )
-                elif current_ctx < recommended_ctx * 0.5:
-                    issues.append(
-                        f"Context size ({current_ctx}) is smaller than recommended ({recommended_ctx})"
-                    )
-                    recommendations.append(
-                        f"Consider increasing context size to {recommended_ctx}"
-                    )
+        if (
+            current_ctx != recommended_ctx
+            and isinstance(current_ctx, (int, float))
+            and isinstance(recommended_ctx, (int, float))
+        ):
+            if current_ctx > recommended_ctx * 2:
+                issues.append(
+                    f"Context size ({current_ctx}) is much larger than recommended ({recommended_ctx})"
+                )
+                recommendations.append(
+                    f"Reduce context size to {recommended_ctx} for better VRAM efficiency"
+                )
+            elif current_ctx < recommended_ctx * 0.5:
+                issues.append(
+                    f"Context size ({current_ctx}) is smaller than recommended ({recommended_ctx})"
+                )
+                recommendations.append(
+                    f"Consider increasing context size to {recommended_ctx}"
+                )
 
         # Check temperature
         current_temp = current_macros.get("temp", defaults["temp"])
@@ -243,11 +243,11 @@ def analyze_current_config(config: dict[str, Any], model_name: str) -> dict[str,
         if (
             isinstance(current_temp, (int, float))
             and isinstance(recommended_temp, (int, float))
+            and abs(current_temp - recommended_temp) > 0.1
         ):
-            if abs(current_temp - recommended_temp) > 0.1:
-                recommendations.append(
-                    f"Consider adjusting temperature from {current_temp} to {recommended_temp}"
-                )
+            recommendations.append(
+                f"Consider adjusting temperature from {current_temp} to {recommended_temp}"
+            )
 
         # Check top_k/top_p
         current_top_k = current_macros.get("top_k", defaults["top_k"])

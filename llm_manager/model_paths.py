@@ -98,19 +98,6 @@ def resolve_model_path(model_key: str, models_dir: str | None = None) -> str:
     return ""
 
 
-def model_directory_mapping(models_dir: str | None = None) -> dict[str, str]:
-    """Return ``{dir_name: dir_path}`` for the top-level model directories."""
-    models_dir = models_dir or DEFAULT_MODELS_DIR
-    mapping: dict[str, str] = {}
-    if not os.path.isdir(models_dir):
-        return mapping
-    for entry in sorted(os.listdir(models_dir)):
-        full = os.path.join(models_dir, entry)
-        if os.path.isdir(full) and entry.lower().endswith("-gguf"):
-            mapping[entry] = full
-    return mapping
-
-
 def find_gguf_in_model_dir(dir_path: str) -> str:
     """Return the path to the first ``.gguf`` file inside ``dir_path``."""
     if not os.path.isdir(dir_path):

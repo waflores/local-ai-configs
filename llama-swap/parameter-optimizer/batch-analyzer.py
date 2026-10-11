@@ -230,12 +230,14 @@ def analyze_all_models(
         # Check temperature
         current_temp = model_info.get("macros", {}).get("temp", defaults["temp"])
         recommended_temp = defaults["temp"]
-        if isinstance(current_temp, (int, float)) and isinstance(
-            recommended_temp, (int, float)
-        ) and abs(current_temp - recommended_temp) > 0.1:
+        if (
+            isinstance(current_temp, (int, float))
+            and isinstance(recommended_temp, (int, float))
+            and abs(current_temp - recommended_temp) > 0.1
+        ):
             analysis["recommendations"].append(
-                    f"Consider adjusting temperature from {current_temp} to {recommended_temp}"
-                )
+                f"Consider adjusting temperature from {current_temp} to {recommended_temp}"
+            )
 
         # Check top_k/top_p
         current_top_k = model_info.get("macros", {}).get("top_k", defaults["top_k"])

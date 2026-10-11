@@ -14,11 +14,6 @@ import os
 import sys
 from pathlib import Path
 
-# Ensure the package under test is importable.
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
-
 import pytest
 
 from llm_manager import hardware_spec, models, quantization
@@ -46,6 +41,11 @@ from llm_manager.quantization import (
     Q4_K_M,
     VALID_QUANTIZATIONS,
 )
+
+# Ensure the package under test is importable.
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
 # Convenience shorthands for quantized tags used in tests.
 Q4 = "Q4_K_M"
@@ -85,9 +85,9 @@ class TestQuantization:
             if name in expect_strings:
                 val = getattr(quantization, name)
                 assert isinstance(val, str), f"{name} should be a str, got {type(val)}"
-                assert val in VALID_QUANTIZATIONS, (
-                    f"{name}={val} not in VALID_QUANTIZATIONS"
-                )
+                assert (
+                    val in VALID_QUANTIZATIONS
+                ), f"{name}={val} not in VALID_QUANTIZATIONS"
 
     def test_valid_quantizations_list(self):
         # FP8 is included in the valid quantizations.
@@ -342,9 +342,9 @@ class TestDetectHardware:
         if spec.gpu_name:
             assert len(spec.gpu_name) > 0
         if spec.system_ram_gb:
-            assert spec.system_ram_gb > 16.0, (
-                f"Expected >16 GB RAM, got {spec.system_ram_gb}"
-            )
+            assert (
+                spec.system_ram_gb > 16.0
+            ), f"Expected >16 GB RAM, got {spec.system_ram_gb}"
 
 
 # ---------------------------------------------------------------------------

@@ -2,20 +2,12 @@ import json
 import os
 import subprocess
 
+from config import ModelConfig
+
 
 class ModelLoader:
     """Loads model definitions from JSON verification files and config.yaml,
     building a unified model registry ready for UI display."""
-
-    def __init__(self):
-        self._models = {}
-        self._config_path = (
-            "/home/waflores/DevFolder/ai/local-config/llama-swap/config.yaml"
-        )
-        self._context_dir = (
-            "/home/waflores/DevFolder/ai/local-config/context-verification"
-        )
-        self._load_config_yaml()
 
     def __init__(self):
         self._models = {}

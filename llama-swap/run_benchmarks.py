@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 """llm-bench: Benchmark suite for llama-swap models."""
-"""
-llama-bench: Benchmark suite for llama-swap models
+
+from datetime import datetime
+
+""
+
+"""llama-bench: Benchmark suite for llama-swap models
 Tests all models and collects performance metrics
 
 NOTE: This script is a placeholder. Benchmark scripts are being redesigned
@@ -10,7 +14,6 @@ according to user's evolving plans.
 TODO: User will implement custom benchmarking approach.
 """
 
-from datetime import datetime
 
 TIMESTAMP = datetime.now().strftime("%Y%m%d_%H%M%S")
 RESULTS_DIR = "/home/waflores/DevFolder/ai/local-config/logs/benchmarks"
