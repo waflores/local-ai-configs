@@ -159,7 +159,7 @@ Models are stored at `/home/waflores/.lmstudio/models`.
 - [x] Performance benchmarking infrastructure
 - [x] Agent skills documentation (`SKILL.md`)
 
-## 📊 Documentation
+## 📚 Documentation
 
 ### Configuration Files
 
@@ -167,6 +167,7 @@ Models are stored at `/home/waflores/.lmstudio/models`.
 - **`SKILL.md`** - Agent commands and capabilities
 - **`README.md`** - This file - Project overview
 - **`AGENTS.md`** - Testing agent responsibilities
+- **`docs/nix-formatting.md`** - Nix formatting infrastructure (treefmt-nix, nix fmt, ruff)
 
 ### Benchmarks
 

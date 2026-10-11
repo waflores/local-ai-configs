@@ -267,6 +267,7 @@ This document defines the agents (humans and AI) involved in this configuration 
 - **Iteration Logs:** What was tried and results
 - **Configuration Files:** Actual llama-swap settings
 - **SKILL.md:** AI agent commands and capabilities (see [Skill File Locations](#skill-file-locations))
+- **docs/nix-formatting.md:** Nix formatting infrastructure (treefmt-nix, nix fmt, ruff)
 
 ### Intent Layer Files
 
