@@ -1,4 +1,5 @@
-_: {
+{ pkgs, ... }:
+{
   projectRootFile = "flake.nix";
 
   programs = {
@@ -10,5 +11,12 @@ _: {
     mdformat.enable = true;
     black.enable = true;
     ruff.enable = true;
+    ruff-format = {
+      package = pkgs.ruff;
+      includes = [
+        "*.py"
+        "*.pyi"
+      ];
+    };
   };
 }
