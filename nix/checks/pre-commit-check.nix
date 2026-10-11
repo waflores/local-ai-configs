@@ -10,6 +10,7 @@ inputs.git-hooks.lib.${pkgs.stdenv.hostPlatform.system}.run {
     treefmt = {
       enable = true;
       package = treefmtEval.config.build.wrapper;
+      failOnChange = false;
     };
   };
 }

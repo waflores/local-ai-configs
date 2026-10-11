@@ -387,7 +387,9 @@ ______________________________________________________________________
    import glob
 
    results = []
-   for benchmark_file in glob.glob("/home/waflores/DevFolder/ai/local-config/logs/benchmarks/*.json"):
+   for benchmark_file in glob.glob(
+       "/home/waflores/DevFolder/ai/local-config/logs/benchmarks/*.json"
+   ):
        with open(benchmark_file) as f:
            results.extend(json.load(f))
 
