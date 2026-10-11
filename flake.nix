@@ -14,13 +14,24 @@
     treefmt.inputs.nixpkgs.follows = "nixpkgs";
     git-hooks.url = "github:cachix/git-hooks.nix";
     git-hooks.inputs.nixpkgs.follows = "nixpkgs";
+    # uv2nix provides the function to convert uv.lock into a Nix build
+    # using the pyproject-nix buildPythonPackage derivation.
+    uv2nix.url = "github:pyproject-nix/uv2nix";
+    uv2nix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
     inputs:
     inputs.blueprint {
       inherit inputs;
+      # Restrict systems to x86_64-linux only, so blueprint generates
+      # outputs for a single platform (no cross-compilation machinery).
       systems = [ "x86_64-linux" ];
       nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (inputs.nixpkgs.lib.getName pkg) [ ];
+      # Import the nix/ modules into blueprint's module scope.
+      # The packages/ directory maps to packages.<system> (e.g.
+      # packages.x86_64-linux), and devshells/ maps to devShells.<system>
+      # (e.g. devShells.x86_64-linux).
+      prefix = ./nix;
     };
 }

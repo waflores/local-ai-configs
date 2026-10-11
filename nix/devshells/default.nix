@@ -1,6 +1,15 @@
 # devShell definition for blueprint
-# blueprint maps nix/devshells/default.nix to devShells.default
-{ pkgs, ... }:
+# This file is a blueprint module: blueprint imports this file and evaluates it
+# as a Nix module with the scope { pkgs, system, flake, inputs, perSystem, pname }.
+# The flake inputs (including uv2nix) are available via inputs.uv2nix.
+
 {
-  default = import ../devshell.nix { inherit pkgs; };
+  pkgs,
+  uv2nix ? null,
+  ...
+}:
+{
+  default = import ../devshell.nix {
+    inherit pkgs uv2nix;
+  };
 }
