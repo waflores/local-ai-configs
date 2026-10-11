@@ -1,377 +1,353 @@
-# Llama-Swap + Continue.dev Configuration Agents
+# llama-swap Configuration — Agent Documentation
 
-## 🤖 Project Agents & Responsibilities
+## 🤖 Primary Agent: Hermes Agent
 
-This document defines the agents (humans and AI) involved in this configuration journey, their roles, and how they collaborate.
+This repository is optimized for **Hermes Agent** (Nous Research). When working in this repo, Hermes Agent is the primary agent — it reads `.hermes.md`, `AGENTS.md`, `SKILL.md`, and `docs/` to understand project context and perform tasks.
 
-## 👥 Human Agents
+### Hermes Agent — Project Context
 
-### Lead Developer (Will)
+- **Repo root:** /home/waflores/DevFolder/ai/local-config
+- **Hermes home:** /home/waflores/.hermes/ (profiles, skills, memory, plugins)
+- **Hermes skills:** /home/waflores/.hermes/skills/autonomous-ai-agents/hermes-agent/
+- **Hermes docs:** https://hermes-agent.nousresearch.com/docs/
 
-**Role:** Primary researcher and configuration architect
+### Hermes Agent — Quick Reference
 
-**Responsibilities:**
+```bash
+# Health check / doctor
+hermes doctor
 
-- Define project vision and goals
-- Select appropriate models for specific use cases
-- Configure llama-swap and continue.dev settings
-- Benchmark and evaluate performance
-- Document findings and iterate on configurations
+# Python environment (uv)
+uv run python -c "print('ok')"
 
-**Key Skills:**
+# Nix (x86_64-linux only)
+nix flake show
+nix flake check
+nix fmt
+nix build .#packages.x86_64-linux.local-config
+nix develop .#default
 
-- Deep understanding of LLM inference
-- Proficiency in Python, C, C++
-- Experience with CUDA and Vulkan APIs
-- Strong documentation practices
+# llama-swap (running)
+curl http://127.0.0.1:10001/health
+curl http://127.0.0.1:10001/v1/models
+```
 
-### Research Assistant
+### Hermes Agent — Core Rules
 
-**Role:** Technical research and experimentation
+1. **Always run `nix flake show`, `nix flake check`, and `nix fmt` before declaring work complete.**
+1. **Never commit secrets** — replace API keys, tokens, and credentials with `[REDACTED]`.
+1. **Keep Python code PEP 8** — Ruff rules are centralized in pyproject.toml.
+1. **Platforms:** x86_64-linux only. No cross-compilation.
+1. **Model quantization:** prefer Q4_K_M or Q5_K_M.
 
-**Responsibilities:**
+______________________________________________________________________
 
-- Investigate llama-swap configuration options
-- Research continue.dev best practices
-- Experiment with different model combinations
-- Document technical deep-dives
-- Provide recommendations for optimization
+## 📁 Repository Structure
 
-**Key Skills:**
+```text
+local-config/
+├── .agents/                          # Generic AI agent definitions
+│   ├── config.json                   # Machine-readable project authority
+│   ├── environment.json
+│   ├── README.md                     # Intent layer documentation
+│   └── agents/
+│       ├── PROJECT-CONTRACT.md
+│       ├── breaking-change-detector.md
+│       ├── dependency-security-review.md
+│       ├── error-message-quality.md
+│       ├── input-validation.md
+│       └── test-coverage.md
+├── llama-swap/                       # llama-swap config + benchmark scripts
+│   ├── config.yaml                   # Model definitions (29 models)
+│   ├── run_benchmarks.py
+│   ├── run_llama_bench.sh
+│   ├── README.md
+│   ├── parameter-optimizer/
+│   │   ├── batch-analyzer.py
+│   │   ├── parameter-optimizer.py
+│   │   └── README.md
+│   └── read-models/run.py
+├── llm_manager/                      # Python package (Flask web app)
+│   ├── __init__.py
+│   ├── config.py
+│   ├── models.py
+│   ├── main.py
+│   ├── configurator.py
+│   ├── hardware.py
+│   ├── hardware_spec.py
+│   ├── loader.py
+│   ├── model_paths.py
+│   ├── quantization.py
+│   ├── webapp.py
+│   ├── templates/                    # Flask templates (package-local)
+│   └── tests/                        # Tests for llm_manager
+├── other_experiments/                # Experimental: inferhost, llamastash
+├── context-verification/             # Model JSON metadata
+├── nix/                              # treefmt-nix module + formatter bridge
+│   ├── pyproject.nix                 # buildPythonPackage builder
+│   ├── packages/default.nix          # blueprint packages output
+│   ├── devshells/default.nix         # blueprint devShells output
+│   ├── formatter.nix                 # bridge to treefmt-nix
+│   ├── treefmt.nix                   # formatter declaration
+│   └── checks/
+│       └── pre-commit-check.nix
+├── docs/
+│   ├── nix-formatting.md             # Nix formatting infrastructure
+│   └── monorepo.md                   # Monorepo reorganization plan
+├── flake.nix                         # Single flake entry point
+├── flake.lock
+├── pyproject.toml                    # Python project metadata
+├── uv.lock
+├── .python-version
+├── .envrc
+├── README.md
+└── SKILL.md                          # Agent commands and capabilities
+```
 
-- Research methodology
-- Technical writing
-- Performance analysis
-- Configuration experimentation
+### Key Files
 
-## 🤖 AI Agents
+| File | Purpose |
+|------|---------|
+| llama-swap/config.yaml | 29 model definitions (CUDA0 active, Vulkan0/Vulkan1 swapped) |
+| flake.nix | Single flake entry point (x86_64-linux only) |
+| pyproject.toml | Python project metadata (uv/uv2nix) |
+| nix/pyproject.nix | buildPythonPackage builder |
+| nix/treefmt.nix | treefmt-nix module (formatter declaration) |
+| nix/formatter.nix | treefmt-nix bridge |
+| nix/packages/default.nix | blueprint packages output |
+| nix/devshells/default.nix | blueprint devShells output |
+| nix/checks/pre-commit-check.nix | pre-commit check wired to treefmt |
+| .agents/config.json | Machine-readable project authority |
+| SKILL.md | Agent commands and capabilities |
 
-### ⚠️ Rules of Engagement
+______________________________________________________________________
 
-**DO:**
+## 🦊 llama-swap — Local LLM Management
 
-- ✅ **Always document** every configuration change with clear reasoning
-- ✅ **Prioritize data-driven decisions** - benchmark before committing to major changes
-- ✅ **Communicate clearly** - explain technical trade-offs to the Lead Developer
-- ✅ **Respect resource constraints** - never recommend configurations that exceed hardware limits
-- ✅ **Track performance metrics** - collect data for every experiment
-- ✅ **Learn from failures** - document what doesn't work and why
-- ✅ **Stay within scope** - focus on llama-swap + continue.dev integration
-- ✅ **Use quantization** - prefer Q4_K_M or Q5_K_M for balance between quality and size
-- ✅ **Prefer CUDA over Vulkan** for active models (better performance)
-- ✅ **Use Vulkan for swapped models** (free up VRAM for active models)
+### Overview
 
-**DON'T:**
+llama-swap manages 22 GGUF models for local LLM inference on **NVIDIA RTX 5070 Max-Q**. It uses llama-server for inference with CUDA (active) and Vulkan (swapped) backends.
 
-- ❌ **Don't make assumptions** about model compatibility without testing
-- ❌ **Don't ignore error messages** - they often contain crucial clues
-- ❌ **Don't over-optimize** early iterations - get basic functionality first
-- ❌ **Don't recommend loading too many models** simultaneously (VRAM constraints)
-- ❌ **Don't forget to document** benchmark results
-- ❌ **Don't change multiple configuration variables** at once (hard to debug)
-- ❌ **Don't ignore context window requirements** - some models need larger contexts
-- ❌ **Don't use Q2_K or Q3_K** unless specifically needed (better quality with Q4_K_M)
-- ❌ **Don't forget security** - never expose API keys or sensitive data
-- ❌ **Don't skip iteration logs** - they're invaluable for future reference
+### Hardware
 
-### Configuration Analyst
+| Device | Type | Memory | Role |
+|--------|------|--------|------|
+| CUDA0 | NVIDIA RTX 5070 | 7.7 GB | Active inference |
+| Vulkan0 | Intel (ARL) | 23.6 GB | Model storage |
+| Vulkan1 | NVIDIA RTX 5070 | 8.1 GB | Fallback |
 
-**Role:** Analyze and recommend llama-swap configurations
+### Model Inventory
 
-**Capabilities:**
+| Model | Parameters | Size (Q4_K_M) | Device |
+|-------|------------|---------------|--------|
+| CodeLlama-7B-Instruct | 7B | ~4 GB | CUDA0 |
+| Meta-Llama-3.1-8B-Instruct | 8B | ~5 GB | CUDA0 |
+| Qwen3.5-9B-GGUF | 9B | ~5.6 GB | CUDA0 |
+| Qwen3.6-27B-GGUF | 27B | ~16.5 GB | CUDA0 |
+| DeepSeek-R1-0528-Qwen3-8B-GGUF | 8B | ~5 GB | CUDA0 |
+| Ministral-3-3B-Instruct-2512-GGUF | 3B | ~2 GB | CUDA0 |
+| Ministral-3-14B-Reasoning-2512-GGUF | 14B | ~8 GB | CUDA0 |
+| Mistral-Nemo-Instruct-2407-GGUF | 13B | ~6.5 GB | CUDA0 |
+| Phi-4-mini-reasoning-GGUF | 3B | ~2.5 GB | CUDA0 |
+| Phi-4-reasoning-plus-GGUF | 13B | ~9 GB | CUDA0 |
+| gemma-4-E4B-it-GGUF | 8B | ~5.3 GB | CUDA0 |
+| NVIDIA-Nemotron-3-Nano-4B-GGUF | 4B | ~2.8 GB | CUDA0 |
+| Devstral-Small-2-24B-Instruct-2512-GGUF | 24B | ~14 GB | CUDA0 |
+| LFM2-24B-A2B-GGUF | 24B | ~14.4 GB | CUDA0 |
+| Qwen3-VL-8B-Instruct-GGUF | 8B | ~5 GB | CUDA0 |
+| olmOCR-2-7B-1025-GGUF | 8B | ~4.7 GB | CUDA0 |
+| granite-4-h-tiny | 7B | ~4 GB | CUDA0 |
+| zerank-1-small-gguf | — | — | — |
+| zerank-2-gguf | — | — | — |
+| rnj-1-instruct-GGUF | — | — | — |
 
-- Parse hardware specifications
-- Recommend model loading strategies
-- Analyze resource utilization patterns
-- Suggest quantization optimizations
+### Performance Targets
 
-**Tools:**
+| Metric | Target |
+|--------|--------|
+| Model Swap Time | < 2s |
+| Generation Speed (7B) | > 10 t/s |
+| VRAM Utilization | < 70% |
+| Context Efficiency | > 80% |
 
-- Hardware monitoring utilities
-- llama-server diagnostics
-- Resource usage analyzers
+### Command Reference
 
-### Performance Benchmarking Agent
+```bash
+# Start llama-swap
+/home/waflores/bin/llama-swap \
+  --config /home/waflores/DevFolder/ai/local-config/llama-swap/config.yaml \
+  --listen 127.0.0.1:10001
 
-**Role:** Measure and compare model performance
+# Health check
+curl http://127.0.0.1:10001/health
 
-**Capabilities:**
+# List models
+curl http://127.0.0.1:10001/v1/models
 
-- Run speed tests for different models
-- Measure swap operation timings
-- Analyze memory usage patterns
-- Generate performance reports
+# Load a model
+curl -X POST http://127.0.0.1:10001/v1/models \
+  -H "Content-Type: application/json" \
+  -d '{"name": "CodeLlama-7B-Instruct", "path": "/home/waflores/.lmstudio/models/lmstudio-community/CodeLlama-7B-Instruct-GGUF/CodeLlama-7B-Instruct-Q4_K_M.gguf", "ttl": 600}'
 
-**Metrics Tracked:**
+# Unload a model
+curl -X DELETE http://127.0.0.1:10001/v1/models/CodeLlama-7B-Instruct
 
-- Tokens per second
-- Model load time
-- Swap operation latency
-- Memory footprint
-- Context window efficiency
+# Run benchmarks
+/home/waflores/DevFolder/ai/local-config/llama-swap/run_benchmarks.py \
+  --model CodeLlama-7B-Instruct \
+  --output benchmarks/results.json
+```
 
-### Documentation Agent
+______________________________________________________________________
 
-**Role:** Maintain and update project documentation
+## 🧰 CLI Reference — Nix
 
-**Capabilities:**
+### flake outputs (x86_64-linux only)
 
-- Write technical deep-dives
-- Create quick-start guides
-- Document iteration logs
-- Generate configuration examples
+| Output | Command |
+|--------|---------|
+| packages | nix build .#packages.x86_64-linux.local-config |
+| devShells | nix develop .#default |
+| formatter | nix fmt |
+| checks | nix flake check |
 
-**Output Formats:**
+### Commands
 
-- Markdown documentation
-- Configuration templates
-- Troubleshooting guides
-- Best practices compilations
+| Command | Purpose |
+|---------|---------|
+| nix flake show | Show flake outputs (must succeed before committing) |
+| nix flake check | Run all flake checks (must pass) |
+| nix fmt | Run treefmt-nix (runs ruff-check + ruff-format) |
+| nix build .#packages.x86_64-linux.local-config | Build the Python package |
+| nix develop .#default | Enter the dev shell |
 
-### Code Analysis Agent
+______________________________________________________________________
 
-**Role:** Analyze code generation quality
+## 🔍 Agent Tool Discovery Order
 
-**Capabilities:**
+When an agent needs to find tools or information, search in this order:
 
-- Evaluate generated code quality
-- Check for syntax errors
-- Verify best practices compliance
-- Suggest improvements
+1. **.agents/ directory** — agent definitions, config, environment:
+   - agents/ — agent definitions (PROJECT-CONTRACT, breaking-change-detector, dependency-security-review, error-message-quality, input-validation, test-coverage)
+   - config.json — machine-readable project authority
+   - environment.json — environment configuration
+   - README.md — intent layer documentation
+1. **AGENTS.md** — this file (primary intent layer)
+1. **README.md** — project vision, goals, roadmap
+1. **SKILL.md** — agent commands and capabilities
+1. **docs/**:
+   - nix-formatting.md — Nix formatting infrastructure
+   - monorepo.md — monorepo structure and phase plan
+1. **Configuration files**:
+   - flake.nix — Nix flake
+   - pyproject.toml — Python project
+   - llama-swap/config.yaml — llama-swap model definitions
 
-**Evaluation Criteria:**
+______________________________________________________________________
 
-- Syntax correctness
-- Code style adherence
-- Security considerations
-- Performance optimization
+## 👥 Agent Roles
 
-## 👥 Human Agent Guidelines
+| Role | Primary | Responsibilities |
+|------|---------|------------------|
+| **Hermes Agent** | Primary | Execute tasks, read documentation, run benchmarks, manage the monorepo |
+| **Lead Developer** | Will | Vision, configuration architecture, decision-making |
+| **Research Assistant** | — | Configuration research, benchmarking, documentation |
+| **Configuration Analyst** | — | Hardware-aware model loading, quantization optimization |
+| **Performance Benchmarking** | — | Speed tests, swap timings, memory analysis, performance reports |
+| **Documentation Agent** | — | Technical writing, deep-dives, quick-start guides |
 
-### Lead Developer Rules
+______________________________________________________________________
 
-**DO:**
+## 📋 Agent Responsibilities Matrix
 
-- ✅ **Approve configuration changes** thoughtfully - consider long-term impact
-- ✅ **Review benchmark results** before making major decisions
-- ✅ **Balance performance with practicality** - don't over-optimize prematurely
-- ✅ **Encourage experimentation** - allow research to explore new options
-- ✅ **Make timely decisions** - don't let analysis paralysis stall progress
-- ✅ **Document decisions** - explain the reasoning behind major choices
+| Task | Hermes | Lead | Research | Config | Benchmark | Doc |
+|------|--------|------|----------|--------|-----------|-----|
+| Define vision | ✅ | ✅ | | | | |
+| Select models | ✅ | ✅ | | | | |
+| Configure system | ✅ | ✅ | | ✅ | | |
+| Run benchmarks | ✅ | | | | ✅ | |
+| Analyze results | ✅ | ✅ | | | ✅ | |
+| Write docs | ✅ | | ✅ | | | ✅ |
+| Make decisions | ✅ | ✅ | | | | |
 
-**DON'T:**
+______________________________________________________________________
 
-- ❌ **Don't change configurations** without understanding the rationale
-- ❌ **Don't micromanage** - trust the research and benchmarking process
-- ❌ **Don't ignore practical constraints** - keep hardware limits in mind
-- ❌ **Don't make decisions** without reviewing benchmark data
-- ❌ **Don't skip documentation** - decisions need to be recorded for future reference
-
-### Research Assistant Rules
-
-**DO:**
-
-- ✅ **Explore multiple options** before recommending changes
-- ✅ **Research thoroughly** - don't make assumptions about compatibility
-- ✅ **Document findings** - even negative results are valuable
-- ✅ **Provide benchmarks** - always include data with recommendations
-- ✅ **Suggest alternatives** - offer fallback options when primary choice fails
-
-**DON'T:**
-
-- ❌ **Don't recommend** configurations without testing them first
-- ❌ **Don't ignore** existing documentation - check what's already known
-- ❌ **Don't overcomplicate** solutions - start simple, optimize later
-- ❌ **Don't forget** to note resource implications of suggestions
-
-### General Team Communication Rules
-
-**DO:**
-
-- ✅ **Be explicit** - always state your reasoning clearly
-- ✅ **Ask questions** - don't hesitate to clarify requirements
-- ✅ **Provide context** - explain why something matters
-- ✅ **Be honest** - admit when you don't know something
-- ✅ **Be concise** - get to the point quickly
-- ✅ **Be thorough** - don't skip important details
-
-**DON'T:**
-
-- ❌ **Don't make assumptions** - always confirm requirements
-- ❌ **Don't skip steps** - follow the process consistently
-- ❌ **Don't ignore errors** - they often contain valuable information
-- ❌ **Don't work in isolation** - communicate with the team
-- ❌ **Don't forget to update** documentation after changes
-
-## 🔄 Collaboration Workflow
+## 🚀 Collaboration Workflow
 
 ### Configuration Iteration Cycle
 
-```mermaid
-┌─────────────────────────────────────────────────────────────┐
-│                    Configuration Cycle                       │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  1. [Lead] Define requirements                               │
-│     └─► Identify use case, models needed, performance goals │
-│                                                             │
-│  2. [Research] Analyze options                               │
-│     └─► Research configurations, benchmark alternatives     │
-│                                                             │
-│  3. [Lead] Configure system                                  │
-│     └─► Update llama-swap, continue.dev settings            │
-│                                                             │
-│  4. [Benchmark] Test performance                             │
-│     └─► Run benchmarks, measure metrics                     │
-│                                                             │
-│  5. [Documentation] Record results                           │
-│     └─► Update docs, write iteration log                    │
-│                                                             │
-│  6. [Review] Evaluate outcomes                               │
-│     └─► Lead reviews, decides next steps                    │
-│                                                             │
-│  └─────────────────────────────────────────────────────────┘
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-```
+1. **[Hermes]** Read context: .hermes.md, AGENTS.md, SKILL.md, docs/
+1. **[Lead]** Define requirements and performance goals
+1. **[Hermes + Research]** Research configurations, benchmark alternatives
+1. **[Hermes]** Configure: update llama-swap/config.yaml, flake.nix, pyproject.toml
+1. **[Hermes + Benchmark]** Run benchmarks, measure metrics
+1. **[Documentation]** Update docs, write iteration log
+1. **[Lead]** Review outcomes, decide next steps
 
 ### Decision Making Process
 
-#### Level 1 - Quick Decisions (Immediate)
+#### Level 1 — Quick Decisions (Immediate)
 
 - Model selection for specific tasks
 - Context window sizing
 - Temperature settings
-  **Agents:** Research + Lead approval
+- **Agents:** Hermes + Lead approval
 
-## Level 2 - Medium Decisions (Short-term)
+#### Level 2 — Medium Decisions (Short-term)
 
 - Model swapping strategies
 - Resource allocation changes
 - Quantization level adjustments
-  **Agents:** Research + Benchmark + Lead approval
+- **Agents:** Research + Benchmark + Lead approval
 
-## Level 3 - Major Decisions (Long-term)
+#### Level 3 — Major Decisions (Long-term)
 
 - Backend selection (llama.cpp vs vLLM)
 - Architecture changes
 - Significant resource reallocation
-  **Agents:** All agents + Lead decision
+- **Agents:** All agents + Lead decision
 
-## 🎯 Agent Communication Channels
+______________________________________________________________________
 
-### Documentation Updates
+## 📊 Performance Tracking
 
-- **README.md:** Project vision, goals, roadmap
-- **AGENTS.md:** This file - agent roles and workflow
-- **Iteration Logs:** What was tried and results
-- **Configuration Files:** Actual llama-swap settings
-- **SKILL.md:** AI agent commands and capabilities (see [Skill File Locations](#skill-file-locations))
-- **docs/nix-formatting.md:** Nix formatting infrastructure (treefmt-nix, nix fmt, ruff)
-- **docs/monorepo.md:** Monorepo reorganization plan (directory structure, phases, nix outputs)
-- **.agents/:** Generic AI agent definitions and project instructions (renamed from .continue)
+| Metric | Target | Current | Status |
+|--------|--------|---------|--------|
+| Model Swap Time | < 2s | TBD | ⏳ |
+| Generation Speed (7B) | > 10 t/s | TBD | ⏳ |
+| VRAM Utilization | < 70% | TBD | ⏳ |
+| Context Efficiency | > 80% | TBD | ⏳ |
 
-### Intent Layer Files
+______________________________________________________________________
 
-The `.agents/` directory serves as the **intent layer**, capturing institutional knowledge that isn't visible in code:
+## 🎓 Knowledge Management
 
-- **System boundaries and ownership** - What each agent owns and doesn't own
-- **Invariants and contracts** - Configuration patterns that must hold
-- **Patterns to follow / anti-patterns to avoid** - Best practices and pitfalls
-- **Performance optimization strategies** - Resource management guidelines
-- **Security considerations** - API key handling, model swapping safety
+### Documentation Categories
 
-### Agent Tool Discovery
+1. **Configuration Guides**
+   - llama-swap setup
+   - Nix flake configuration
+   - Model loading strategies
+1. **Performance Analysis**
+   - Benchmark results
+   - Model comparisons
+   - Optimization tips
+1. **Troubleshooting**
+   - Common issues
+   - Error resolutions
+   - Debugging guides
+1. **Best Practices**
+   - Resource management
+   - Model selection
+   - Performance tuning
 
-When agents need to find tools and information, they should search in this order:
+### Knowledge Sources
 
-- **.agents/** directory — Contains agent definitions, rules, and checks:
+- Primary: This project documentation
+- Secondary: llama-swap docs, Nix docs
+- Tertiary: llama.cpp documentation, community forums
 
-  - `agents/` - Agent definitions (PROJECT-CONTRACT.md, breaking-change-detector.md, dependency-security-review.md, error-message-quality.md, input-validation.md, test-coverage.md)
-  - `config.json` - Machine-readable project authority and configuration
-  - `environment.json` - Environment configuration
-  - `README.md` - Intent layer documentation
-
-1. AGENTS.md - Primary intent layer file with:
-
-   - Agent roles and responsibilities
-   - Configuration workflow definitions
-   - Performance tracking targets
-   - Collaboration guidelines
-
-1. README.md - Project vision, goals, roadmap
-
-1. Iteration logs - Historical configuration changes and results
-
-1. Configuration files - llama-swap and LLM manager settings
-
-- Create a SKILL.md file with markdown content
-
-- Document commands using `## Commands` sections
-
-- Example:
-
-  ```text
-  ## Commands
-
-  - /benchmark
-  - /swap-model
-  - /config-analyze
-  ```
-
-- continue.dev parses the file and makes commands available in the chat interface
-
-- Skills are automatically associated with the current project context
-
-### Performance Reports
-
-- **Benchmark Results:** Speed, latency, memory usage
-- **Comparison Tables:** Model performance rankings
-- **Resource Utilization:** VRAM, RAM, swap usage
-
-### Technical Deep-Dives
-
-- **Architecture Analysis:** How configurations work
-- **Troubleshooting Guides:** Common issues and solutions
-- **Optimization Tips:** Performance improvement strategies
-
-## 📋 Agent Responsibilities Matrix
-
-| Task | Lead | Research | Config | Benchmark | Doc |
-| ---------------- | ---- | -------- | ------ | --------- | --- |
-| Define vision | ✅ | | | | |
-| Select models | ✅ | | | | |
-| Configure system | ✅ | | ✅ | | |
-| Run benchmarks | | | | ✅ | |
-| Analyze results | ✅ | ✅ | | ✅ | |
-| Write docs | | ✅ | | | ✅ |
-| Make decisions | ✅ | | | | |
-
-## 🚀 Agent Capabilities
-
-### Lead Developer (AI)
-
-- **Strategic:** Vision setting, goal definition
-- **Technical:** Configuration, deployment
-- **Evaluative:** Performance assessment, decision making
-
-### Research Assistant (AI)
-
-- **Investigative:** Configuration research, best practices
-- **Analytical:** Performance analysis, comparison
-- **Documentary:** Technical writing, deep-dives
-
-### Configuration Analyst (Capabilities)
-
-- **Hardware-aware:** GPU/CPU resource management
-- **Model-aware:** Architecture understanding
-- **Optimization:** Quantization, context management
-
-### Documentation Analyst (Performance)
-
-- **Writing:** Clear, concise documentation
-- **Organization:** Structured information presentation
-- **Maintenance:** Keeping docs current and accurate
+______________________________________________________________________
 
 ## 🔄 Iteration Protocol
 
@@ -423,88 +399,17 @@ When agents need to find tools and information, they should search in this order
 - Comparison tables
 - Performance rankings
 
-## 📊 Performance Tracking
+______________________________________________________________________
 
-### Metrics Dashboard
-
-| Metric | Target | Current | Status |
-| --------------------- | -------- | ------- | ------ |
-| Model Swap Time | < 2s | TBD | ⏳ |
-| Generation Speed (7B) | > 10 t/s | TBD | ⏳ |
-| VRAM Utilization | < 70% | TBD | ⏳ |
-| Context Efficiency | > 80% | TBD | ⏳ |
-
-### Benchmark Schedule
-
-**Weekly:**
-
-- Model swap timing tests
-- Generation speed benchmarks
-- Memory usage monitoring
-
-**Monthly:**
-
-- Full performance suite
-- Model comparison analysis
-- Configuration optimization
-
-**Per Major Change:**
-
-- Before/after comparison
-- Impact assessment
-- Regression testing
-
-## 🎓 Knowledge Management
-
-### Documentation Categories
-
-1. **Configuration Guides**
-
-   - llama-swap setup
-   - continue.dev integration
-   - Model loading strategies
-
-1. **Performance Analysis**
-
-   - Benchmark results
-   - Model comparisons
-   - Optimization tips
-
-1. **Troubleshooting**
-
-   - Common issues
-   - Error resolutions
-   - Debugging guides
-
-1. **Best Practices**
-
-   - Resource management
-   - Model selection
-   - Performance tuning
-
-### Knowledge Sources
-
-- Primary: This project documentation
-- Secondary: llama-swap docs, continue.dev docs
-- Tertiary: llama.cpp documentation, community forums
-
-## 🌟 Success Criteria
+## ✅ Success Criteria
 
 ### Individual Agent Success
 
-**Lead Developer:**
-
-- ✅ System configured and operational
-- ✅ Performance meets targets
-- ✅ Documentation comprehensive
-- ✅ Iteration process effective
-
-**Research Assistant:**
-
-- ✅ Configuration options explored
-- ✅ Best practices documented
-- ✅ Performance analysis complete
-- ✅ Recommendations actionable
+| Agent | Criteria |
+|-------|----------|
+| **Hermes Agent** | ✅ System configured and operational; ✅ Performance meets targets; ✅ Documentation comprehensive; ✅ Iteration process effective |
+| **Lead Developer** | ✅ Configuration architecture sound; ✅ Benchmarks reviewed before decisions; ✅ Practical constraints respected |
+| **Research Assistant** | ✅ Configuration options explored; ✅ Best practices documented; ✅ Performance analysis complete; ✅ Recommendations actionable |
 
 **All Agents:**
 
@@ -513,31 +418,53 @@ When agents need to find tools and information, they should search in this order
 - ✅ Performance tracked
 - ✅ Lessons captured
 
+______________________________________________________________________
+
 ## 📈 Evolution Path
 
-### Phase 1: Foundation (Current)
+### Phase 1: Foundation (Complete)
 
-- Establish basic configuration
-- Document initial setup
-- Create benchmarking framework
+- ✅ Basic configuration established
+- ✅ Documentation comprehensive
+- ✅ Nix flake simplified (x86_64-linux only)
 
-### Phase 2: Optimization
+### Phase 2: Optimization (In Progress)
 
-- Refine model swapping strategy
-- Optimize resource utilization
-- Improve performance metrics
+- 🔄 Refine model swapping strategy
+- 🔄 Optimize resource utilization
+- 🔄 Improve performance metrics
 
 ### Phase 3: Advanced
 
-- Implement intelligent model selection
-- Add multi-model support
-- Enhance C/C++ optimizations
+- 🔄 Implement intelligent model selection
+- 🔄 Add multi-model support
+- 🔄 Enhance C/C++ optimizations
 
 ### Phase 4: Production
 
-- Achieve production-ready configuration
-- Document best practices
-- Create deployment guides
+- 🔄 Achieve production-ready configuration
+- 🔄 Document best practices
+- 🔄 Create deployment guides
+
+______________________________________________________________________
+
+## ⚙️ Configuration Files
+
+| File | Purpose |
+|------|---------|
+| llama-swap/config.yaml | llama-swap model definitions (29 models) |
+| flake.nix | Nix flake (x86_64-linux only) |
+| pyproject.toml | Python project metadata (uv) |
+| nix/treefmt.nix | treefmt-nix formatter declaration |
+| nix/formatter.nix | treefmt-nix bridge |
+| nix/pyproject.nix | buildPythonPackage builder |
+| nix/packages/default.nix | blueprint packages output |
+| nix/devshells/default.nix | blueprint devShells output |
+| nix/checks/pre-commit-check.nix | pre-commit check wired to treefmt |
+| .agents/config.json | Machine-readable project authority |
+| SKILL.md | Agent commands and capabilities |
+
+______________________________________________________________________
 
 ## 🔄 Continuous Improvement
 
@@ -574,9 +501,3 @@ When agents need to find tools and information, they should search in this order
 - Iteration logs build expertise
 - Deep-dives create reference material
 - Troubleshooting guides help future sessions
-
-Last updated: 2026
-Status: Phase 1 - Foundation
-Next milestone: First configuration iteration
-
-AGENTS.md has 607 lines total.

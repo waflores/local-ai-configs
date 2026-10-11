@@ -22,6 +22,36 @@ This project uses **llama-swap** as the primary interface for all AI agent inter
 
 ## Available Commands
 
+### `/nix-check` - Run Nix Health Check
+
+```bash
+nix flake show && nix flake check && nix fmt --check
+```
+
+**Purpose:** Verify the Nix flake is healthy (must succeed before committing).
+
+### `/hermes` - Hermes Agent Context
+
+**Purpose:** Load this project's Hermes Agent documentation.
+
+**Context files:**
+
+- `AGENTS.md` — Agent roles, responsibilities, and workflow
+- `.hermes.md` — Hermes-specific project rules
+- `SKILL.md` — Agent commands and capabilities
+- `docs/monorepo.md` — Monorepo structure and phase plan
+- `docs/nix-formatting.md` — Nix formatting infrastructure
+
+**Key references:**
+
+- **Hermes home:** `/home/waflores/.hermes/` (profiles, skills, memory, plugins)
+- **Hermes docs:** https://hermes-agent.nousresearch.com/docs/
+- **Hermes skill:** `/home/waflores/.hermes/skills/autonomous-ai-agents/hermes-agent/SKILL.md`
+
+______________________________________________________________________
+
+## Agent Commands — llama-swap
+
 ### `/models` - List Available Models
 
 ```bash
