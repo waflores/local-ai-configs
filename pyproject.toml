@@ -8,9 +8,9 @@ dependencies = [
     "llama-cpp-python"
 ]
 
-[tool.ruff]
+[tool.ruff.lint]
 select = ["B", "D3", "E", "F"]
 ignore = ["E501"]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "tests/*" = ["PLW1510"]

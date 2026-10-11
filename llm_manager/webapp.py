@@ -27,7 +27,7 @@ def create_app() -> Flask:
     # Use the package's templates/ directory regardless of CWD.
     app = Flask(
         __name__,
-        template_folder=str(PROJECT_ROOT / "templates"),
+        template_folder=str(PROJECT_ROOT / "llm_manager" / "templates"),
     )
     app.config["JSON_SORT_KEYS"] = False
 
