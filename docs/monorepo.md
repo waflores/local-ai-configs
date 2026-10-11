@@ -177,11 +177,18 @@ None — the tree is fully reorganizable.
 1. Update `models.py` import from `config` → `from .config`
 1. Update imports in `tests/` for the moved files
 
-### Phase 3 — Nix module updates
+### Phase 3 — Nix module updates (COMPLETE)
 
-1. Update `flake.nix` to add `packages`, `devShells`, `formatter`, `checks`
-1. Create `nix/pyproject.nix` for Python package generation
-1. Verify `nix fmt` still works
+1. **flake.nix** — updated `nix flake show` to work; restricted to x86_64-linux only via blueprint's `systems = [ "x86_64-linux" ]`; dropped cross-compilation for aarch64-darwin, x86_64-darwin; kept blueprint as the flake input.
+1. **nix/pyproject.nix** — `buildPythonPackage` with `pyproject = true` for Python package generation; creates `packages.default` via `nix/packages/default.nix`.
+1. **nix/packages/default.nix** — blueprint packages output: `packages.local-config` built from `nix/pyproject.nix` with `pyproject = true` and `src = ./.` for path-based build.
+1. **nix/devshells/default.nix** — blueprint devShells output: `devShells.default` wrapped with pre-commit check shellHook from `nix/devshell.nix`.
+1. **nix/formatter.nix** — bridge: `{ inputs, pkgs, ... }: let treefmtEval = inputs.treefmt.lib.evalModule pkgs ./treefmt.nix; in treefmtEval.config.build.wrapper` — raw submodule signature because `blueprint` calls `inputs.treefmt.lib.evalModule pkgs ./treefmt.nix`.
+1. **nix/checks/pre-commit-check.nix** — pre-commit check wired to treefmt; blueprint maps `nix/checks/pre-commit-check.nix` to `checks.x86_64-linux`.
+1. **nix/treefmt.nix** — treefmt-nix module at the `nix/` prefix: declares formatters (nixfmt, yamlfmt, deadnix, shellcheck, shfmt, mdformat, black, ruff, ruff-format) with `projectRootFile = "flake.nix"`; uses `package = pkgs.ruff` without `command` for ruff-format.
+1. **nix fmt authorative route** — `nix fmt` now runs both `ruff-check` (lint) and `ruff-format` (format) with consistent configuration from `pyproject.toml`.
+
+**Verified:** `nix flake show` → exit 0; `nix flake check` → exit 0; `nix fmt` → exit 0, 0 files changed (idempotent); `ruff format --check` → clean; `ruff check` → all checks passed; `python3 -m py_compile` → all files OK.
 
 ### Phase 4 — Documentation
 
