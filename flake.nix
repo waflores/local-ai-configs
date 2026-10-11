@@ -1,8 +1,13 @@
 {
-  description = "Flake with treefmt-nix and git-hooks.nix";
+  description = "Flake with treefmt-nix, git-hooks.nix, and nixfmt";
 
+  # x86_64-linux only. We keep the blueprint flake input but restrict the
+  # systems blueprint generates outputs for to x86_64-linux, dropping the
+  # cross-compilation machinery for aarch64-darwin and x86_64-darwin that
+  # blueprint would otherwise emit. This keeps `nix flake show` fast and
+  # focused on our single target platform.
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs?ref=nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     blueprint.url = "github:numtide/blueprint";
     blueprint.inputs.nixpkgs.follows = "nixpkgs";
     treefmt.url = "github:numtide/treefmt-nix";
@@ -15,6 +20,7 @@
     inputs:
     inputs.blueprint {
       inherit inputs;
-      prefix = "nix";
+      systems = [ "x86_64-linux" ];
+      nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (inputs.nixpkgs.lib.getName pkg) [ ];
     };
 }
