@@ -14,10 +14,6 @@
     treefmt.inputs.nixpkgs.follows = "nixpkgs";
     git-hooks.url = "github:cachix/git-hooks.nix";
     git-hooks.inputs.nixpkgs.follows = "nixpkgs";
-    # uv2nix provides the function to convert uv.lock into a Nix build
-    # using the pyproject-nix buildPythonPackage derivation.
-    uv2nix.url = "github:pyproject-nix/uv2nix";
-    uv2nix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
