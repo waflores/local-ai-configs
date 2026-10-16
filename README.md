@@ -38,13 +38,15 @@ This is a monorepo centered on managing `llama-swap` configurations for a local 
 local-config/
 ├── .agents/                  # Generic AI agent definitions
 ├── llama-swap/               # llama-swap config + benchmark scripts
-├── llm_manager/              # Python package (Flask web app)
+├── llm_manager/              # Python package (Flask web app + tests)
 ├── other_experiments/        # Experimental: inferhost, llamastash
 ├── context-verification/     # Model verification JSON metadata
 ├── nix/                      # treefmt-nix module + formatter bridge
-├── docs/                     # Documentation (nix-formatting.md, monorepo.md)
+├── docs/                     # Documentation
 ├── flake.nix                 # Single flake entry point
-└── pyproject.toml            # Python project metadata (uv/uv2nix)
+├── pyproject.toml            # Python project metadata (uv/uv2nix)
+├── .coverage                 # Coverage data (pytest-cov)
+└── htmlcov/                  # HTML coverage reports
 ```
 
 ## ⚙️ Configuration
@@ -90,14 +92,47 @@ Models are stored at `/home/waflores/.lmstudio/models`.
 
 **Total Models:** 22 models across various architectures
 
+### Model Discovery
+
+Models are discovered via two complementary mechanisms:
+
+1. **Static verification metadata** (`context-verification/*.json`) — 22 non-mmproj JSON files provide model metadata (name, size, context, quantization tags).
+1. **On-disk discovery** (`loader.discover_models_on_disk()`) — the LLM manager walks the models directory (`/home/waflores/.lmstudio/models`) for live `.gguf` files, computing sizes dynamically.
+
+The `discover_models()` function combines both sources: JSON metadata provides the registry, and on-disk discovery provides live file paths. Each model's path is resolved via:
+
+1. **config.yaml path override** (if the model is listed in `llama-swap/config.yaml` with a `model_path`)
+1. **Directory mapping** (`model_directory_mapping()`) — case-insensitive lookup of model directory → canonical path
+1. **Directory scanning** (`_finalize_residual_paths()`) — walks the full models tree to find matching GGUF files, handling quantized filenames (e.g., `Q4_K_M`, `Q3_K_L`, `Q8_0`)
+
 ### Full Model Inventory
 
-| Model | Parameters | Size (Q4_K_M) | Use Case |
-|-------|------------|---------------|----------|
-| CodeLlama-7B-Instruct | 7B | ~4 GB | Python, general coding |
+| Model | Parameters | Size (Q4_K_M / Q8_0) | Use Case |
+|-------|------------|---------------------|----------|
+| Codellama-7B-Instruct | 7B | ~4 GB | Python, general coding |
+| DeepSeek-R1-0528-Qwen3-8B | 8B | ~5 GB | Reasoning |
+| Devstral-Small-2-24B-Instruct-2512 | 24B | ~14 GB | Advanced reasoning |
+| Gemma-4-E4B-it | 8B | ~5.3 GB | General tasks |
+| Granite-4.0-h-tiny | 7B | ~4 GB | IBM's code model |
+| LFM2-24B-A2B | 24B | ~14.4 GB | Embeddings |
 | Meta-Llama-3.1-8B-Instruct | 8B | ~5 GB | General tasks |
-| Qwen3.5-9B-GGUF | 9B | ~5.6 GB | General tasks |
-| Qwen3.6-27B-GGUF | 27B | ~16.5 GB | Advanced tasks |
+| Ministral-3-14B-Reasoning-2512 | 14B | ~8 GB | Reasoning tasks |
+| Ministral-3-3B-Instruct-2512 | 3B | ~2 GB | Fast completions |
+| Mistral-Nemo-Instruct-2407 | 13B | ~6.5 GB | Balanced performance |
+| NVIDIA-Nemotron-3-Nano-4B | 4B | ~2.8 GB | NVIDIA-optimized |
+| olmOCR-2-7B-1025 | 8B | ~4.7 GB | OCR tasks |
+| Phi-4-mini-reasoning | 3B | ~2.5 GB | Lightweight tasks |
+| Phi-4-reasoning-plus | 13B | ~9 GB | Advanced reasoning |
+| Qwen3-4B-Thinking-2507 | 4B | ~4 GB | Thinking/reasoning |
+| Qwen3.5-9B | 9B | ~5.6 GB | General tasks |
+| Qwen3.6-27B | 27B | ~16.5 GB | Advanced tasks |
+| Qwen3-VL-8B-Instruct | 8B | ~5 GB | Vision-language |
+| rnj-1-instruct | - | - | General tasks |
+| zerank-1-small | - | - | Reranking |
+| zerank-2 | - | - | Embeddings |
+| llama2:latest | 7B | ~3.6 GB | Base model reference (no disk path) |
+
+*Note: `llama2:latest` is a base-model reference from verification metadata with no installed `.gguf` file, so it has no resolved disk path.*
 | DeepSeek-R1-0528-Qwen3-8B-GGUF | 8B | ~5 GB | Reasoning |
 | Ministral-3-3B-Instruct-2512-GGUF | 3B | ~2 GB | Fast completions |
 | Ministral-3-14B-Reasoning-2512-GGUF | 14B | ~8 GB | Reasoning tasks |
@@ -202,6 +237,10 @@ Models are stored at `/home/waflores/.lmstudio/models`.
 - [x] Basic llama-swap configuration (`llama-swap/config.yaml`)
 - [x] Performance benchmarking infrastructure
 - [x] Agent skills documentation (`SKILL.md`)
+- [x] Test coverage expansion (70% → 95%) — 181 tests across `test_llm_manager.py`, `test_discovery_edge_cases.py`, `test_more_coverage.py`, `test_edge_cases.py`
+- [x] Webapp front-page context (hardware + Configuration Summary now populate via `index()` route)
+- [x] Fully qualified model paths (config-key resolution + directory mapping + directory scanning)
+- [x] LLm Manager CLI: `uv run python -m llm_manager.webapp` (dev) or `uv run python -m llm_manager.main` (CLI)
 
 ## 📚 Documentation
 
@@ -212,6 +251,7 @@ Models are stored at `/home/waflores/.lmstudio/models`.
 - **`README.md`** - This file - Project overview
 - **`AGENTS.md`** - Testing agent responsibilities
 - **`docs/nix-formatting.md`** - Nix formatting infrastructure (treefmt-nix, nix fmt, ruff)
+- **`docs/monorepo.md`** - Monorepo structure guide
 
 ### Benchmarks
 
@@ -230,11 +270,11 @@ Models are stored at `/home/waflores/.lmstudio/models`.
 
 | Component | Technology | Purpose |
 |-----------|------------|---------|
-| **Inference Engine** | llama.cpp | Model serving |
-| **Swapping** | llama-swap | Model management |
-| **GPU Backend** | CUDA (RTX 5070) | Primary inference |
-| **Secondary GPU** | Vulkan (Intel) | Model storage |
-| **CPU Offload** | OpenBLAS | Fallback computation |
+| Inference Engine | llama.cpp | Model serving |
+| Swapping | llama-swap | Model management |
+| GPU Backend | CUDA (RTX 5070) | Primary inference |
+| Secondary GPU | Vulkan (Intel) | Model storage |
+| CPU Offload | OpenBLAS | Fallback computation |
 
 ## 📈 Key Metrics to Track
 
@@ -270,13 +310,14 @@ This project evolves iteratively. Each session:
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 1.1 | 2026-10-15 | Test coverage expanded to 95% (181 tests); webapp front-page context; fully qualified model paths; LLm Manager CLI documented |
 | 1.0 | 2026-06-20 | Initial configuration with 22 models, benchmarking infrastructure |
 
 ______________________________________________________________________
 
-*Last updated: 2026-06-20*
+*Last updated: 2026-10-15*
 *Status: Phase 1 - Foundation*
-*Next milestone: Performance benchmarking*
+*Next milestones: Coverage perfection; webapp usability*
 
 ## Notes
 

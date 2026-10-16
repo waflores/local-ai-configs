@@ -223,6 +223,23 @@ curl http://127.0.0.1:10001/v1/models
 /home/waflores/DevFolder/ai/local-config/llama-swap/run_benchmarks.py
 ```
 
+### LLm Manager Web App
+
+```bash
+# Development (debug mode, binds 127.0.0.1:5000)
+uv run python -m llm_manager.webapp
+
+# Production (gunicorn, no debug)
+uv run gunicorn 'llm_manager.webapp:app' --bind 127.0.0.1:5000
+
+# Route Overview
+#   /                   - Front page (hardware + Configuration Summary)
+#   /hardware           - Hardware overview page
+#   /configs            - Model configurations with paths
+#   /reload             - Reload configuration
+#   /shell              - Interactive Python shell
+```
+
 ## Best Practices
 
 1. **Use Q4_K_M or Q5_K_M quantization** - Balance between quality and size

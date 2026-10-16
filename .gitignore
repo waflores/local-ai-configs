@@ -20,5 +20,10 @@ result-*
 # HerMES scratch
 .hermes/cache/
 
+# Coverage
+.coverage
+htmlcov/
+.coverage.*
+
 # VS Code
 .vscode/

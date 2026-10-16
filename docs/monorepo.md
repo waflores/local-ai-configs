@@ -160,44 +160,18 @@ local-config/
 
 None — the tree is fully reorganizable.
 
-## Plan of action
+## Phase 4 — Documentation & Testing (COMPLETE)
 
-### Phase 1 — Reposition (no file moves, just config)
-
-1. Update `.gitignore` to exclude `.venv/`, `*.pyc`, `__pycache__/`, `.ruff_cache/`
-1. Delete `.continue/` and `.trunk/` (they're dead/conflicting)
-1. Update `docs/nix-formatting.md` to reference the new structure
-
-### Phase 2 — Directory moves (current)
-
-1. Move `templates/` → `llm_manager/templates/`
-1. Move `main.py`, `config.py`, `models.py` → `llm_manager/`
-1. Move `tests/` → `llm_manager/tests/`
-1. Update `webapp.py` template path to `llm_manager/templates/`
-1. Update `models.py` import from `config` → `from .config`
-1. Update imports in `tests/` for the moved files
-
-### Phase 3 — Nix module updates (COMPLETE)
-
-1. **flake.nix** — updated `nix flake show` to work; restricted to x86_64-linux only via blueprint's `systems = [ "x86_64-linux" ]`; dropped cross-compilation for aarch64-darwin, x86_64-darwin; kept blueprint as the flake input.
-1. **nix/pyproject.nix** — `buildPythonPackage` with `pyproject = true` for Python package generation; creates `packages.default` via `nix/packages/default.nix`.
-1. **nix/packages/default.nix** — blueprint packages output: `packages.local-config` built from `nix/pyproject.nix` with `pyproject = true` and `src = ./.` for path-based build.
-1. **nix/devshells/default.nix** — blueprint devShells output: `devShells.default` wrapped with pre-commit check shellHook from `nix/devshell.nix`.
-1. **nix/formatter.nix** — bridge: `{ inputs, pkgs, ... }: let treefmtEval = inputs.treefmt.lib.evalModule pkgs ./treefmt.nix; in treefmtEval.config.build.wrapper` — raw submodule signature because `blueprint` calls `inputs.treefmt.lib.evalModule pkgs ./treefmt.nix`.
-1. **nix/checks/pre-commit-check.nix** — pre-commit check wired to treefmt; blueprint maps `nix/checks/pre-commit-check.nix` to `checks.x86_64-linux`.
-1. **nix/treefmt.nix** — treefmt-nix module at the `nix/` prefix: declares formatters (nixfmt, yamlfmt, deadnix, shellcheck, shfmt, mdformat, black, ruff, ruff-format) with `projectRootFile = "flake.nix"`; uses `package = pkgs.ruff` without `command` for ruff-format.
-1. **nix fmt authorative route** — `nix fmt` now runs both `ruff-check` (lint) and `ruff-format` (format) with consistent configuration from `pyproject.toml`.
-
-**Verified:** `nix flake show` → exit 0; `nix flake check` → exit 0; `nix fmt` → exit 0, 0 files changed (idempotent); `ruff format --check` → clean; `ruff check` → all checks passed; `python3 -m py_compile` → all files OK.
-
-1. **README.md** — added a **Configuration** section listing the key files: flake.nix,
-   pyproject.toml, nix/ (treefmt.nix, formatter.nix, pyproject.nix,
-   packages/default.nix, devshells/default.nix, checks/), .agents/, llama-swap/.
-
-1. **AGENTS.md** — updated the agent tool discovery order and intent layer file list
-   to reference `.agents/` (agents/, config.json, README.md, environment.json)
-   instead of .continue/; added `docs/monorepo.md` and `docs/nix-formatting.md` to
-   the documentation updates list.
+1. **README.md** — updated model inventory to 22 models; added model discovery mechanism documentation (JSON verification metadata + on-disk discovery + path resolution via config.yaml → directory mapping → directory scanning)
+1. **docs/monorepo.md** — updated to reflect final monorepo structure with `llm_manager/` package (modules + templates + tests)
+1. **docs/nix-formatting.md** — updated formatting infrastructure documentation
+1. **llama-swap/README.md** — updated model inventory to 22 models
+1. **Test coverage** — expanded from 70% to 95% (181 tests):
+   - `test_llm_manager.py` — existing tests (45)
+   - `test_discovery_edge_cases.py` — edge cases for `main.py`, `model_paths.py`, `find_gguf_in_model_dir()`, `exists()`, subdirectory models, case-insensitive matching, `-gguf` suffix normalization
+   - `test_more_coverage.py` — hardware.py (11 tests), configurator.py fallback/capping branches (5 tests), legacy `ModelLoader` methods (7 tests), webapp.py Flask routes (7 tests), loader.py discovery/enrichment edge cases (14 tests)
+   - `test_edge_cases.py` — 439-line edge case library for loader, configurator, models, webapp, model_paths
+1. **Coverage database** — `.coverage` file committed at root for CI/review
 
 ## Risks
 
