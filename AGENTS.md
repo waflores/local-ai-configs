@@ -58,7 +58,7 @@ local-config/
 │       ├── input-validation.md
 │       └── test-coverage.md
 ├── llama-swap/                       # llama-swap config + benchmark scripts
-│   ├── config.yaml                   # Model definitions (29 models)
+│   ├── config.yaml                   # Model definitions (22 models)
 │   ├── run_benchmarks.py
 │   ├── run_llama_bench.sh
 │   ├── README.md
@@ -108,7 +108,7 @@ local-config/
 
 | File | Purpose |
 |------|---------|
-| llama-swap/config.yaml | 29 model definitions (CUDA0 active, Vulkan0/Vulkan1 swapped) |
+| llama-swap/config.yaml | 22 model definitions (CUDA0 active, Vulkan0/Vulkan1 swapped) |
 | flake.nix | Single flake entry point (x86_64-linux only) |
 | pyproject.toml | Python project metadata (uv/uv2nix) |
 | nix/pyproject.nix | buildPythonPackage builder |
@@ -452,7 +452,7 @@ ______________________________________________________________________
 
 | File | Purpose |
 |------|---------|
-| llama-swap/config.yaml | llama-swap model definitions (29 models) |
+| llama-swap/config.yaml | llama-swap model definitions (22 models) |
 | flake.nix | Nix flake (x86_64-linux only) |
 | pyproject.toml | Python project metadata (uv) |
 | nix/treefmt.nix | treefmt-nix formatter declaration |

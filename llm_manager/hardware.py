@@ -14,7 +14,7 @@ from .hardware_spec import HardwareSpec
 
 def _run(cmd, **kwargs):
     """Run a subprocess, returning a CompletedProcess. Safe to monkeypatch in tests."""
-    return subprocess.run(cmd, capture_output=True, text=True, check=False, **kwargs)
+    return subprocess.run(cmd, capture_output=True, text=True, **kwargs)
 
 
 def detect_hardware() -> HardwareSpec:

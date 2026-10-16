@@ -1,8 +1,129 @@
 import json
 import os
 import subprocess
+from dataclasses import dataclass, field
 
 from .config import ModelConfig
+from .quantization import (
+    VALID_QUANTIZATIONS,
+    BF16,
+    FP8,
+    F16,
+    Q2_K,
+    Q3_K_M,
+    Q4_K_M,
+    Q5_K_M,
+    Q5_K_M_K_V,
+    Q8_0,
+)
+
+
+@dataclass
+class Model:
+    """A single LLM model in the registry.
+
+    This is the canonical model descriptor used by the model discovery
+    machinery.  It combines on-disk metadata (path, size) with verification
+    data (context, memory-safe context) and extra metadata (declared context,
+    recommended context, status).
+    """
+
+    name: str
+    full_name: str
+    size_gb: float = 0.0
+    context_length: int = 0
+    quantization: str = Q4_K_M
+    precision: str = "gguf"
+    device: str = "auto"
+    status: str = "available"
+    version: str = ""
+    model_id: str = ""
+    hardware_constraint: str = ""
+    memory_safe_context: int = 0
+    parameter_label: str = ""
+    path: str = ""
+    extra: dict = field(default_factory=dict)
+    max_tokens: int = 512
+    hardware: str | None = None
+
+    def __post_init__(self) -> None:
+        # Validate quantization; fall back to Q4_K_M for unknown tags.
+        if self.quantization not in VALID_QUANTIZATIONS:
+            self.quantization = Q4_K_M
+
+    @property
+    def parameters_b(self) -> float | None:
+        """Estimated parameter count in billions, or None if size is unknown.
+
+        Derived from the file size and the quantization: e.g. a 4 GB file
+        at Q4_K_M (0.5 bytes/param) holds ~8 billion parameters.
+        """
+        if self.size_gb <= 0:
+            return None
+        bytes_per_param = {
+            Q4_K_M: 0.5,
+            Q5_K_M: 0.625,
+            Q5_K_M_K_V: 0.625,
+            Q8_0: 1.0,
+            FP8: 1.0,
+            F16: 2.0,
+            BF16: 2.0,
+            Q3_K_M: 0.375,
+            Q2_K: 0.25,
+        }.get(self.quantization, 0.5)
+        return self.size_gb / bytes_per_param
+
+    def fits_in(self, vram_gb: float, ctx_size: int = 0) -> bool:
+        """Check if this model fits in the given VRAM and context budget.
+
+        VRAM needed is roughly the model size plus ~10% overhead, scaled up if
+        the requested context exceeds the memory-safe context limit.  The
+        context term is a no-op when ``memory_safe_context`` is unknown.
+        """
+        vram_needed = self.size_gb * 1.1
+        if ctx_size > 0 and self.memory_safe_context > 0:
+            ctx_ratio = ctx_size / self.memory_safe_context
+            vram_needed *= ctx_ratio
+        return vram_gb >= vram_needed
+
+
+# ---------------------------------------------------------------------------
+# Configurator types
+# ---------------------------------------------------------------------------
+@dataclass
+class ConfigProfile:
+    """A generated configuration profile for a single model."""
+
+    model_id: str
+    model_name: str
+    quantization: str
+    size_gb: float = 0.0
+    ctx_size: int = 0
+    fit_status: str = "fits"
+    vram_needed: float = 0.0
+    device: str = "cpu"
+    path: str = ""
+    kv_gb: float = 0.0
+    generated_at: str = ""
+    temp: float = 0.7
+    top_k: int = 40
+    top_p: float = 0.9
+    n_predict: int = 512
+    n_gpu_layers: str = "all"
+    max_tokens: int = 512
+
+
+def estimate_vram_gb(model: Model, ctx_size: int) -> float:
+    """Estimate the VRAM needed for a model at a given context size.
+
+    Scales the model size by the ratio of the requested context to the
+    memory-safe context (if known).  Returns the estimated VRAM in GB.
+    """
+    base = model.size_gb * 1.1  # ~10% overhead
+    if ctx_size > 0 and model.memory_safe_context > 0:
+        ctx_ratio = ctx_size / model.memory_safe_context
+        base *= ctx_ratio
+    return base
 
 
 class ModelLoader:
@@ -35,15 +156,15 @@ class ModelLoader:
         """Return models suitable for the given device (auto = all)."""
         if device == "auto":
             return list(self._models.values())
-        return [
-            m
-            for m in self._models.values()
-            if (
-                device == "auto"
-                or device.lower() in m.device.lower()
-                or m.device == "cpu"
-            )
+        # Core match: models whose device matches the requested device.
+        matched = [
+            m for m in self._models.values() if device.lower() in m.device.lower()
         ]
+        # Fallback: append models marked as CPU-only when the requested device
+        # is CPU- or GPU-compatible but none of the requested devices matched.
+        if not matched:
+            matched = [m for m in self._models.values() if m.device == "cpu"]
+        return matched
 
     def get_available(self):
         """Return only models currently available for use."""

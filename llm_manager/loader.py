@@ -118,27 +118,33 @@ def _register_config_dir_name() -> None:
                 on_disk[entry] = entry
     except OSError:
         return
-    for cfg_key in models_section:
+    # The ``models`` section of config.yaml is a list of entries; each entry
+    # carries the config key in its ``model`` field.
+    if isinstance(models_section, list):
+        items = models_section
+    else:
+        items = list(models_section.items())
+    for item in items:
+        cfg_key = item.get("model", "") if isinstance(item, dict) else str(item)
+        if not cfg_key:
+            continue
         # Direct match: config key is already the on-disk directory name.
         if cfg_key in on_disk:
             _CONFIG_DIR_NAME[cfg_key] = on_disk[cfg_key]
         else:
             # Try exact directory name with a -GGUF suffix appended.
-            # E.g. 'granite-4-h-tiny' -> 'granite-4.0-h-tiny-GGUF'.
             candidate = cfg_key if cfg_key.endswith("-gguf") else cfg_key + "-GGUF"
             if candidate in on_disk:
                 _CONFIG_DIR_NAME[cfg_key] = on_disk[candidate]
             else:
                 # Fall back: match on the canonical low-level key (dots ->
-                # dashes) plus a -GGUF suffix.  E.g. 'granite-4-h-tiny' has
-                # the on-disk directory 'granite-4.0-h-tiny-GGUF'.
+                # dashes) plus a -GGUF suffix.
                 core = _core_name(cfg_key)
                 candidate = core if core.endswith("-gguf") else core + "-GGUF"
                 if candidate in on_disk:
                     _CONFIG_DIR_NAME[cfg_key] = on_disk[candidate]
                 else:
-                    # Fall back: use the config key as the directory name (relative
-                    # path for models that live in sub-directories).
+                    # Fall back: use the config key as the directory name.
                     _CONFIG_DIR_NAME[cfg_key] = cfg_key
 
 
@@ -213,7 +219,7 @@ def discover_models(
     for json_path in sorted(context_dir.glob("*.json")):
         try:
             data = json.loads(json_path.read_text(encoding="utf-8"))
-        except json.JSONDecodeError, OSError:
+        except json.JSONDecodeError, OSError, UnicodeDecodeError:
             continue
         parse_verification_metadata(json_path, data, models)
 
@@ -388,6 +394,20 @@ def enrich_from_config(models: dict[str, Model], config_yaml: Path) -> None:
     models_section = data.get("models", {}) if isinstance(data, dict) else {}
     if not models_section:
         return
+    # The models section is a list of dicts (per llama-swap config.yaml).  Build
+    # a lookup keyed by the model config key (the ``model`` field of each item).
+    if isinstance(models_section, list):
+        models_section = {
+            item.get("model", ""): item
+            for item in models_section
+            if isinstance(item, dict)
+        }
+    elif isinstance(models_section, dict):
+        models_section = {
+            k: v for k, v in models_section.items() if isinstance(v, dict)
+        }
+    else:
+        models_section = {}
 
     models_dir = os.getenv("LLM_MANAGER_MODELS_DIR", DEFAULT_MODELS_DIR)
     dir_map = model_directory_mapping(models_dir)
@@ -543,3 +563,211 @@ def extract_quantization(model_id: str) -> str:
         if tag in model_id:
             return text
     return "Q4_K_M"
+
+
+def extract_quantization_from_file(file_name: str) -> str:
+    """Extract a human-readable quantization tag from a GGUF file name.
+
+    e.g. 'CodeLlama-7B-Instruct-Q4_K_M.gguf' -> 'Q4_K_M'
+    """
+    lower = file_name.lower()
+    for tag in sorted(
+        (
+            "q5_k_m_k_v",
+            "q4_k_m_k_v",
+            "q5_k_m",
+            "q4_k_m",
+            "q4_k_s",
+            "q4_k_f",
+            "q3_k_m",
+            "q2_k",
+            "q8_0",
+            "fp8",
+            "f16",
+            "bf16",
+        ),
+        key=len,
+        reverse=True,
+    ):
+        if tag in lower:
+            return tag.upper().replace("-", "_")
+    return "Q4_K_M"
+
+
+def discover_models_on_disk(models_dir: str | None = None) -> list[Model]:
+    """Discover all models on disk by scanning the models directory.
+
+    Walks ``models_dir`` recursively for ``.gguf`` files (skipping mmproj
+    auxiliary files), extracting model metadata (name, path, size from disk).
+    Context and verification fields are filled in by
+    :func:`enrich_with_verification`.
+
+    The default ``models_dir`` is the parent of :data:`DEFAULT_MODELS_DIR`
+    so that sub-directory models (e.g. ``ibm-granite``) are also discovered.
+    """
+    if models_dir is None:
+        models_dir = os.path.dirname(DEFAULT_MODELS_DIR)
+    models: list[Model] = []
+
+    if not os.path.isdir(models_dir):
+        return models
+
+    for root, _dirs, files in os.walk(models_dir):
+        for name in sorted(files):
+            if not name.lower().endswith(".gguf"):
+                continue
+            # Skip mmproj auxiliary files (they are not standalone models).
+            if "mmproj" in name.lower():
+                continue
+
+            model_path = os.path.join(root, name)
+            size_gb = os.path.getsize(model_path) / (1024**3)
+
+            # Model name: directory name without the -GGUF suffix; for
+            # sub-directory models, prefix with the parent directory names.
+            dir_name = os.path.basename(root)
+            if dir_name.lower().endswith("-gguf"):
+                base_name = dir_name[: -len("-gguf")]
+            else:
+                base_name = _strip_quant_tag_from_file(os.path.splitext(name)[0])
+
+            rel = os.path.relpath(root, models_dir)
+            if rel != "." and rel != dir_name:
+                base_name = f"{rel.replace(os.sep, '/')}/{base_name}"
+
+            models.append(
+                Model(
+                    name=base_name,
+                    full_name=base_name,
+                    size_gb=round(size_gb, 2),
+                    context_length=0,
+                    quantization=extract_quantization_from_file(name),
+                    precision="gguf",
+                    device="auto",
+                    status="available",
+                    version="",
+                    model_id=base_name,
+                    hardware_constraint="",
+                    memory_safe_context=0,
+                    parameter_label=base_name,
+                    path=model_path,
+                    extra={},
+                )
+            )
+
+    return models
+
+
+def _strip_quant_tag_from_file(file_name: str) -> str:
+    """Strip the quantization tag from a GGUF file base name.
+
+    e.g. 'granite-4.0-h-tiny.Q4_K_M' -> 'granite-4.0-h-tiny'.
+    """
+    lower = file_name.lower()
+    for tag in sorted(
+        (
+            "q5_k_m_k_v",
+            "q4_k_m_k_v",
+            "q5_k_m",
+            "q4_k_m",
+            "q4_k_s",
+            "q4_k_f",
+            "q3_k_m",
+            "q2_k",
+            "q8_0",
+            "fp8",
+            "f16",
+            "bf16",
+        ),
+        key=len,
+        reverse=True,
+    ):
+        if lower.endswith(tag):
+            return file_name[: -len(tag)]
+    return file_name
+
+
+def enrich_with_verification(
+    models: list[Model],
+    context_dir: Path | None = None,
+    config_yaml: Path | None = None,
+) -> None:
+    """Enrich on-disk discovered models with context-verification metadata.
+
+    Matches models to JSON verification files by normalized model name and
+    merges verification metadata (context, memory-safe context, recommended
+    context, status, size).  Modifies the input list in place.
+    """
+    context_dir = context_dir or DEFAULT_CONTEXT_DIR
+    config_yaml = config_yaml or DEFAULT_CONFIG_YAML
+
+    # Build a lookup of JSON files by normalized model name.
+    json_by_name: dict[str, tuple[Path, dict]] = {}
+    if context_dir.exists():
+        for json_path in context_dir.glob("*.json"):
+            try:
+                data = json.loads(json_path.read_text(encoding="utf-8"))
+            except json.JSONDecodeError, OSError, UnicodeDecodeError:
+                continue
+            model_id = data.get("model", "")
+            if not model_id:
+                continue
+            key = _json_identifier(json_path.stem)
+            if not key:
+                continue
+            json_by_name[_normalize_model_name(key)] = (json_path, data)
+
+    for model in models:
+        name_key = _normalize_model_name(model.name)
+        if name_key not in json_by_name:
+            continue
+        json_path, data = json_by_name[name_key]
+
+        # Override size from JSON (may be more accurate than disk-derived).
+        size_gb = data.get("modelSizeGB", 0)
+        if size_gb:
+            model.size_gb = float(size_gb)
+
+        declared_context = data.get("declaredContext", 0)
+        if declared_context:
+            model.context_length = int(declared_context)
+
+        verification = data.get("verification", {})
+        if isinstance(verification, dict):
+            memory_safe = verification.get("memoryLimitedContext", 0)
+            if memory_safe:
+                model.memory_safe_context = int(memory_safe)
+            recommended = verification.get("recommendedContext", 0)
+            if recommended:
+                model.extra["recommended_context"] = int(recommended)
+            status = verification.get("status", "")
+            if status:
+                model.extra["status"] = status
+
+
+def _normalize_model_name(name: str) -> str:
+    """Normalize a model name for matching: extract the model name (last part
+    of the path), lowercase, strip -gguf suffix, and replace dots with dashes."""
+    name = name.rsplit("/", 1)[-1]  # Extract the model name (last path segment)
+    name = name.lower()
+    name = name.replace(".", "-")
+    if name.endswith("-gguf"):
+        name = name[: -len("-gguf")]
+    return name
+
+
+def discover_models_with_verification(
+    context_dir: Path | None = None,
+    config_yaml: Path | None = None,
+    models_dir: str | None = None,
+) -> list[Model]:
+    """Discover models on disk and combine with context-verification data.
+
+    Scans the models directory for .gguf files, extracts model metadata
+    (name, path, size from disk), then enriches with context-verification
+    metadata from JSON files (context, memory-safe context, recommended
+    context, status).  Returns a unified model registry.
+    """
+    models = discover_models_on_disk(models_dir)
+    enrich_with_verification(models, context_dir, config_yaml)
+    return models
