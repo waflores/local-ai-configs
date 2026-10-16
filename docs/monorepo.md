@@ -20,8 +20,12 @@ local-config/
 ├── llama-swap/              # llama-swap config + benchmark scripts
 ├── llm_manager/          # Python package (Flask web app)
 ├── other_experiments/    # Experimental: inferhost, llamastash
-├── context-verification/ # Model verification JSON metadata
+├── context-verification/              # Model verification JSON metadata
 ├── nix/                  # treefmt-nix module + formatter bridge
+├── docs/                 # Project documentation
+│   ├── monorepo.md              # Monorepo structure guide
+│   ├── nix-formatting.md        # Nix formatting docs
+│   └── inference-tuning.md      # Inference parameter tuning & OOM prevention
 ├── pyproject.toml
 ├── uv.lock
 ├── .python-version

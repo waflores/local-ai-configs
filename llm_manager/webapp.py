@@ -96,23 +96,22 @@ def create_app() -> Flask:
 
     @app.route("/reload", methods=["POST"])
     def reload_data():
-        """Force a fresh read of the model registry and hardware."""
+        """Force a fresh read of the model registry and hardware.
+
+        Returns the full serialized configuration (hardware, models, profiles,
+        and derived totals) instead of a bare list, so the frontend can update
+        the summary cards and profiles table in place without navigating away.
+
+        A normal ``GET``/click on this endpoint returns nothing useful: it is a
+        POST-only JSON API and has no rendered template of its own.
+        """
         try:
-            hw = detect_hardware()
-        except Exception:
-            hw = None
-        models = discover_models()
-        try:
-            profiles = build_config().profiles
-        except Exception:
-            profiles = []
-        return jsonify(
-            {
-                "hardware": _to_serializable(hw),
-                "models": _to_serializable(models),
-                "profiles": _to_serializable(profiles),
-            }
-        )
+            cfg = build_config()
+        except Exception as e:
+            # Building the config should never fail; mirror the index route's
+            # behavior and surface the exception to the caller.
+            return jsonify({"error": str(e)}), 502
+        return jsonify(_to_serializable(cfg))
 
     return app
 

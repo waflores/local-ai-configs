@@ -52,6 +52,28 @@ class Model:
             self.quantization = Q4_K_M
 
     @property
+    def kv_bytes_per_token(self) -> float:
+        """Estimated KV-cache bytes per token for this model.
+
+        Derived from the model size and memory-safe context: at the memory-safe
+        context, the KV cache is typically ~30% of the model size (Q8_0 precision)
+        or ~15% (Q4_0 precision).  Falls back to a rough default by parameter
+        count when the memory-safe context is unknown.
+        """
+        if self.memory_safe_context and self.memory_safe_context > 0 and self.size_gb > 0:
+            return (self.size_gb * 1e9 * 0.30) / self.memory_safe_context
+        # Fallback: rough estimates by parameter count range.
+        if self.parameters_b:
+            params = self.parameters_b * 1e9
+            if params <= 3e9:
+                return 190_000
+            elif params <= 6e9:
+                return 230_000
+            elif params <= 12e9:
+                return 250_000
+        return 280_000
+
+    @property
     def parameters_b(self) -> float | None:
         """Estimated parameter count in billions, or None if size is unknown.
 
@@ -104,6 +126,12 @@ class ConfigProfile:
     device: str = "cpu"
     path: str = ""
     kv_gb: float = 0.0
+    # KV-cache precision used by llama.cpp: 8 = Q8_0, 4 = Q4_0
+    kv_bits: int = 8
+    # Estimated VRAM the model needs at the chosen ctx_size and kv_bits
+    vram_for_model: float = 0.0
+    # Estimated RAM the model needs (weights + KV cache)
+    ram_gb: float = 0.0
     generated_at: str = ""
     temp: float = 0.7
     top_k: int = 40
@@ -113,16 +141,39 @@ class ConfigProfile:
     max_tokens: int = 512
 
 
-def estimate_vram_gb(model: Model, ctx_size: int) -> float:
+def _estimate_ram_gb(model: Model, ctx_size: int, kv_bits: int = 8) -> float:
+    """Estimate the RAM (system memory) needed for a model at a given context.
+
+    Total memory = model weight + KV cache.  The KV-cache precision
+    (``kv_bits``: 8 = Q8_0, 4 = Q4_0) scales the KV-cache bytes per token.
+    Returns the estimated RAM usage in GB.
+    """
+    base = model.size_gb * 1.1
+    kv_bytes_per_token = model.kv_bytes_per_token * (kv_bits / 8.0)
+    if ctx_size > 0:
+        base += (ctx_size * kv_bytes_per_token) / 1024.0**3
+    return base
+
+
+def estimate_vram_gb(model: Model, ctx_size: int, kv_bits: int = 8) -> float:
     """Estimate the VRAM needed for a model at a given context size.
 
-    Scales the model size by the ratio of the requested context to the
-    memory-safe context (if known).  Returns the estimated VRAM in GB.
+    Uses the model's size, the requested context, the model's memory-safe
+    context (if known), and the KV-cache precision (``kv_bits``: 8 = Q8_0,
+    4 = Q4_0).  Returns the estimated VRAM in GB.
+
+    The formula is:
+        vram = model_size_gb * 1.1 + (ctx_size * kv_bytes_per_token / (1024**3)) * (kv_bits / 8)
+    where ``kv_bytes_per_token`` is the model's estimated KV-cache bytes per
+    token at Q8_0 precision (4 bytes/token).
     """
-    base = model.size_gb * 1.1  # ~10% overhead
-    if ctx_size > 0 and model.memory_safe_context > 0:
-        ctx_ratio = ctx_size / model.memory_safe_context
-        base *= ctx_ratio
+    # Model weight + ~10% runtime overhead.
+    base = model.size_gb * 1.1
+    # KV-cache bytes per token at Q8_0, scaled by precision (Q4_0 = 4 bits, Q8_0 = 8 bits).
+    kv_bytes_per_token = model.kv_bytes_per_token * (kv_bits / 8.0)
+    # Add KV-cache memory for the requested context.
+    if ctx_size > 0:
+        base += (ctx_size * kv_bytes_per_token) / 1024.0**3
     return base
 
 
