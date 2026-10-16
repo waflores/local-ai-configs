@@ -299,22 +299,20 @@ def _finalize_residual_paths(models: dict[str, Model], models_dir: str) -> None:
     if not models_dir or not os.path.isdir(models_dir):
         return
 
-    for model in models.values():
+    # Pre-compute json identifiers for all models to avoid re-deriving them.
+    json_ids: dict[str, str] = {}
+    for model_id in models:
+        json_ids[model_id] = _json_identifier(model_id)
+
+    for key, model in models.items():
         if model.path:
             continue
-        # Build a searchable key from the model id, mirroring the
-        # ``_json_identifier`` logic.  The model_id embeds the site prefix,
-        # the json identifier and the GGUF filename, so we strip:
-        #   'lms-mradermacher-zerank-1-small-gguf-zerank-1-small-q8-0' ->
-        #   'zerank-1-small'
-        meat = model.model_id.split("-gguf-", 1)[0]
-        for prefix in ("lms-lmstudio-community-", "lms-mradermacher-", "lms-"):
-            if meat.startswith(prefix):
-                meat = meat[len(prefix) :]
-                break
-        # 'meat' is e.g. 'zerank-1-small-q8-0'; strip the quant tag to get
-        # the json identifier 'zerank-1-small', matching the file scan below.
-        json_id = meat
+        # 'json_id' is the part before '-gguf-' in the JSON filename stem,
+        # e.g. 'mistral-nemo-instruct-2407' from
+        # 'lms-lmstudio-community-mistral-nemo-instruct-2407-gguf-mistral-nemo-ins-0972fd65'.
+        json_id = json_ids[key]
+        # 'json_id' is e.g. 'zerank-1-small'; strip the quant tag to get the
+        # json identifier 'zerank-1-small', matching the file scan below.
         for tag in sorted(
             (
                 "q5_k_m_k_v",
@@ -358,6 +356,7 @@ def _finalize_residual_paths(models: dict[str, Model], models_dir: str) -> None:
                         "q4_k_s",
                         "q4_k_f",
                         "q3_k_m",
+                        "q3_k_l",
                         "q2_k",
                         "q8_0",
                         "fp8",
@@ -368,7 +367,7 @@ def _finalize_residual_paths(models: dict[str, Model], models_dir: str) -> None:
                     reverse=True,
                 ):
                     if core.endswith(tag):
-                        core = core[: -len(tag)]
+                        core = core[: -len(tag)].rstrip(".").rstrip("-")
                         break
                 # Normalize dotted versions so that 'granite-4.0-h-tiny-Q4_K_M'
                 # still matches the json identifier 'granite-4-0-h-tiny'.
@@ -417,56 +416,65 @@ def enrich_from_config(models: dict[str, Model], config_yaml: Path) -> None:
         # 'codellama-7b-instruct'.  This is the part between the site prefix
         # (e.g. 'lms-lmstudio-community-') and the '-gguf-' suffix.
         json_id = _json_identifier(key)
+        # Map JSON identifier to config.yaml key (if any).
         config_key = _config_key_for(json_id)
-        if config_key is None:
-            continue
 
-        model_cfg = models_section.get(config_key)
-        if not isinstance(model_cfg, dict):
-            continue
+        # Name override from config (only for models that exist in the
+        # llama-swap config.yaml).
+        if config_key is not None:
+            model_cfg = models_section.get(config_key)
+            if isinstance(model_cfg, dict) and model_cfg.get("name"):
+                model.full_name = str(model_cfg["name"])
 
-        # Name override from config.
-        if model_cfg.get("name"):
-            model.full_name = str(model_cfg["name"])
+        # Path resolution: prefer an explicit `model_path` key if present in
+        # the config.  Otherwise rely on on-disk directory resolution via the
+        # directory mapping and a recursive fallback scan.  Models not listed
+        # in config.yaml (e.g. community-submitted models) still get paths
+        # from on-disk discovery.
+        if not model.path:
+            # Try config.yaml key first (if available).
+            if config_key is not None:
+                model_cfg = models_section.get(config_key)
+                if isinstance(model_cfg, dict):
+                    if model_cfg.get("model_path"):
+                        model.path = resolve_model_path(
+                            model_cfg["model_path"], models_dir
+                        )
+                    elif not model.path:
+                        dir_name = _CONFIG_DIR_NAME.get(config_key)
+                        if dir_name:
+                            dir_path = model_directory_mapping().get(dir_name)
+                            if dir_path and os.path.isdir(dir_path):
+                                gguf_files = sorted(
+                                    n
+                                    for n in os.listdir(dir_path)
+                                    if n.lower().endswith(".gguf")
+                                )
+                                if gguf_files:
+                                    model.path = os.path.join(dir_path, gguf_files[0])
+                            else:
+                                full_dir = dir_map.get(dir_name)
+                                if full_dir:
+                                    model.path = resolve_model_path(
+                                        full_dir, models_dir
+                                    )
+                        elif not model.path:
+                            model.path = _resolve_path_for_id(
+                                json_id, models_dir, dir_map
+                            )
 
-        # Path: prefer an explicit `model_path` key if present in the config.
-        if model_cfg.get("model_path"):
-            model.path = resolve_model_path(model_cfg["model_path"], models_dir)
-        elif not model.path:
-            # Resolve the on-disk directory name for this config model. The
-            # directory name is the base name of the config key plus '-GGUF',
-            # e.g. 'CodeLlama-7B-Instruct' -> 'CodeLlama-7B-Instruct-GGUF'.
-            dir_name = _CONFIG_DIR_NAME.get(config_key)
-            if dir_name:
-                # dir_name is the actual on-disk directory name (e.g.
-                # 'CodeLlama-7B-Instruct-GGUF'); resolve the GGUF file inside
-                # that directory using the directory mapping.
-                dir_path = model_directory_mapping().get(dir_name)
-                if dir_path and os.path.isdir(dir_path):
-                    gguf_files = sorted(
-                        n for n in os.listdir(dir_path) if n.lower().endswith(".gguf")
-                    )
-                    if gguf_files:
-                        model.path = os.path.join(dir_path, gguf_files[0])
-                else:
-                    # Fall back: try to resolve the directory name via the
-                    # directory mapping built earlier (may be a relative path).
-                    full_dir = dir_map.get(dir_name)
-                    if full_dir:
-                        model.path = resolve_model_path(full_dir, models_dir)
-            elif not model.path:
-                # Last resort: resolve from the JSON identifier.
-                model.path = _resolve_path_for_id(json_id, models_dir, dir_map)
-
-        # Final pass: any models still missing a path are resolved by scanning the
-        # full models tree for a matching GGUF file.  This covers sub-directory
-        # models such as zerank (mradermacher), ibm-granite, and empero-ai.
-        models_root = os.getenv(
-            "LLM_MANAGER_MODELS_DIR", os.path.dirname(DEFAULT_MODELS_DIR)
-        )
-        if not models_root or not os.path.isdir(models_root):
-            models_root = os.path.dirname(DEFAULT_MODELS_DIR)
-        _finalize_residual_paths(models, models_root)
+        # Final pass: any models still missing a path are resolved by scanning
+        # the full models tree for a matching GGUF file.  This covers models
+        # not listed in config.yaml (e.g. community-submitted models).  This
+        # is a best-effort pass; models that cannot be resolved leave path
+        # empty.
+        if not model.path:
+            models_root = os.getenv(
+                "LLM_MANAGER_MODELS_DIR", os.path.dirname(DEFAULT_MODELS_DIR)
+            )
+            if not models_root or not os.path.isdir(models_root):
+                models_root = os.path.dirname(DEFAULT_MODELS_DIR)
+            _finalize_residual_paths({key: model}, models_root)
 
 
 def format_name(model_id: str) -> str:

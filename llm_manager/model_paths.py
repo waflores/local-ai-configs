@@ -44,7 +44,11 @@ def discover_model_paths(models_dir: str | None = None) -> dict[str, str]:
 
 
 def model_directory_mapping(models_dir: str | None = None) -> dict[str, str]:
-    """Return ``{dir_name: dir_path}`` for the top-level model directories."""
+    """Return ``{dir_name: dir_path}`` for the top-level model directories.
+
+    Directory names are normalized to lowercase so that lookups are case-
+    insensitive (e.g. 'CodeLlama-7B-Instruct-GGUF' -> 'codellama-7b-instruct-gguf').
+    """
     models_dir = models_dir or DEFAULT_MODELS_DIR
     mapping: dict[str, str] = {}
     if not os.path.isdir(models_dir):
@@ -52,7 +56,7 @@ def model_directory_mapping(models_dir: str | None = None) -> dict[str, str]:
     for entry in sorted(os.listdir(models_dir)):
         full = os.path.join(models_dir, entry)
         if os.path.isdir(full) and entry.lower().endswith("-gguf"):
-            mapping[entry] = full
+            mapping[entry.lower()] = full
     return mapping
 
 

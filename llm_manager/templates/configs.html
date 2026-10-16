@@ -63,7 +63,7 @@
             <td class="num">{{ "%.2f"|format(p.kv_gb) }}</td>
             <td><span class="tag">{{ p.quantization }}</span></td>
             <td><span class="tag {% if p.fit_status == 'fits' %}good{% elif p.fit_status == 'fits_with_capping' %}warn{% elif p.fit_status == 'over_vram' %}bad{% else %}muted{% endif %}">{{ p.fit_status }}</span></td>
-            <td class="mono" style="font-size:12px;">{{ p.path[:54] if p.path else '(inferred)' }}</td>
+            <td class="mono" style="font-size:12px; word-break:break-all;">{{ p.path if p.path else '(inferred)' }}</td>
           </tr>
           {% endfor %}
         </tbody>

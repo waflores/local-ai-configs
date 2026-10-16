@@ -38,7 +38,25 @@ def create_app() -> Flask:
     # --- routes ------------------------------------------------------------
     @app.route("/")
     def index():
-        return _render("index.html", title="LLM Manager")
+        # Populate hardware + config summary on the front page.
+        try:
+            hardware_info = detect_hardware()
+        except Exception:
+            hardware_info = None
+        try:
+            cfg = build_config()
+        except Exception as e:
+            cfg = None
+            error = str(e)
+        else:
+            error = None
+        return _render(
+            "index.html",
+            title="LLM Manager",
+            hardware=hardware_info,
+            cfg=cfg,
+            error=error,
+        )
 
     @app.route("/models")
     def models_page():
