@@ -289,6 +289,17 @@ class Config:
         return max(0.0, self.hardware.gpu_free_gb - used)
 
     @property
+    def fit_summary(self) -> str:
+        """A human readable summary of the fit status for every profile."""
+        if not self.profiles:
+            return "no profiles"
+        counts: dict[str, int] = {}
+        for p in self.profiles:
+            counts[p.fit_status] = counts.get(p.fit_status, 0) + 1
+        parts = [f"{counts[s]} {s}" for s in sorted(counts)]
+        return ", ".join(parts)
+
+    @property
     def total_vram_gb(self) -> float:
         return self.hardware.gpu_memory_gb
 
@@ -341,6 +352,7 @@ def _to_serializable(obj) -> dict:
             "free_vram_gb": obj.free_vram_gb,
             "models_count": len(obj.models),
             "profiles_count": len(obj.profiles),
+            "fit_summary": obj.fit_summary,
         }
     if isinstance(obj, HardwareSpec):
         return {

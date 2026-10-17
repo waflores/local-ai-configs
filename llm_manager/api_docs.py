@@ -122,6 +122,7 @@ class ConfigOut(BaseModel):
     ram_limit_gb: float | None = None
     total_vram_gb: float = 0.0
     free_vram_gb: float = 0.0
+    fit_summary: str = ""
     models_count: int = 0
     profiles_count: int = 0
 
@@ -293,6 +294,7 @@ def reload_data():
         ram_limit_gb=cfg.ram_limit_gb,
         total_vram_gb=cfg.total_vram_gb,
         free_vram_gb=cfg.free_vram_gb,
+        fit_summary=cfg.fit_summary,
         models_count=len(cfg.models),
         profiles_count=len(cfg.profiles),
     )
