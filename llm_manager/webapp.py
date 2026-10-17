@@ -16,7 +16,8 @@ from pathlib import Path
 from flask import Flask, jsonify, render_template, Response, request, redirect
 
 from .configurator import _to_serializable, build_config
-from .config_store import export_llama_swap_config_bytes, list_profiles, load_config
+from .config_store import export_llama_swap_config_bytes, load_config
+from .configurator import ConfigProfile
 from .database import init_db
 from .hardware import detect_hardware
 from .loader import discover_models
@@ -39,6 +40,21 @@ def create_app() -> Flask:
     # --- helpers -----------------------------------------------------------
     def _render(template: str, **ctx) -> str:
         return render_template(template, **ctx)
+
+    def _profile_dicts(profiles: list[ConfigProfile]) -> list[dict]:
+        """Convert ConfigProfile objects to plain dicts for the UI template."""
+        fields = (
+            "model_name",
+            "model_id",
+            "size_gb",
+            "ctx_size",
+            "kv_gb",
+            "quantization",
+            "fit_status",
+            "path",
+            "device",
+        )
+        return [{field: getattr(p, field) for field in fields} for p in profiles]
 
     # --- routes ------------------------------------------------------------
     @app.route("/")
@@ -94,12 +110,20 @@ def create_app() -> Flask:
         else:
             error = None
 
+        # Persist snapshots are the UI's source of truth so the summary cards
+        # and profiles table stay in sync. When build_config() fails (e.g. no
+        # tools or models), we keep cfg=None and pass an empty profiles list
+        # so the template's `if cfg.profiles` guard still works.
+        if cfg is not None:
+            profiles = _profile_dicts(cfg.profiles)
+        else:
+            profiles = []
         return _render(
             "configs.html",
             title="Configurations",
             cfg=cfg,
             error=error,
-            profiles=list_profiles(),
+            profiles=profiles,
         )
 
     @app.route("/configs/export.json")
