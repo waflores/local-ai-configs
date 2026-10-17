@@ -249,6 +249,17 @@ def create_app() -> Flask:
             return jsonify({"error": str(e)}), 502
         return jsonify(_to_serializable(cfg))
 
+    @app.route("/api-docs")
+    def api_docs():
+        """Serve the API documentation page (Swagger UI / ReDoc served by FastAPI)."""
+        # The FastAPI app runs on port 5001 as a separate server; the Flask app
+        # proxies the docs here (iframe to the FastAPI Swagger UI).
+        return render_template(
+            "api_docs.html",
+            fastapi_docs_url="http://127.0.0.1:5001/docs",
+            fastapi_redoc_url="http://127.0.0.1:5001/redoc",
+        )
+
     return app
 
 

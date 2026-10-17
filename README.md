@@ -268,9 +268,34 @@ The `discover_models()` function combines both sources: JSON metadata provides t
 
 ### API Documentation (FastAPI)
 
-The FastAPI app (`llm_manager.api_docs`) documents the JSON API that the Flask web app exposes. It reuses the same domain objects (`discover_models()`, `build_config()`, `save_tuning_profile()`, `add_dir()`, ...) so the docs mirror what the UI already does.
+The FastAPI app (`llm_manager.api_docs`) documents the JSON API that the Flask web app
+exposes, reusing the same domain objects (`discover_models()`, `build_config()`,
+`save_tuning_profile()`, `add_dir()`, ...) so the docs mirror what the UI does.
 
-**Endpoints documented** (all under `http://127.0.0.1:5001`):
+**Two ways to browse the docs:**
+
+1. **Flask app (recommended, same server)** — the Flask app proxies the docs to
+   `/api-docs` (iframe to the FastAPI Swagger UI):
+
+   ```bash
+   cd /home/waflores/DevFolder/ai/local-config
+   uv run python -m llm_manager.webapp        # Flask (port 5000)
+   ```
+
+   Then open **http://127.0.0.1:5000/api-docs**. The page embeds the Swagger UI
+   and links to ReDoc (both served by the FastAPI app on port 5001).
+
+2. **FastAPI app (standalone)** — run the FastAPI docs app directly:
+
+   ```bash
+   cd /home/waflores/DevFolder/ai/local-config
+   uv run uvicorn llm_manager.api_docs:app --port 5001
+   ```
+
+   Then open **http://127.0.0.1:5001/docs** (Swagger UI) or
+   **http://127.0.0.1:5001/redoc** (ReDoc).
+
+**Endpoints documented** (all under the above URLs):
 
 | Method | Path | Description |
 |--------|------|-------------|
@@ -283,14 +308,8 @@ The FastAPI app (`llm_manager.api_docs`) documents the JSON API that the Flask w
 | `POST` | `/dirs` | Add or delete a model directory (`action`, `path`) |
 | `POST` | `/reload` | Refresh the model registry + hardware |
 
-Run the FastAPI docs app with:
-
-```bash
-cd /home/waflores/DevFolder/ai/local-config
-uv run uvicorn llm_manager.api_docs:app --port 5001
-```
-
-Then open **http://127.0.0.1:5001/docs** (Swagger UI) or **http://127.0.0.1:5001/redoc** (ReDoc).
+The FastAPI app is also documented by its own auto-generated spec at
+`/openapi.json` (used by both Swagger UI and ReDoc).
 
 | Component | Technology | Purpose |
 |-----------|------------|---------|
