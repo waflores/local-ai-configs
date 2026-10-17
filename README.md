@@ -266,7 +266,31 @@ The `discover_models()` function combines both sources: JSON metadata provides t
 - Expected vs actual results
 - Actionable recommendations
 
-## 🔧 Technical Stack
+### API Documentation (FastAPI)
+
+The FastAPI app (`llm_manager.api_docs`) documents the JSON API that the Flask web app exposes. It reuses the same domain objects (`discover_models()`, `build_config()`, `save_tuning_profile()`, `add_dir()`, ...) so the docs mirror what the UI already does.
+
+**Endpoints documented** (all under `http://127.0.0.1:5001`):
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/models` | Unified model registry |
+| `GET` | `/hardware` | Detected hardware |
+| `GET` | `/configs` | Last persisted configuration |
+| `GET` | `/configs/export.json` | Config as JSON |
+| `GET` | `/configs/export.yaml` | Config as YAML (download) |
+| `POST` | `/tuning` | Save a per-model llama.cpp tuning profile |
+| `POST` | `/dirs` | Add or delete a model directory (`action`, `path`) |
+| `POST` | `/reload` | Refresh the model registry + hardware |
+
+Run the FastAPI docs app with:
+
+```bash
+cd /home/waflores/DevFolder/ai/local-config
+uv run uvicorn llm_manager.api_docs:app --port 5001
+```
+
+Then open **http://127.0.0.1:5001/docs** (Swagger UI) or **http://127.0.0.1:5001/redoc** (ReDoc).
 
 | Component | Technology | Purpose |
 |-----------|------------|---------|
