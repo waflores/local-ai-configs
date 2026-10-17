@@ -441,6 +441,28 @@ class TestWebApp:
         """Test the /configs route when build_config raises."""
         from llm_manager.webapp import create_app
 
+        # Isolated in-memory SQLite so this test does not read a persisted
+        # snapshot that may already exist in the shared local_config.db.
+        import llm_manager
+        from sqlalchemy import create_engine
+        from sqlalchemy.orm import sessionmaker
+        from sqlalchemy.pool import StaticPool
+
+        _engine = create_engine(
+            "sqlite://",
+            connect_args={"check_same_thread": False},
+            poolclass=StaticPool,
+        )
+        _Session = sessionmaker(bind=_engine, autoflush=False, expire_on_commit=False)
+
+        # Re-bind the names consumed by config_store and the webapp routes.
+        import llm_manager.config_store as cs_mod
+
+        cs_mod.SessionLocal = _Session
+        cs_mod.engine = _engine
+        llm_manager.database.SessionLocal = _Session
+        llm_manager.database.engine = _engine
+
         app = create_app()
         with app.test_client() as client:
             monkeypatch.setattr(
@@ -450,6 +472,8 @@ class TestWebApp:
             response = client.get("/configs")
             assert response.status_code == 200
             assert b"boom" in response.data
+
+        _engine.dispose()
 
     def test_export_configs(self):
         """Test the /configs/export.json route."""

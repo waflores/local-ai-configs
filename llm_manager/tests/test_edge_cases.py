@@ -200,7 +200,7 @@ class TestGenerateProfiles:
 
         models = list(discover_models())
         hardware_spec = types.SimpleNamespace(
-            gpu_free_gb=15.0, gpu_memory_gb=15.0, cpu_cores=8
+            gpu_free_gb=15.0, gpu_memory_gb=15.0, cpu_cores=8, system_ram_gb=16.0
         )
         profiles = generate_profiles(hardware=hardware_spec, models=models)
         # All models should have a fit_status (not crashing)
@@ -214,7 +214,7 @@ class TestGenerateProfiles:
 
     def test_generate_profiles_no_models(self):
         hardware_spec = types.SimpleNamespace(
-            gpu_free_gb=8.0, gpu_memory_gb=8.0, cpu_cores=8
+            gpu_free_gb=8.0, gpu_memory_gb=8.0, cpu_cores=8, system_ram_gb=8.0
         )
         profiles = generate_profiles(hardware=hardware_spec, models=[])
         # generate_profiles() uses discover_models() to get models, not the

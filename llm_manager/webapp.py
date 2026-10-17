@@ -13,9 +13,11 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, Response
 
 from .configurator import _to_serializable, build_config
+from .config_store import export_llama_swap_config_bytes, list_profiles, load_config
+from .database import init_db
 from .hardware import detect_hardware
 from .loader import discover_models
 
@@ -30,6 +32,9 @@ def create_app() -> Flask:
         template_folder=str(PROJECT_ROOT / "llm_manager" / "templates"),
     )
     app.config["JSON_SORT_KEYS"] = False
+
+    # (Re)create ORM tables on startup so the persisted snapshots are ready.
+    init_db()
 
     # --- helpers -----------------------------------------------------------
     def _render(template: str, **ctx) -> str:
@@ -73,26 +78,45 @@ def create_app() -> Flask:
 
     @app.route("/configs")
     def configs_page():
-        try:
-            cfg = build_config()
-        except Exception as e:
-            # Building the config should never fail; on failure show the
-            # exception so the user can report it.
-            cfg = None
-            error = str(e)
+        # Serve the last persisted configuration if one exists; otherwise
+        # fall back to a freshly generated one. Persisted snapshots are the
+        # UI's source of truth so the summary cards and profiles table stay
+        # in sync with what was checked in to the database.
+        cfg = load_config()
+        if cfg is None:
+            try:
+                cfg = build_config()
+            except Exception as e:
+                cfg = None
+                error = str(e)
+            else:
+                error = None
         else:
             error = None
+
         return _render(
             "configs.html",
             title="Configurations",
             cfg=cfg,
             error=error,
+            profiles=list_profiles(),
         )
 
     @app.route("/configs/export.json")
-    def export_configs():
+    def export_configs_json():
         cfg = build_config()
         return jsonify(_to_serializable(cfg))
+
+    @app.route("/configs/export.yaml")
+    def export_configs_yaml():
+        cfg = load_config() or build_config()
+        return Response(
+            export_llama_swap_config_bytes(cfg),
+            mimetype="application/yaml",
+            headers={
+                "Content-Disposition": "attachment; filename=profiles_generated.yaml"
+            },
+        )
 
     @app.route("/reload", methods=["POST"])
     def reload_data():

@@ -1,0 +1,231 @@
+name: llama-swap profiles (generated from ORM)
+version: 1.0.0
+schema: v1
+models:
+- name: llama2:latest
+  provider: llama.cpp
+  model: llama2:latest
+  roles:
+  - chat
+  capabilities: []
+- name: Codellama 7b
+  provider: llama.cpp
+  model: lms-lmstudio-community-codellama-7b-instruct-gguf-codellama-7b-instruct-q4-k-m:latest
+  roles:
+  - chat
+  - edit
+  - apply
+  - autocomplete
+  capabilities:
+  - tool_use
+- name: Deepseek Qwen3 Qwen3 8b
+  provider: llama.cpp
+  model: lms-lmstudio-community-deepseek-r1-0528-qwen3-8b-gguf-deepseek-r1-0528-974d9efc:latest
+  roles:
+  - chat
+  - edit
+  - apply
+  - autocomplete
+  capabilities:
+  - tool_use
+- name: Devstral Instruct 2512
+  provider: llama.cpp
+  model: lms-lmstudio-community-devstral-small-2-24b-instruct-2512-gguf-devstral-d8fc31ec:latest
+  roles:
+  - chat
+  - edit
+  - apply
+  - autocomplete
+  capabilities:
+  - tool_use
+- name: Gemma E4b E4b It
+  provider: llama.cpp
+  model: lms-lmstudio-community-gemma-4-e4b-it-gguf-gemma-4-e4b-it-q4-k-m:latest
+  roles:
+  - chat
+  - edit
+  - apply
+  - autocomplete
+  capabilities:
+  - tool_use
+- name: IBM Granite 4 Tiny
+  provider: llama.cpp
+  model: lms-lmstudio-community-granite-4-0-h-tiny-gguf-granite-4-0-h-tiny-q4-k-m:latest
+  roles:
+  - chat
+  - edit
+  - apply
+  - autocomplete
+  capabilities:
+  - tool_use
+- name: Lfm2 24b A2b
+  provider: llama.cpp
+  model: lms-lmstudio-community-lfm2-24b-a2b-gguf-lfm2-24b-a2b-q4-k-m:latest
+  roles:
+  - chat
+  - edit
+  - apply
+  - autocomplete
+  capabilities:
+  - tool_use
+- name: Meta 8b 8b
+  provider: llama.cpp
+  model: lms-lmstudio-community-meta-llama-3-1-8b-instruct-gguf-meta-llama-3-1-8-58b4f9bd:latest
+  roles:
+  - chat
+  - edit
+  - apply
+  - autocomplete
+  capabilities:
+  - tool_use
+- name: Ministral Reasoning 2512
+  provider: llama.cpp
+  model: lms-lmstudio-community-ministral-3-14b-reasoning-2512-gguf-ministral-3-f2aa5b6f:latest
+  roles:
+  - chat
+  - edit
+  - apply
+  - autocomplete
+  capabilities:
+  - tool_use
+- name: Ministral Instruct 2512
+  provider: llama.cpp
+  model: lms-lmstudio-community-ministral-3-3b-instruct-2512-gguf-ministral-3-3b-3e58ecf4:latest
+  roles:
+  - chat
+  - edit
+  - apply
+  - autocomplete
+  capabilities:
+  - tool_use
+- name: Mistral Instruct 2407
+  provider: llama.cpp
+  model: lms-lmstudio-community-mistral-nemo-instruct-2407-gguf-mistral-nemo-ins-0972fd65:latest
+  roles:
+  - chat
+  - edit
+  - apply
+  - autocomplete
+  capabilities:
+  - tool_use
+- name: Nvidia Nano Nano 4b
+  provider: llama.cpp
+  model: lms-lmstudio-community-nvidia-nemotron-3-nano-4b-gguf-nvidia-nemotron-3-5dad6c34:latest
+  roles:
+  - chat
+  - edit
+  - apply
+  - autocomplete
+  capabilities:
+  - tool_use
+- name: Olmocr 7b 7b 1025
+  provider: llama.cpp
+  model: lms-lmstudio-community-olmocr-2-7b-1025-gguf-olmocr-2-7b-1025-q4-k-m:latest
+  roles:
+  - chat
+  - edit
+  - apply
+  - autocomplete
+  capabilities:
+  - tool_use
+- name: Phi Mini Mini
+  provider: llama.cpp
+  model: lms-lmstudio-community-phi-4-mini-reasoning-gguf-phi-4-mini-reasoning-q4-k-m:latest
+  roles:
+  - chat
+  - edit
+  - apply
+  - autocomplete
+  capabilities:
+  - tool_use
+- name: Phi Reasoning Plus
+  provider: llama.cpp
+  model: lms-lmstudio-community-phi-4-reasoning-plus-gguf-phi-4-reasoning-plus-q4-k-m:latest
+  roles:
+  - chat
+  - edit
+  - apply
+  - autocomplete
+  capabilities:
+  - tool_use
+- name: Qwen3 Thinking 2507
+  provider: llama.cpp
+  model: lms-lmstudio-community-qwen3-4b-thinking-2507-gguf-qwen3-4b-thinking-2507-q4-k-m:latest
+  roles:
+  - chat
+  - edit
+  - apply
+  - autocomplete
+  capabilities:
+  - tool_use
+- name: Qwen 3.5 9B
+  provider: llama.cpp
+  model: lms-lmstudio-community-qwen3-5-9b-gguf-qwen3-5-9b-q4-k-m:latest
+  roles:
+  - chat
+  - edit
+  - apply
+  - autocomplete
+  capabilities:
+  - tool_use
+- name: Qwen3 6 27b
+  provider: llama.cpp
+  model: lms-lmstudio-community-qwen3-6-27b-gguf-qwen3-6-27b-q4-k-m:latest
+  roles:
+  - chat
+  - edit
+  - apply
+  - autocomplete
+  capabilities:
+  - tool_use
+- name: Qwen3 8b 8b
+  provider: llama.cpp
+  model: lms-lmstudio-community-qwen3-vl-8b-instruct-gguf-qwen3-vl-8b-instruct-q4-k-m:latest
+  roles:
+  - chat
+  - edit
+  - apply
+  - autocomplete
+  capabilities:
+  - tool_use
+- name: Rnj 1
+  provider: llama.cpp
+  model: lms-lmstudio-community-rnj-1-instruct-gguf-rnj-1-instruct-q4-k-m:latest
+  roles:
+  - chat
+  - edit
+  - apply
+  - autocomplete
+  capabilities:
+  - tool_use
+- name: Zerank 1 Small
+  provider: llama.cpp
+  model: lms-mradermacher-zerank-1-small-gguf-zerank-1-small-q8-0:latest
+  roles:
+  - chat
+  - edit
+  - apply
+  - autocomplete
+  capabilities:
+  - tool_use
+- name: Zerank 2
+  provider: llama.cpp
+  model: lms-mradermacher-zerank-2-gguf-zerank-2-q4-k-s:latest
+  roles:
+  - chat
+  - edit
+  - apply
+  - autocomplete
+  capabilities:
+  - tool_use
+context:
+- provider: repo-map
+  params:
+    includeSignatures: true
+- provider: os
+- provider: diff
+- provider: file
+- provider: code
+- provider: open
+- provider: tree
+- provider: currentFile

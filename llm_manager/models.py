@@ -60,7 +60,11 @@ class Model:
         or ~15% (Q4_0 precision).  Falls back to a rough default by parameter
         count when the memory-safe context is unknown.
         """
-        if self.memory_safe_context and self.memory_safe_context > 0 and self.size_gb > 0:
+        if (
+            self.memory_safe_context
+            and self.memory_safe_context > 0
+            and self.size_gb > 0
+        ):
             return (self.size_gb * 1e9 * 0.30) / self.memory_safe_context
         # Fallback: rough estimates by parameter count range.
         if self.parameters_b:

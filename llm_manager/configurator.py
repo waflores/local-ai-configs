@@ -6,7 +6,6 @@ KV-cache precision and VRAM slicing strategy so the model fits in the
 available GPU memory.
 """
 
-
 from __future__ import annotations
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -35,7 +34,7 @@ TIER_OVERRIDES: dict[float, dict[str, str | int]] = {
 
 # KV cache bits used when no per-model override is present.
 DEFAULT_KV_BITS = 8  # Q8_0 (high quality)
-Q4_K_M_KV_BITS = 4   # Q4_K_M KV precision (halves KV-cache memory)
+Q4_K_M_KV_BITS = 4  # Q4_K_M KV precision (halves KV-cache memory)
 
 # Context reduction ladder if a model still doesn't fit after tier capping.
 CONTEXT_REDUCTION_LADDER = (8192, 1024, 256)
@@ -179,9 +178,7 @@ def generate_profiles(
         vram_for_model = estimate_vram_gb(model, ctx_size, kv_bits)
         free_vram = hardware.gpu_free_gb or 0.0
         # RAM limit: either explicit (ram_limit_gb) or the system's total RAM.
-        ram_limit = (
-            ram_limit_gb if ram_limit_gb is not None else hardware.system_ram_gb
-        )
+        ram_limit = ram_limit_gb if ram_limit_gb is not None else hardware.system_ram_gb
 
         # Fit check:
         #   - VRAM constraint: the model's weights + KV cache must fit in GPU VRAM,
@@ -287,9 +284,7 @@ class Config:
     def free_vram_gb(self) -> float:
         """VRAM still available for the next swap."""
         used = sum(
-            p.kv_gb + p.size_gb + 0.35
-            for p in self.profiles
-            if p.fit_status == "fits"
+            p.kv_gb + p.size_gb + 0.35 for p in self.profiles if p.fit_status == "fits"
         )
         return max(0.0, self.hardware.gpu_free_gb - used)
 
@@ -301,7 +296,9 @@ class Config:
     def free_ram_gb(self) -> float:
         """RAM still available for the next swap."""
         used = sum(p.ram_gb for p in self.profiles if p.fit_status == "fits")
-        return max(0.0, self.hardware.system_ram_gb - used) if self.ram_limit_gb else 0.0
+        return (
+            max(0.0, self.hardware.system_ram_gb - used) if self.ram_limit_gb else 0.0
+        )
 
 
 def build_config(
@@ -312,7 +309,9 @@ def build_config(
     """Discover models and generate profiles in one call."""
     hardware = hardware or _detect_and_return()
     models = discover_models()
-    profiles = generate_profiles(hardware=hardware, models=models, ram_limit_gb=ram_limit_gb)
+    profiles = generate_profiles(
+        hardware=hardware, models=models, ram_limit_gb=ram_limit_gb
+    )
     return Config(
         hardware=hardware,
         profiles=profiles,

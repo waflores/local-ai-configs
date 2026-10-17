@@ -5,12 +5,12 @@
   <h2>Hardware-Aware Configurations</h2>
 
   {% if error %}
-    <div class="card" style="border-color:#f85149; background:rgba(248,81,73,0.08);">
+    <div class="card" id="configs-error-panel" style="border-color:#f85149; background:rgba(248,81,73,0.08);">
       <p class="mono" style="margin:0;"><strong>Failed to build configurations:</strong></p>
       <p class="mono" style="margin:4px 0 0; color:#f85149;">{{ error }}</p>
     </div>
   {% elif cfg %}
-    <div class="card condensed" style="flex-direction:column; gap:8px;">
+    <div class="card condensed" id="configs-summary-data" style="flex-direction:column; gap:8px;">
       <div>
         <div class="row" style="justify-content:space-between; flex-wrap:wrap; gap:6px;">
           <span class="label">Generated</span>
@@ -54,16 +54,16 @@
             <th>Path</th>
           </tr>
         </thead>
-        <tbody>
-          {% for p in cfg.profiles %}
+        <tbody id="profiles-tbody">
+          {% for p in profiles %}
           <tr>
-            <td>{{ p.model_name }}</td>
-            <td class="num">{{ "%.1f"|format(p.size_gb) }}</td>
-            <td class="num">{{ p.ctx_size }}</td>
-            <td class="num">{{ "%.2f"|format(p.kv_gb) }}</td>
-            <td><span class="tag">{{ p.quantization }}</span></td>
-            <td><span class="tag {% if p.fit_status == 'fits' %}good{% elif p.fit_status == 'fits_with_capping' %}warn{% elif p.fit_status == 'over_vram' %}bad{% else %}muted{% endif %}">{{ p.fit_status }}</span></td>
-            <td class="mono" style="font-size:12px; word-break:break-all;">{{ p.path if p.path else '(inferred)' }}</td>
+            <td>{{ p['model_name'] }}</td>
+            <td class="num">{{ "%.1f"|format(p['size_gb']) }}</td>
+            <td class="num">{{ p['ctx_size'] }}</td>
+            <td class="num">{{ "%.2f"|format(p['kv_gb']) }}</td>
+            <td><span class="tag">{{ p['quantization'] }}</span></td>
+            <td><span class="tag {% if p['fit_status'] == 'fits' %}good{% elif p['fit_status'] == 'fits_with_capping' %}warn{% elif p['fit_status'] == 'over_vram' %}bad{% else %}muted{% endif %}">{{ p['fit_status'] }}</span></td>
+            <td class="mono" style="font-size:12px; word-break:break-all;">{{ p['path'] if p['path'] else '(inferred)' }}</td>
           </tr>
           {% endfor %}
         </tbody>
@@ -80,11 +80,102 @@
         <span class="value">Download all generated configurations as JSON.</span>
       </a>
       <form method="post" action="/reload" style="display:flex; gap:8px; align-items:center;">
-        <button type="submit" class="card" style="text-decoration:none; color:inherit; display:inline-flex; align-items:center; gap:6px; cursor:pointer;">
+        <button type="submit" class="card" style="text-decoration:none; color:inherit; display:inline-flex; align-items:center; gap:6px; cursor-pointer;">
           <span class="label" style="display:block;">Reload data</span>
           <span class="value">Re-read models + hardware from disk</span>
         </button>
       </form>
     </div>
   </div>
+  <script>
+  (() => {
+    const $ = (id) => document.getElementById(id);
+
+    function esc(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    // XSS note: every dynamic value that reaches innerHTML goes through esc(),
+    // which HTML-escapes &, <, >, " and '. Only type-safe values (generated_at,
+    // numbers, ISO timestamps) reach the summary cards; model names, fit_status
+    // and paths are the only user-derived strings and are escaped before use.
+    // No HTML is ever constructed from untrusted input.
+
+    function tagClass(status) {
+      if (status === "fits") return "good";
+      if (status === "fits_with_capping") return "warn";
+      if (status === "over_vram") return "bad";
+      return "muted";
+    }
+
+    function renderSummary(data) {
+      const el = $("configs-summary-data");
+      if (!el) return;
+      const cfg = data.config || data;
+      el.innerHTML = `
+        <div class="row"><span class="label">Generated</span><span class="value mono">${esc(cfg.generated_at)}</span></div>
+        <div class="row"><span class="label">Models / profiles</span><span class="value">${cfg.models?.length || 0} / ${cfg.profiles?.length || 0}</span></div>
+        <div class="row"><span class="label">VRAM total</span><span class="value num">${cfg.total_vram_gb ? Number(cfg.total_vram_gb).toFixed(1) : "-"} GB</span></div>
+        <div class="row"><span class="label">VRAM free</span><span class="value num">${cfg.free_vram_gb ? Number(cfg.free_vram_gb).toFixed(1) : "-"} GB</span></div>
+        <div class="row"><span class="label">Fit status</span><span class="value">${cfg.fit_summary || "-"}</span></div>
+      `;
+    }
+
+    function renderTable(data) {
+      const tbody = $("profiles-tbody");
+      if (!tbody) return;
+      const profiles = data.profiles || [];
+      tbody.innerHTML = profiles
+        .map((p) => `
+        <tr>
+          <td>${esc(p.model_name)}</td>
+          <td class="num">${Number(p.size_gb).toFixed(1)}</td>
+          <td class="num">${p.ctx_size ?? "-"}</td>
+          <td class="num">${Number(p.kv_gb || 0).toFixed(2)}</td>
+          <td><span class="tag">${esc(p.quantization || "")}</span></td>
+          <td><span class="tag ${tagClass(p.fit_status)}">${esc(p.fit_status || "")}</span></td>
+          <td class="mono" style="font-size:12px; word-break:break-all;">${esc(p.path || "(inferred)")}</td>
+        </tr>
+      `).join("");
+    }
+
+    async function reload() {
+      try {
+        const res = await fetch("/reload", { method: "POST" });
+        const data = await res.json();
+        const panel = $("configs-error-panel");
+        if (res.ok) {
+          if (panel) panel.style.display = "none";
+          renderSummary(data);
+          renderTable(data);
+        } else {
+          if (panel) {
+            panel.style.display = "block";
+            panel.innerHTML = `<p class="mono">${esc(data.error || "Reload failed")}</p>`;
+          }
+        }
+      } catch (err) {
+        const panel = $("configs-error-panel");
+        if (!panel) return;
+        panel.style.display = "block";
+        panel.innerHTML = `<p class="mono">${esc(err.message)}</p>`;
+      }
+    }
+
+    // Re-render the summary cards and profiles table in place whenever the
+    // reload form is posted. The endpoint returns JSON (never a template), so
+    // the form submit is intercepted to keep the browser on this page.
+    document
+      .querySelectorAll('form[action="/reload"]')
+      .forEach((form) => form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        reload();
+      }));
+  })();
+  </script>
 {% endblock %}
