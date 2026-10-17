@@ -6,6 +6,10 @@
 *.pyc
 __pycache__/
 
+# ORM / test databases
+*.db
+test_*.db
+
 # Ruff caches
 .ruff_cache/
 ruff_cache/

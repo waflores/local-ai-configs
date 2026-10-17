@@ -1,4 +1,4 @@
-"""Web route tests for /tuning and /dirs using an isolated SQLite database."""
+"""Web route tests for /tuning and the consolidated directory admin portal."""
 
 from pathlib import Path
 
@@ -66,13 +66,6 @@ def test_tuning_page_renders(app):
     assert "Model tuning profiles" in resp.get_data(as_text=True)
 
 
-def test_dirs_page_renders(app):
-    client = app.test_client()
-    resp = client.get("/dirs")
-    assert resp.status_code == 200
-    assert "Model directories" in resp.get_data(as_text=True)
-
-
 def test_tuning_save_and_list(app):
     client = app.test_client()
     payload = {
@@ -111,19 +104,20 @@ def test_tuning_requires_model_key(app):
 
 
 def test_dirs_add_and_delete(app):
+    """Directory add/remove works through the consolidated admin API."""
     client = app.test_client()
     resp = client.post("/dirs", data={"action": "add", "path": "/tmp/models-new"})
     assert resp.status_code == 200
     assert resp.get_json()["ok"] is True
 
-    html = client.get("/dirs").get_data(as_text=True)
+    html = client.get("/admin").get_data(as_text=True)
     assert "/tmp/models-new" in html
 
     resp = client.post("/dirs", data={"action": "delete", "path": "/tmp/models-new"})
     assert resp.status_code == 200
     assert resp.get_json()["ok"] is True
 
-    html = client.get("/dirs").get_data(as_text=True)
+    html = client.get("/admin").get_data(as_text=True)
     assert "/tmp/models-new" not in html
 
 
@@ -132,3 +126,23 @@ def test_dirs_add_rejects_empty(app):
     resp = client.post("/dirs", data={"action": "add", "path": "  "})
     assert resp.status_code == 400
     assert resp.get_json()["ok"] is False
+
+
+def test_admin_page_renders_and_lists_dirs(app):
+    client = app.test_client()
+    # Add a directory so the portal can render it.
+    client.post("/dirs", data={"action": "add", "path": "/tmp/admin-test-dir"})
+
+    resp = client.get("/admin")
+    assert resp.status_code == 200
+    html = resp.get_data(as_text=True)
+    assert "Admin — Model directories" in html
+    assert "Configured directories" in html
+    assert 'action="/dirs"' in html
+    assert "data-path" in html
+    # The added directory appears in the table.
+    assert "/tmp/admin-test-dir" in html
+    # Each configured directory has a remove form.
+    assert html.count("<form method=\"post\" action=\"/dirs\"") >= 1
+    # Model counts are presented next to each directory row.
+    assert "Models" in html

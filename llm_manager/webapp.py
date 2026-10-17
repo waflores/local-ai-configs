@@ -13,7 +13,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from flask import Flask, jsonify, render_template, Response, request
+from flask import Flask, jsonify, render_template, Response, request, redirect
 
 from .configurator import _to_serializable, build_config
 from .config_store import export_llama_swap_config_bytes, list_profiles, load_config
@@ -174,11 +174,36 @@ def create_app() -> Flask:
     # Model directories
     # ------------------------------------------------------------------------
 
-    @app.route("/dirs")
-    def dir_settings_page():
+    @app.route("/admin")
+    def admin_page():
+        from pathlib import Path
+
+        from .loader import discover_models
         from .tuning_store import list_dirs
 
-        return _render("dir_settings.html", title="Model Directories", dirs=list_dirs())
+        dirs = list_dirs()
+        # Number of discovered models sitting in each directory.
+        model_counts: dict[str, int] = {}
+        for model in discover_models():
+            parent = str(Path(model.path).parent) if model.path else ""
+            if parent:
+                model_counts[parent] = model_counts.get(parent, 0) + 1
+
+        return _render(
+            "admin.html",
+            title="Admin",
+            dirs=dirs,
+            model_counts=model_counts,
+        )
+
+    # ------------------------------------------------------------------------
+    # Model directory configuration
+    # ------------------------------------------------------------------------
+
+    @app.route("/dirs")
+    def dir_settings_page():
+        # Consolidated admin portal lives at /admin.
+        return redirect("/admin")
 
     @app.route("/dirs", methods=["POST"])
     def dir_settings_save():
