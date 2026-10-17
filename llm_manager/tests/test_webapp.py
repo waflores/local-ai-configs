@@ -104,7 +104,6 @@ def test_tuning_requires_model_key(app):
 
 
 def test_dirs_add_and_delete(app):
-    """Directory add/remove works through the consolidated admin API."""
     client = app.test_client()
     resp = client.post("/dirs", data={"action": "add", "path": "/tmp/models-new"})
     assert resp.status_code == 200

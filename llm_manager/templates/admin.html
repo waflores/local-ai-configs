@@ -23,6 +23,11 @@
         <option value="{{ d.path }}">
         {% endfor %}
       </datalist>
+      <input
+        type="hidden"
+        name="action"
+        value="add"
+      >
       <button type="submit" class="primary" style="font-size:13px;">Add directory</button>
       <button
         type="button"
