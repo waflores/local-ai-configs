@@ -87,6 +87,40 @@
   {% endif %}
 </div>
 
+<h3 style="margin-top:14px;">Discovered models</h3>
+<table class="data" style="width:100%; border-collapse:collapse;">
+  <thead>
+    <tr style="text-align:left;">
+      <th>Model</th>
+      <th style="text-align:right;">Size (GB)</th>
+      <th style="text-align:right;">Quant</th>
+      <th style="text-align:right;">Path</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for d in dirs %}
+    {% set models_in_dir = [] %}
+    {% for m in models_in_db if m.path and (m.path == d.path or m.path.startswith(d.path + '/')) %}
+    {% set _ = models_in_dir.append(m) %}
+    {% endfor %}
+    {% if models_in_dir %}
+    <tr>
+      <td colspan="4" style="font-weight:bold; background:#21262d; color:#e6e6e6;">{{ d.path }}</td>
+    </tr>
+    {% for m in models_in_dir %}
+    <tr>
+      <td>{{ m.name }}</td>
+      <td style="text-align:right;">{{ "%.1f"|format(m.size_gb) }}</td>
+      <td style="text-align:right;">{{ m.quantization }}</td>
+      <td class="mono" style="font-size:12px; word-break:break-all;">{{ m.path }}</td>
+    </tr>
+    {% endfor %}
+    {% endif %}
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+
 <script>
   document.querySelectorAll('form[action="/dirs"]').forEach((form) => {
     form.addEventListener("submit", async (e) => {

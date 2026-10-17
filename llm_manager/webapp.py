@@ -12,12 +12,12 @@ Provides:
 from __future__ import annotations
 
 from pathlib import Path
+import os
 
 from flask import Flask, jsonify, render_template, Response, request, redirect
 
-from .configurator import _to_serializable, build_config
-from .config_store import export_llama_swap_config_bytes, load_config
-from .configurator import ConfigProfile
+from .config_store import export_llama_swap_config_bytes, load_config, SessionLocal, OrmConfig
+from .configurator import ConfigProfile, _to_serializable, build_config
 from .database import init_db
 from .hardware import detect_hardware
 from .loader import discover_models
@@ -202,23 +202,57 @@ def create_app() -> Flask:
     def admin_page():
         from pathlib import Path
 
-        from .loader import discover_models
         from .tuning_store import list_dirs
+        from .config_store import (
+            discover_and_persist_models,
+            discover_models_in_dirs,
+            list_db_models,
+        )
 
         dirs = list_dirs()
-        # Number of discovered models sitting in each directory.
-        model_counts: dict[str, int] = {}
-        for model in discover_models():
-            parent = str(Path(model.path).parent) if model.path else ""
-            if parent:
-                model_counts[parent] = model_counts.get(parent, 0) + 1
+        # Discovered models persisted to the DB from configured directories.
+        # (Runs disk discovery one time; harmless if repeated.)
+        dirs_dict = [
+            {"path": d.path, "created_at": d.created_at, "updated_at": d.updated_at} for d in dirs
+        ]
+        try:
+            if dirs_dict:
+                # Ensure a config snapshot exists, then discover + persist models.
+                from .config_store import build_and_persist
+
+                build_and_persist()
+                discover_and_persist_models(dirs_dict)
+        except Exception:
+            pass
+
+        # Number of discovered models sitting in each configured directory.
+        # Map each configured directory to its model count (0 if none).
+        model_counts: dict[str, int] = {d.path: 0 for d in dirs}
+        for model in discover_models_in_dirs(dirs_dict):
+            parent = str(Path(model.path).parent)
+            for d in dirs:
+                dpath = d.path
+                if parent == dpath or parent.startswith(dpath + os.sep):
+                    model_counts[dpath] = model_counts.get(dpath, 0) + 1
+                    break
+
+        # Discovered models persisted to the DB.
+        models_in_db = list_db_models(_get_current_config_id())
 
         return _render(
             "admin.html",
             title="Admin",
             dirs=dirs,
             model_counts=model_counts,
+            models_in_db=models_in_db,
         )
+
+    # --- helpers ---
+    def _get_current_config_id() -> int:
+        # Return the ID of the most recently persisted config snapshot.
+        with SessionLocal() as session:
+            orm_cfg = session.query(OrmConfig).order_by(OrmConfig.id.desc()).first()
+            return int(orm_cfg.id) if orm_cfg else 0
 
     # ------------------------------------------------------------------------
     # Model directory configuration
@@ -242,6 +276,21 @@ def create_app() -> Flask:
                 added = add_dir(path)
             except Exception as exc:  # noqa: BLE001
                 return jsonify({"ok": False, "error": str(exc)}), 500
+            # Discovered models are persisted to the DB by the config_store
+            # layer; this handler just confirms the directory is registered.
+            try:
+                from .tuning_store import list_dirs
+                from .config_store import discover_and_persist_models
+
+                # list_dirs() returns ModelDir objects; convert to dicts for
+                # discover_and_persist_models().
+                dirs = list_dirs()
+                dirs_dict = [{"path": d.path, "created_at": d.created_at, "updated_at": d.updated_at} for d in dirs]
+                if dirs_dict:
+                    discover_and_persist_models(dirs_dict)
+            except Exception:
+                # Discovery is best-effort; the directory is still added.
+                pass
             return jsonify({"ok": True, "dir": added})
         if action == "delete":
             path = request.form.get("path", "").strip().rstrip("/")

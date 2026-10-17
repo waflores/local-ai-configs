@@ -16,12 +16,14 @@ SQLite file (``local_config.db``) that can be versioned or discarded.
 from __future__ import annotations
 
 import logging
+import os
 from pathlib import Path
 
 import yaml
 
-from .configurator import Config, _to_serializable, build_config
+from .configurator import Config, _to_serializable, build_config, Model
 from .database import OrmConfig, OrmModel, OrmProfile, SessionLocal
+from .loader import discover_models_on_disk
 
 logger = logging.getLogger(__name__)
 
@@ -148,6 +150,107 @@ def delete_config() -> None:
 
 
 # ---------------------------------------------------------------------------
+# Disk discovery from configured directories
+# ---------------------------------------------------------------------------
+def discover_models_in_dirs(dirs: list[dict], models_dir: str | None = None) -> list[Model]:
+    """Discover models by crawling each configured directory on disk.
+
+    Uses :func:`discover_models_on_disk` to walk each configured directory
+    recursively for :file:`.gguf` files. Returns a list of :class:`Model`
+    objects (with ``path`` set to the on-disk location). Does NOT persist to
+    the database; use :func:`persist_models` for that.
+    """
+    models: list[Model] = []
+    seen: set[str] = set()
+    for d in dirs:
+        dir_path = d.path if hasattr(d, "path") else d.get("path", "")
+        if not dir_path or not os.path.isdir(dir_path):
+            continue
+        try:
+            found = discover_models_on_disk(dir_path)
+        except Exception:
+            continue
+        for model in found:
+            if model.path in seen:
+                continue
+            seen.add(model.path)
+            models.append(model)
+    return models
+
+
+def discover_and_persist_models(dirs: list[dict]) -> int:
+    """Scan configured directories for models and persist them to the DB.
+
+    This is the disk discovery entrypoint. It uses :func:`discover_models_in_dirs`
+    to crawl each configured directory, then :func:`persist_models` to write
+    the discovered models to the ORM database (linked to the current snapshot).
+
+    Returns the number of new rows added.
+    """
+    from .database import OrmConfig, SessionLocal
+
+    # Use the current persisted snapshot as the anchor.
+    with SessionLocal() as session:
+        orm_cfg = session.query(OrmConfig).order_by(OrmConfig.id.desc()).first()
+        if orm_cfg is None:
+            return 0
+        config_id = int(orm_cfg.id)
+
+    models = discover_models_in_dirs(dirs)
+    return persist_models(models, config_id)
+
+
+def persist_models(models: list[Model], config_id: int) -> int:
+    """Persist a list of :class:`Model` objects to the ORM database.
+
+    Upserts by ``model_id`` within the given config snapshot. Returns the
+    number of new rows added.
+    """
+    with SessionLocal() as session:
+        existing = {
+            m.model_id: m
+            for m in session.query(OrmModel).filter_by(config_id=config_id).all()
+        }
+        new_count = 0
+        for model in models:
+            if not isinstance(model, Model):
+                continue
+            if model.model_id in existing:
+                # Update existing row with latest disk info.
+                orm = existing[model.model_id]
+                orm.size_gb = model.size_gb
+                orm.context_length = model.context_length
+                orm.quantization = model.quantization
+                orm.path = model.path
+                orm.extra = dict(model.extra or {})
+            else:
+                session.add(
+                    OrmModel(
+                        model_id=model.model_id,
+                        name=model.name,
+                        full_name=model.full_name,
+                        size_gb=model.size_gb,
+                        context_length=model.context_length,
+                        quantization=model.quantization,
+                        precision=model.precision,
+                        device=model.device,
+                        status=model.status,
+                        version=model.version,
+                        hardware_constraint=model.hardware_constraint,
+                        memory_safe_context=model.memory_safe_context,
+                        parameter_label=model.parameter_label,
+                        path=model.path,
+                        max_tokens=model.max_tokens,
+                        extra=dict(model.extra or {}),
+                        config_id=config_id,
+                    )
+                )
+                new_count += 1
+        session.commit()
+    return new_count
+
+
+# ---------------------------------------------------------------------------
 # llama-swap config emission
 # ---------------------------------------------------------------------------
 
@@ -214,3 +317,34 @@ def _build_llama_swap_yaml_bytes(config: Config) -> str:
         ],
     }
     return yaml.safe_dump(data, sort_keys=False, default_flow_style=False)
+
+
+def list_db_models(config_id: int) -> list[dict]:
+    """Return persisted models from the current config snapshot as dicts."""
+    from .database import SessionLocal, OrmModel
+
+    with SessionLocal() as session:
+        models = session.query(OrmModel).filter_by(config_id=config_id).all()
+    result = []
+    for m in models:
+        result.append(
+            {
+                "model_id": m.model_id,
+                "name": m.name,
+                "full_name": m.full_name,
+                "size_gb": m.size_gb,
+                "context_length": m.context_length,
+                "quantization": m.quantization,
+                "precision": m.precision,
+                "device": m.device,
+                "status": m.status,
+                "version": m.version,
+                "hardware_constraint": m.hardware_constraint,
+                "memory_safe_context": m.memory_safe_context,
+                "parameter_label": m.parameter_label,
+                "path": m.path,
+                "max_tokens": m.max_tokens,
+                "extra": m.extra,
+            }
+        )
+    return result

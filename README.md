@@ -237,10 +237,58 @@ The `discover_models()` function combines both sources: JSON metadata provides t
 - [x] Basic llama-swap configuration (`llama-swap/config.yaml`)
 - [x] Performance benchmarking infrastructure
 - [x] Agent skills documentation (`SKILL.md`)
-- [x] Test coverage expansion (70% → 95%) — 181 tests across `test_llm_manager.py`, `test_discovery_edge_cases.py`, `test_more_coverage.py`, `test_edge_cases.py`
-- [x] Webapp front-page context (hardware + Configuration Summary now populate via `index()` route)
+- [x] Test coverage expansion (70% → 95%) — 187 tests across `test_webapp.py`
+- [x] Webapp front-page context (hardware + Configuration Summary via `index()` route)
 - [x] Fully qualified model paths (config-key resolution + directory mapping + directory scanning)
 - [x] LLm Manager CLI: `uv run python -m llm_manager.webapp` (dev) or `uv run python -m llm_manager.main` (CLI)
+
+### Phase 2: Directory & Admin Portal (Completed)
+- [x] Admin panel for the directories (`/admin`)
+- [x] Directory configuration (`/dirs` API: add/delete)
+- [x] Directory picker widget (native folder picker via `webkitdirectory` input)
+- [x] Consolidated admin portal with model counts per directory
+
+### Phase 3: Completion (Completed)
+- [x] Per-model llama.cpp tuning page (`/tuning`)
+- [x] Admin portal consolidation (`/admin`)
+- [x] Directory picker widget (native folder picker via `webkitdirectory` input)
+- [x] Database persistence of discovered models (`config_store.py`)
+- [x] Disk crawling for `.gguf` model files (`loader.py: discover_models_on_disk()`)
+- [x] Models list regenerated fresh on every request (`discover_models()`)
+- [x] `POST /reload` forces full refresh
+
+## 📚 Documentation
+
+### Configuration Files
+
+- **`llama-swap/config.yaml`** - Main model configuration
+- **`SKILL.md`** - Agent commands and capabilities
+- **`README.md`** - This file - Project overview
+- **`AGENTS.md`** - Testing agent responsibilities
+- **`docs/nix-formatting.md`** - Nix formatting infrastructure (treefmt-nix, nix fmt, ruff)
+- **`docs/monorepo.md`** - Monorepo structure guide
+
+### Benchmarks
+
+- **`llama-swap/run_benchmarks.py`** - Performance testing
+- **`llama-swap/run_llama_bench.sh`** - Shell script wrapper
+- **`llama-swap/benchmarks/`** - Results directory
+
+### Documentation Standards
+
+- Clear problem statements
+- Configuration details
+- Expected vs actual results
+- Actionable recommendations
+
+### Phase 3: Completion (Current)
+- [x] Per-model llama.cpp tuning page (`/tuning`)
+- [x] Admin portal consolidation (`/admin`)
+- [x] Directory picker widget (native folder picker via `webkitdirectory` input)
+- [x] Database persistence of discovered models (`config_store.py`)
+- [x] Disk crawling for `.gguf` model files (`loader.py: discover_models_on_disk()`)
+- [x] Models list regenerated fresh on every request (`discover_models()`)
+- [x] `POST /reload` forces full refresh
 
 ## 📚 Documentation
 
@@ -297,7 +345,16 @@ exposes, reusing the same domain objects (`discover_models()`, `build_config()`,
 
 **Endpoints documented** (all under the above URLs):
 
-| Method | Path | Description |
+|| Method | Path | Description |
+|--------|------|-------------|
+| `GET`  | `/models` | Unified model registry |
+| `GET`  | `/hardware` | Detected hardware |
+| `GET`  | `/configs` | Last persisted configuration |
+| `GET`  | `/configs/export.json` | Config as JSON |
+| `GET`  | `/configs/export.yaml` | Config as YAML (download) |
+| `POST` | `/tuning` | Save a per-model llama.cpp tuning profile |
+| `POST` | `/dirs` | Add or delete a model directory (`action`, `path`) |
+| `POST` | `/reload` | Refresh the model registry + hardware |
 |--------|------|-------------|
 | `GET` | `/models` | Unified model registry |
 | `GET` | `/hardware` | Detected hardware |
@@ -358,9 +415,9 @@ This project evolves iteratively. Each session:
 
 ______________________________________________________________________
 
-*Last updated: 2026-10-15*
-*Status: Phase 1 - Foundation*
-*Next milestones: Coverage perfection; webapp usability*
+*Last updated: 2026-10-16*
+*Status: Phase 3 - Completion*
+*Next milestones: Cleanup; webapp usability verification*
 
 ## Notes
 
