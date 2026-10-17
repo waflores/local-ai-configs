@@ -208,6 +208,66 @@ class OrmConfig(Base):
         return f"<OrmConfig(id={self.id}, generated_at={self.generated_at!r}, models_count={len(self.models)})>"
 
 
+class OrmTuningProfile(Base):
+    """A per-model, user-editable llama.cpp tuning profile.
+
+    Stored in the database so the web app can present a form per model and
+    persist the chosen quantization, context, layers and generation knobs.
+    """
+
+    __tablename__ = "tuning_profile"
+
+    id = Column(Integer, primary_key=True, index=True)
+    model_key = Column(String, unique=True, index=True, nullable=False)
+    model_name = Column(String, nullable=False)
+    quantization = Column(String, default="Q4_K_M")
+    n_gpu_layers = Column(String, default="all")
+    ctx_size = Column(Integer, default=0)
+    temp = Column(Float, default=0.7)
+    top_k = Column(Integer, default=40)
+    top_p = Column(Float, default=0.9)
+    n_predict = Column(Integer, default=512)
+    n_threads = Column(Integer, default=4)
+    path = Column(String, default="")
+    created_at = Column(String, default="")
+    updated_at = Column(String, default="")
+
+    def to_domain(self):  # pragma: no cover - simple mapping
+        from .tuning_store import TuningProfile
+
+        return TuningProfile(
+            model_key=self.model_key,
+            model_name=self.model_name,
+            quantization=self.quantization,
+            n_gpu_layers=self.n_gpu_layers,
+            ctx_size=self.ctx_size,
+            temp=self.temp,
+            top_k=self.top_k,
+            top_p=self.top_p,
+            n_predict=self.n_predict,
+            n_threads=self.n_threads,
+            path=self.path,
+            created_at=self.created_at,
+            updated_at=self.updated_at,
+        )
+
+
+class OrmModelDir(Base):
+    """A configured directory where llama.cpp models may live."""
+
+    __tablename__ = "model_dir"
+
+    id = Column(Integer, primary_key=True, index=True)
+    path = Column(String, unique=True, index=True, nullable=False)
+    created_at = Column(String, default="")
+    updated_at = Column(String, default="")
+
+    def to_domain(self):  # pragma: no cover - simple mapping
+        from .tuning_store import ModelDir
+
+        return ModelDir(path=self.path, created_at=self.created_at, updated_at=self.updated_at)
+
+
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------

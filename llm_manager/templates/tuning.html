@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="panel">
+  <h2>Model tuning profiles</h2>
+  <p class="muted" style="margin-top:-8px;">
+    Per-model llama.cpp tuning knobs: quantization, context size, GPU layers
+    and generation parameters. Every change is persisted to the ORM database.
+  </p>
+
+  <div id="tuning-list">
+    {% for profile in tuning %}
+    <div class="card tuned">
+      <div class="row" style="justify-content:space-between; align-items:center;">
+        <h3 style="margin:0; font-size:14px;">{{ profile.model_name or profile.model_key }}</h3>
+        <span class="tag info">{{ profile.quantization }}</span>
+      </div>
+
+      <form method="post" action="/tuning" class="tuning-form">
+        <input type="hidden" name="model_key" value="{{ profile.model_key }}">
+
+        <div class="grid cols-2" style="gap:10px;">
+          <div class="field">
+            <label for="q-{{ loop.index }}">Quantization</label>
+            <select id="q-{{ loop.index }}" name="quantization">
+              {% for q in ["Q4_K_M","Q5_K_M","Q5_K_M_K_V","Q8_0","FP8","F16","BF16","Q3_K_M","Q2_K"] %}
+              <option value="{{ q }}" {% if q == profile.quantization %}selected{% endif %}>{{ q }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="n_gpu_layers-{{ loop.index }}">n_gpu_layers</label>
+            <input id="n_gpu_layers-{{ loop.index }}" name="n_gpu_layers" value="{{ profile.n_gpu_layers }}" class="mono">
+          </div>
+
+          <div class="field">
+            <label for="ctx_size-{{ loop.index }}">Context (ctx_size)</label>
+            <input id="ctx_size-{{ loop.index }}" name="ctx_size" type="number" value="{{ profile.ctx_size }}" class="mono">
+          </div>
+
+          <div class="field">
+            <label for="n_threads-{{ loop.index }}">n_threads</label>
+            <input id="n_threads-{{ loop.index }}" name="n_threads" type="number" value="{{ profile.n_threads }}" class="mono">
+          </div>
+
+          <div class="field">
+            <label for="temp-{{ loop.index }}">temp</label>
+            <input id="temp-{{ loop.index }}" name="temp" type="number" step="0.1" value="{{ profile.temp }}" class="mono">
+          </div>
+
+          <div class="field">
+            <label for="top_k-{{ loop.index }}">top_k</label>
+            <input id="top_k-{{ loop.index }}" name="top_k" type="number" value="{{ profile.top_k }}" class="mono">
+          </div>
+
+          <div class="field">
+            <label for="top_p-{{ loop.index }}">top_p</label>
+            <input id="top_p-{{ loop.index }}" name="top_p" type="number" step="0.1" value="{{ profile.top_p }}" class="mono">
+          </div>
+
+          <div class="field">
+            <label for="n_predict-{{ loop.index }}">n_predict</label>
+            <input id="n_predict-{{ loop.index }}" name="n_predict" type="number" value="{{ profile.n_predict }}" class="mono">
+          </div>
+        </div>
+
+        <div class="grid cols-2" style="gap:10px; margin-top:10px;">
+          <div class="field">
+            <label for="path-{{ loop.index }}">Model path (resolved)</label>
+            <input id="path-{{ loop.index }}" name="path" class="mono" value="{{ profile.path }}" style="font-size:12px;">
+          </div>
+        </div>
+
+        <div class="row" style="justify-content:flex-end; gap:8px; margin-top:10px;">
+          <button type="submit" class="primary">Save tuning</button>
+        </div>
+      </form>
+    </div>
+    {% else %}
+    <div class="card">
+      <p class="muted" style="margin:0;">No models discovered. Check that your model directories are configured and reload the registry (click <strong>Reload</strong> on the main page).</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

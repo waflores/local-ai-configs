@@ -13,7 +13,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from flask import Flask, jsonify, render_template, Response
+from flask import Flask, jsonify, render_template, Response, request
 
 from .configurator import _to_serializable, build_config
 from .config_store import export_llama_swap_config_bytes, list_profiles, load_config
@@ -117,6 +117,93 @@ def create_app() -> Flask:
                 "Content-Disposition": "attachment; filename=profiles_generated.yaml"
             },
         )
+
+    # ------------------------------------------------------------------------
+    # Model tuning
+    # ------------------------------------------------------------------------
+
+    @app.route("/tuning")
+    def tuning_page():
+        from .loader import discover_models
+        from .tuning_store import list_tuning_profiles, list_dirs
+
+        models = discover_models()
+        profiles = list_tuning_profiles()
+        profile_by_key = {p.model_key: p for p in profiles}
+
+        # Present tuning profiles in registry order (models first, then any
+        # stray profiles with no matching registry entry).
+        ordered = [profile_by_key.pop(m.model_id, None) for m in models]
+        ordered = [p for p in ordered if p is not None]
+        ordered += list(profile_by_key.values())
+
+        return _render(
+            "tuning.html",
+            title="Model Tuning",
+            models=models,
+            tuning=ordered,
+            dirs=list_dirs(),
+            profile_by_key=profile_by_key,
+        )
+
+    @app.route("/tuning", methods=["POST"])
+    def tuning_save():
+        from .tuning_store import save_tuning_profile
+        from dataclasses import asdict
+
+        model_key = request.form.get("model_key", "").strip()
+        if not model_key:
+            return jsonify({"ok": False, "error": "missing model_key"}), 400
+
+        data = {
+            "model_name": request.form.get("model_name", model_key),
+            "quantization": request.form.get("quantization", "Q4_K_M"),
+            "n_gpu_layers": request.form.get("n_gpu_layers", "all"),
+            "ctx_size": request.form.get("ctx_size", "0"),
+            "temp": request.form.get("temp", "0.7"),
+            "top_k": request.form.get("top_k", "40"),
+            "top_p": request.form.get("top_p", "0.9"),
+            "n_predict": request.form.get("n_predict", "512"),
+            "n_threads": request.form.get("n_threads", "4"),
+            "path": request.form.get("path", ""),
+        }
+        profile = save_tuning_profile(model_key, data)
+        return jsonify({"ok": True, "profile": asdict(profile)})
+
+    # ------------------------------------------------------------------------
+    # Model directories
+    # ------------------------------------------------------------------------
+
+    @app.route("/dirs")
+    def dir_settings_page():
+        from .tuning_store import list_dirs
+
+        return _render("dir_settings.html", title="Model Directories", dirs=list_dirs())
+
+    @app.route("/dirs", methods=["POST"])
+    def dir_settings_save():
+        from .tuning_store import add_dir, delete_dir
+
+        action = request.form.get("action", "")
+        if action == "add":
+            path = request.form.get("path", "").strip().rstrip("/")
+            if not path:
+                return jsonify({"ok": False, "error": "empty path"}), 400
+            try:
+                added = add_dir(path)
+            except Exception as exc:  # noqa: BLE001
+                return jsonify({"ok": False, "error": str(exc)}), 500
+            return jsonify({"ok": True, "dir": added})
+        if action == "delete":
+            path = request.form.get("path", "").strip().rstrip("/")
+            if delete_dir(path):
+                return jsonify({"ok": True})
+            return jsonify({"ok": False, "error": "not found"}), 404
+        return jsonify({"ok": False, "error": "unknown action"}), 400
+
+    # ------------------------------------------------------------------------
+    # Model registry refresh
+    # ------------------------------------------------------------------------
 
     @app.route("/reload", methods=["POST"])
     def reload_data():

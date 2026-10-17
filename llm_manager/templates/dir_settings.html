@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="panel">
+  <h2>Model directories</h2>
+  <p class="muted" style="margin-top:-8px;">
+    llama.cpp models are discovered by scanning configured directories. Add or
+    remove a directory and the model registry refreshes on the next reload.
+  </p>
+
+  <form method="post" action="/dirs" class="dir-add">
+    <div class="row" style="gap:8px; align-items:center;">
+      <input
+        name="path"
+        id="dir-input"
+        placeholder="/path/to/llama.cpp/models"
+        style="flex:1; font-size:13px; padding:6px 8px; background:#21262d; color:#e6e6e6; border:1px solid #2a2f3a; border-radius:6px;"
+      >
+      <button type="submit" class="primary" style="font-size:13px;">Add directory</button>
+    </div>
+    <div id="dir-error" class="mono" style="display:none; color:#f85149; margin-top:6px; font-size:12px;"></div>
+  </form>
+
+  <h3 style="margin-top:14px;">Configured directories</h3>
+  {% if dirs %}
+  <ul id="dir-list" style="list-style:none; padding:0; margin:0;">
+    {% for d in dirs %}
+    <li class="dir-item" style="display:flex; justify-content:space-between; align-items:center; gap:8px; padding:8px 10px; border:1px solid var(--border); border-radius:6px; background:#1c2026;">
+      <span class="mono" style="word-break:break-all;">{{ d.path }}</span>
+      <form method="post" action="/dirs" style="display:inline;">
+        <input type="hidden" name="action" value="delete">
+        <input type="hidden" name="path" value="{{ d.path }}">
+        <button type="submit" class="ghost" style="cursor:pointer; color:var(--muted); font-size:13px; border:none; background:transparent;">Remove</button>
+      </form>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="muted">No directories configured. Add the location of your llama.cpp model folders above.</p>
+  {% endif %}
+</div>
+
+<script>
+  document.querySelectorAll('form[action="/dirs"]').forEach((form) => {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = form.querySelector("button[type=submit]");
+      const err = document.getElementById("dir-error");
+      btn.disabled = true;
+      err.style.display = "none";
+      const res = await fetch("/dirs", { method: "POST", body: new FormData(form) });
+      const data = await res.json();
+      if (!res.ok) {
+        err.style.display = "block";
+        err.textContent = data.error || "Failed to update directories.";
+        btn.disabled = false;
+        return;
+      }
+      err.style.display = "none";
+      location.reload();
+    });
+  });
+</script>
+{% endblock %}
