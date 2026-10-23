@@ -1,0 +1,310 @@
+# add this modeline for validation in vscode
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mostlygeek/llama-swap/refs/heads/main/config-schema.json
+globalTTL: 0
+groups:
+  swappable:
+    exclusive: true
+    members:
+      - Meta-Llama-3.1-8B-Instruct
+      - CodeLlama-7B-Instruct
+      - Qwen3.5-9B-GGUF
+      - Qwen3.6-27B-GGUF
+      - Qwen3-4B-Thinking-2507-GGUF
+      - DeepSeek-R1-0528-Qwen3-8B-GGUF
+      - Ministral-3-3B-Instruct-2512-GGUF
+      - Ministral-3-14B-Reasoning-2512-GGUF
+      - Mistral-Nemo-Instruct-2407-GGUF
+      - Phi-4-mini-reasoning-GGUF
+      - Phi-4-reasoning-plus-GGUF
+      - gemma-4-E4B-it-GGUF
+      - NVIDIA-Nemotron-3-Nano-4B-GGUF
+      - Devstral-Small-2-24B-Instruct-2512-GGUF
+      - LFM2-24B-A2B-GGUF
+      - Qwen3-VL-8B-Instruct-GGUF
+      - olmOCR-2-7B-1025-GGUF
+      - rnj-1-instruct-GGUF
+      - zerank-2-gguf
+      - zerank-1-small-gguf
+    swap: true
+healthCheckTimeout: 60
+logLevel: debug
+logTimeFormat: rfc3339
+logToStdout: both
+apiKeys:
+  - "8675309"
+macros:
+  cacheRamSpillover: '4096'
+  cmdPrefix: /home/waflores/DevFolder/ai/llama.cpp/build/bin/llama-server
+  prismmlcmdPrefix: /home/waflores/DevFolder/ai/prismml-llama.cpp/build/bin/llama-server
+  contextShift: 'false'
+  ctxSize: '131072'
+  device: "CUDA0"
+  flashAttn: auto
+  jinja: 'true'
+  models_directory: /home/waflores/.lmstudio/models/lmstudio-community
+  nGpuLayers: all
+  nPredict: '-1'
+  reasoning: auto
+  reasoningBudget: '-1'
+  reasoningFormat: deepseek
+  threads: '-1'
+  tools: all
+models:
+  CodeLlama-7B-Instruct:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/CodeLlama-7B-Instruct-GGUF/codellama-7b-instruct.Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+    macros:
+      ctxSize: '16384'
+      temp: '0.8'
+      top_k: '40'
+      top_p: '0.9'
+    name: CodeLlama 7B
+  DeepSeek-R1-0528-Qwen3-8B-GGUF:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/DeepSeek-R1-0528-Qwen3-8B-GGUF/DeepSeek-R1-0528-Qwen3-8B-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+    macros:
+      ctxSize: '24893'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: DeepSeek R1 8B
+  Devstral-Small-2-24B-Instruct-2512-GGUF:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/Devstral-Small-2-24B-Instruct-2512-GGUF/Devstral-Small-2-24B-Instruct-2512-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+    macros:
+      ctxSize: '1024'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: Devstral 24B
+  LFM2-24B-A2B-GGUF:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/LFM2-24B-A2B-GGUF/LFM2-24B-A2B-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+    macros:
+      ctxSize: '1024'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: LFM2 24B A2B
+  Meta-Llama-3.1-8B-Instruct:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/Meta-Llama-3.1-8B-Instruct-GGUF/Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+    macros:
+      ctxSize: '27391'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: Llama 3.1 8B
+  Ministral-3-14B-Reasoning-2512-GGUF:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/Ministral-3-14B-Reasoning-2512-GGUF/Ministral-3-14B-Reasoning-2512-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+    macros:
+      ctxSize: '1024'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: Ministral 14B Reasoning
+  Ministral-3-3B-Instruct-2512-GGUF:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/Ministral-3-3B-Instruct-2512-GGUF/Ministral-3-3B-Instruct-2512-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+    macros:
+      ctxSize: '133333'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: Ministral 3B
+  Mistral-Nemo-Instruct-2407-GGUF:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/Mistral-Nemo-Instruct-2407-GGUF/Mistral-Nemo-Instruct-2407-Q3_K_L.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+    macros:
+      ctxSize: '1024'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: Mistral Nemo 12B
+  NVIDIA-Nemotron-3-Nano-4B-GGUF:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/NVIDIA-Nemotron-3-Nano-4B-GGUF/NVIDIA-Nemotron-3-Nano-4B-Q8_0.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --context-shift --reasoning ${reasoning} --reasoning-format ${reasoningFormat} --reasoning-budget ${reasoningBudget} --cache-ram ${cacheRamSpillover}"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+    macros:
+      ctxSize: '290000'
+      reasoningFormat: auto
+    name: NVIDIA Nemotron 3 Nano 4B
+    tools: true
+  Phi-4-mini-reasoning-GGUF:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/Phi-4-mini-reasoning-GGUF/Phi-4-mini-reasoning-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+    macros:
+      ctxSize: '123333'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: Phi-4 Mini Reasoning
+  Phi-4-reasoning-plus-GGUF:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/Phi-4-reasoning-plus-GGUF/Phi-4-reasoning-plus-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+    macros:
+      ctxSize: '1024'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: Phi-4 Reasoning Plus
+  Qwen3-4B-Thinking-2507-GGUF:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/Qwen3-4B-Thinking-2507-GGUF/Qwen3-4B-Thinking-2507-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+    macros:
+      ctxSize: '123333'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: Qwen3 4B Thinking
+  Qwen3-VL-8B-Instruct-GGUF:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/Qwen3-VL-8B-Instruct-GGUF/Qwen3-VL-8B-Instruct-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+    macros:
+      ctxSize: '24893'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: Qwen3-VL 8B Vision
+  Qwen3.5-9B-GGUF:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/Qwen3.5-9B-GGUF/Qwen3.5-9B-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --context-shift --reasoning ${reasoning} --reasoning-format ${reasoningFormat} --reasoning-budget ${reasoningBudget} --cache-ram ${cacheRamSpillover} --temp ${temp} --top-k ${top_k} --top-p ${top_p} --min-p ${min_p} --mmproj ${models_directory}/Qwen3.5-9B-GGUF/mmproj-Qwen3.5-9B-BF16.gguf"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+    macros:
+      ctxSize: '262144'
+      min_p: '0'
+      temp: '0.6'
+      top_k: '20'
+      top_p: '0.95'
+      reasoning: on
+    name: Qwen3.5 9B
+    tools: true
+  Bonsai-27B-GGUF:
+    cmd: "${prismmlcmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/Bonsai-27B-GGUF/Bonsai-27B-Q1_0.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --context-shift --reasoning ${reasoning} --reasoning-format ${reasoningFormat} --reasoning-budget ${reasoningBudget} --cache-ram ${cacheRamSpillover} --temp ${temp} --top-k ${top_k} --top-p ${top_p} --min-p ${min_p} --mmproj ${models_directory}/Bonsai-27B-GGUF/mmproj-Bonsai-27B-BF16.gguf"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+    macros:
+      ctxSize: '262144'
+      min_p: '0'
+      temp: '0.7'
+      top_k: '20'
+      top_p: '0.95'
+    name: PrismML Bonsai 27B
+    tools: true
+  Qwythos-9B-Claude-Mythos-5-1M-GGUF:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/../empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF/Qwythos-9B-Claude-Mythos-5-1M-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --context-shift --reasoning ${reasoning} --reasoning-format ${reasoningFormat} --reasoning-budget ${reasoningBudget} --cache-ram ${cacheRamSpillover} --temp ${temp} --top-k ${top_k} --top-p ${top_p} --min-p ${min_p}"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+    macros:
+      ctxSize: '131072'
+      min_p: '0'
+      temp: '0.6'
+      top_k: '20'
+      top_p: '0.95'
+    name: Qwythos 9B Claude Mythos 5 1M GGUF
+    tools: true
+  Qwen3.6-27B-GGUF:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/Qwen3.6-27B-GGUF/Qwen3.6-27B-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+    macros:
+      ctxSize: '1024'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: Qwen3.6 27B
+  gemma-4-E4B-it-GGUF:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/gemma-4-E4B-it-GGUF/gemma-4-E4B-it-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+    macros:
+      ctxSize: '262144'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: Gemma 4E Instruct
+  granite-4.1-8b-GGUF:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/../ibm-granite/granite-4.1-8b-GGUF/granite-4.1-8b-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --context-shift"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+    macros:
+      cacheRamSpillover: '-1'
+      ctxSize: '100000'
+    name: IBM Granite 4.1
+  granite-4-h-tiny:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/granite-4.0-h-tiny-GGUF/granite-4.0-h-tiny-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --context-shift"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+    macros:
+      cacheRamSpillover: '-1'
+      ctxSize: '400000'
+    name: IBM Granite 4.0 Hybrid Tiny
+  olmOCR-2-7B-1025-GGUF:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/olmOCR-2-7B-1025-GGUF/olmOCR-2-7B-1025-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+    macros:
+      ctxSize: '32727'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: olmOCR 7B
+  rnj-1-instruct-GGUF:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/rnj-1-instruct-GGUF/rnj-1-instruct-Q4_K_M.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+    macros:
+      ctxSize: '22500'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: RNJ-1 Instruct
+  zerank-1-small-gguf:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/../mradermacher/zerank-1-small-GGUF/zerank-1-small.Q8_0.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --temp ${temp} --top-k ${top_k} --top-p ${top_p}"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+    macros:
+      ctxSize: '40960'
+      temp: '0.7'
+      top_k: '40'
+      top_p: '0.9'
+    name: Zerank 1 Small
+  zerank-2-gguf:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/../mradermacher/zerank-2-GGUF/zerank-2.Q4_K_S.gguf --device ${device} --reranking --tools all --embedding --reasoning-budget 0 --reasoning off --gpu-layers -2"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+    macros:
+      ctxSize: '-1'
+    name: Zerank 2.0
+  FastContext-1.0-4B-SFT-Q4_K_M-GGUF:
+    cmd: "${cmdPrefix} --no-webui --port ${PORT} --models-dir ${models_directory} --model ${models_directory}/../mitkox/FastContext-1.0-4B-SFT-Q4_K_M-GGUF/fastcontext-1.0-4b-sft-q4_k_m.gguf --n-gpu-layers ${nGpuLayers} --threads ${threads} --flash-attn ${flashAttn} --jinja --tools ${tools} --device ${device} --ctx-size ${ctxSize} --n-predict ${nPredict} --context-shift --reasoning ${reasoning} --reasoning-format ${reasoningFormat} --reasoning-budget ${reasoningBudget} --cache-ram ${cacheRamSpillover} --temp ${temp} --top-k ${top_k} --top-p ${top_p} --min-p ${min_p}"
+    env:
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+    macros:
+      ctxSize: '65536'
+      min_p: '0'
+      temp: '0.6'
+      top_k: '20'
+      top_p: '0.95'
+    name: FastContext 1.0 4B
+    tools: true
+# llama-server --model /home/waflores/.lmstudio/models/openbmb/MiniCPM5-2B-GGUF/MiniCPM5-2B-Q4_K_M.gguf --host 127.0.0.1 --port 44425 --api-key DBshr_Q2qiqAEhagaH5eLSbnBL5UZhGSir_WoABxCV8 --verbosity 5 --no-webui --jinja --chat-template-file /home/waflores/.lmstudio/.internal/temp/lmstudio-chat-template-w7NTaN/chat-template.jinja --ctx-size 131072 --n-gpu-layers 999999 --n-cpu-moe 0 --main-gpu 0 --tensor-split 0 --split-mode layer --ctx-checkpoints 32 --batch-size 2048 --ubatch-size 512 --threads 9 --parallel 4 --cache-type-k f16 --cache-type-v f16 --flash-attn on --kv-offload --kv-unified --load-mode mmap+mlock
+# lama-server --model /home/waflores/.lmstudio/models/unsloth/SmolLM2-360M-Instruct-GGUF/SmolLM2-360M-Instruct-F16.gguf --host 127.0.0.1 --port 33973 --api-key qjjOv1fAqX1hZui7XIP3smI1ZYX5EXgpd_N82Z84Q3w --verbosity 5 --no-webui --jinja --chat-template-file /home/waflores/.lmstudio/.internal/temp/lmstudio-chat-template-OJ37FQ/chat-template.jinja --ctx-size 8192 --n-gpu-layers 999999 --n-cpu-moe 0 --main-gpu 0 --tensor-split 0 --split-mode layer --ctx-checkpoints 32 --batch-size 2048 --ubatch-size 512 --threads 9 --parallel 4 --cache-type-k f16 --cache-type-v f16 --flash-attn on --kv-offload --kv-unified --load-mode mmap+mlock
+performance:
+  disabled: false
+  every: 15s
+sendLoadingState: true
+startPort: 10001
