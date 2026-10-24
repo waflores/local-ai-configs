@@ -126,7 +126,18 @@ def load_config() -> Config | None:
 
 
 def list_profiles(
-    *, fields: tuple[str, ...] = ("model_name", "model_id", "size_gb", "ctx_size", "kv_gb", "quantization", "fit_status", "path", "device")
+    *,
+    fields: tuple[str, ...] = (
+        "model_name",
+        "model_id",
+        "size_gb",
+        "ctx_size",
+        "kv_gb",
+        "quantization",
+        "fit_status",
+        "path",
+        "device",
+    ),
 ) -> list[dict]:
     """Return every persisted profile as a plain dict (useful for a UI table)."""
     with SessionLocal() as session:
@@ -152,7 +163,9 @@ def delete_config() -> None:
 # ---------------------------------------------------------------------------
 # Disk discovery from configured directories
 # ---------------------------------------------------------------------------
-def discover_models_in_dirs(dirs: list[dict], models_dir: str | None = None) -> list[Model]:
+def discover_models_in_dirs(
+    dirs: list[dict], models_dir: str | None = None
+) -> list[Model]:
     """Discover models by crawling each configured directory on disk.
 
     Uses :func:`discover_models_on_disk` to walk each configured directory

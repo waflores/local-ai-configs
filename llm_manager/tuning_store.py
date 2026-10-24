@@ -54,9 +54,7 @@ class ModelDir:
     updated_at: str = ""
 
 
-_DEFAULT_DIRS = (
-    "/home/waflores/.lmstudio/models/lmstudio-community",
-)
+_DEFAULT_DIRS = ("/home/waflores/.lmstudio/models/lmstudio-community",)
 
 
 def _now() -> str:
@@ -77,7 +75,9 @@ def list_tuning_profiles():
     from .database import OrmTuningProfile
 
     with _session() as session:
-        rows = session.query(OrmTuningProfile).order_by(OrmTuningProfile.model_key).all()
+        rows = (
+            session.query(OrmTuningProfile).order_by(OrmTuningProfile.model_key).all()
+        )
         return [r.to_domain() for r in rows]
 
 
@@ -109,7 +109,9 @@ def save_tuning_profile(model_key: str, data: dict) -> TuningProfile:
             .first()
         )
         if row is None:
-            row = OrmTuningProfile(model_key=model_key, model_name=data.get("model_name", model_key))
+            row = OrmTuningProfile(
+                model_key=model_key, model_name=data.get("model_name", model_key)
+            )
             session.add(row)
         row.quantization = data.get("quantization", "Q4_K_M")
         row.n_gpu_layers = data.get("n_gpu_layers", "all")
@@ -163,7 +165,9 @@ def add_dir(path: str) -> ModelDir:
 
     normalized = path.strip().rstrip("/")
     with _session() as session:
-        exists = session.query(OrmModelDir).filter(OrmModelDir.path == normalized).first()
+        exists = (
+            session.query(OrmModelDir).filter(OrmModelDir.path == normalized).first()
+        )
         if exists:
             return exists.to_domain()
         row = OrmModelDir(path=normalized, created_at=_now(), updated_at=_now())

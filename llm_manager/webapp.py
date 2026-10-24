@@ -16,7 +16,12 @@ import os
 
 from flask import Flask, jsonify, render_template, Response, request, redirect
 
-from .config_store import export_llama_swap_config_bytes, load_config, SessionLocal, OrmConfig
+from .config_store import (
+    export_llama_swap_config_bytes,
+    load_config,
+    SessionLocal,
+    OrmConfig,
+)
 from .configurator import ConfigProfile, _to_serializable, build_config
 from .database import init_db
 from .hardware import detect_hardware
@@ -213,7 +218,8 @@ def create_app() -> Flask:
         # Discovered models persisted to the DB from configured directories.
         # (Runs disk discovery one time; harmless if repeated.)
         dirs_dict = [
-            {"path": d.path, "created_at": d.created_at, "updated_at": d.updated_at} for d in dirs
+            {"path": d.path, "created_at": d.created_at, "updated_at": d.updated_at}
+            for d in dirs
         ]
         try:
             if dirs_dict:
@@ -285,7 +291,14 @@ def create_app() -> Flask:
                 # list_dirs() returns ModelDir objects; convert to dicts for
                 # discover_and_persist_models().
                 dirs = list_dirs()
-                dirs_dict = [{"path": d.path, "created_at": d.created_at, "updated_at": d.updated_at} for d in dirs]
+                dirs_dict = [
+                    {
+                        "path": d.path,
+                        "created_at": d.created_at,
+                        "updated_at": d.updated_at,
+                    }
+                    for d in dirs
+                ]
                 if dirs_dict:
                     discover_and_persist_models(dirs_dict)
             except Exception:

@@ -85,9 +85,9 @@ class TestQuantization:
             if name in expect_strings:
                 val = getattr(quantization, name)
                 assert isinstance(val, str), f"{name} should be a str, got {type(val)}"
-                assert val in VALID_QUANTIZATIONS, (
-                    f"{name}={val} not in VALID_QUANTIZATIONS"
-                )
+                assert (
+                    val in VALID_QUANTIZATIONS
+                ), f"{name}={val} not in VALID_QUANTIZATIONS"
 
     def test_valid_quantizations_list(self):
         # FP8 is included in the valid quantizations.
@@ -342,9 +342,9 @@ class TestDetectHardware:
         if spec.gpu_name:
             assert len(spec.gpu_name) > 0
         if spec.system_ram_gb:
-            assert spec.system_ram_gb > 16.0, (
-                f"Expected >16 GB RAM, got {spec.system_ram_gb}"
-            )
+            assert (
+                spec.system_ram_gb > 16.0
+            ), f"Expected >16 GB RAM, got {spec.system_ram_gb}"
 
 
 # ---------------------------------------------------------------------------

@@ -19,7 +19,6 @@ from .models import (
     estimate_vram_gb,
 )
 
-
 # Hardware tiers: <min_free_vram_gb> -> config override applied when the model
 # would otherwise not fit.  The value is the config key that a llama-swap
 # user would set (e.g. nGpuLayers, ctxSize).

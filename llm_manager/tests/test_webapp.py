@@ -9,7 +9,11 @@ TEST_DB = REPO / "test_local_config.db"
 
 
 def _patch_modules(engine, SessionLocal):
-    from llm_manager import database as db_mod, config_store as cs_mod, tuning_store as ts_mod
+    from llm_manager import (
+        database as db_mod,
+        config_store as cs_mod,
+        tuning_store as ts_mod,
+    )
 
     db_mod.engine = engine
     db_mod.SessionLocal = SessionLocal
@@ -29,7 +33,9 @@ def app():
     from sqlalchemy import create_engine
     from sqlalchemy.orm import sessionmaker
 
-    engine2 = create_engine(f"sqlite:///{TEST_DB}", connect_args={"check_same_thread": False})
+    engine2 = create_engine(
+        f"sqlite:///{TEST_DB}", connect_args={"check_same_thread": False}
+    )
     SessionLocal2 = sessionmaker(bind=engine2, autoflush=False, expire_on_commit=False)
 
     original_engine = db_mod.engine
@@ -44,7 +50,11 @@ def app():
         app.config["TESTING"] = True
         yield app
     finally:
-        from llm_manager import database as db_mod_r, config_store as cs_mod_r, tuning_store as ts_mod_r
+        from llm_manager import (
+            database as db_mod_r,
+            config_store as cs_mod_r,
+            tuning_store as ts_mod_r,
+        )
 
         db_mod_r.engine = original_engine
         db_mod_r.SessionLocal = original_session
@@ -93,12 +103,21 @@ def test_tuning_save_and_list(app):
 
 def test_tuning_requires_model_key(app):
     client = app.test_client()
-    resp = client.post("/tuning", data={
-        "model_name": "X", "quantization": "Q4_K_M",
-        "n_gpu_layers": "all", "ctx_size": "0",
-        "temp": "0.7", "top_k": "40", "top_p": "0.9",
-        "n_predict": "512", "n_threads": "4", "path": "",
-    })
+    resp = client.post(
+        "/tuning",
+        data={
+            "model_name": "X",
+            "quantization": "Q4_K_M",
+            "n_gpu_layers": "all",
+            "ctx_size": "0",
+            "temp": "0.7",
+            "top_k": "40",
+            "top_p": "0.9",
+            "n_predict": "512",
+            "n_threads": "4",
+            "path": "",
+        },
+    )
     assert resp.status_code == 400
     assert resp.get_json()["ok"] is False
 
@@ -142,6 +161,6 @@ def test_admin_page_renders_and_lists_dirs(app):
     # The added directory appears in the table.
     assert "/tmp/admin-test-dir" in html
     # Each configured directory has a remove form.
-    assert html.count("<form method=\"post\" action=\"/dirs\"") >= 1
+    assert html.count('<form method="post" action="/dirs"') >= 1
     # Model counts are presented next to each directory row.
     assert "Models" in html

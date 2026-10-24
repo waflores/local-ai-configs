@@ -32,6 +32,18 @@ curl http://127.0.0.1:10001/health
 curl http://127.0.0.1:10001/v1/models
 ```
 
+## Documentation
+
+Progressive-disclosure docs live in `docs/`:
+
+1. [README.md](README.md) — entry point
+1. [docs/README.md](docs/README.md) — doc index + where to look
+1. [docs/llama-swap.md](docs/llama-swap.md) — llama-swap API, 22-model inventory
+1. [docs/llm_manager.md](docs/llm_manager.md) — Python app architecture
+1. [docs/nix-formatting.md](docs/nix-formatting.md) — Nix + formatting
+1. [docs/monorepo.md](docs/monorepo.md) — structure + phase plan
+1. [docs/inference-tuning.md](docs/inference-tuning.md) — performance math
+
 ### Hermes Agent — Core Rules
 
 1. **Always run `nix flake show`, `nix flake check`, and `nix fmt` before declaring work complete.**

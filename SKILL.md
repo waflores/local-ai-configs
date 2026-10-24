@@ -81,6 +81,8 @@ curl http://127.0.0.1:10001/v1/models
 }
 ```
 
+Model inventory and API details are in `docs/llama-swap.md`.
+
 ### `/load <model-name>` - Load a Specific Model
 
 ```bash
@@ -106,6 +108,8 @@ curl -X DELETE http://127.0.0.1:10001/v1/models/IBM Granite 4 Tiny
   --model <model-name> \
   --output benchmarks/results.json
 ```
+
+NOTE: `run_benchmarks.py` and `run_llama_bench.sh` are placeholders. See `docs/llama-swap.md` for the benchmark status.
 
 ### `/health` - Health Check
 
@@ -236,7 +240,7 @@ ______________________________________________________________________
 ## Core Rules
 
 1. **Always run `nix flake show`, `nix flake check`, and `nix fmt` before declaring work complete.**
-2. **Never commit secrets** — replace API keys, tokens, and credentials with `[REDACTED]`.
-3. **Keep Python code PEP 8** — Ruff rules are centralized in pyproject.toml.
-4. **Platforms:** x86_64-linux only. No cross-compilation.
-5. **Model quantization:** prefer Q4_K_M or Q5_K_M.
+1. **Never commit secrets** — replace API keys, tokens, and credentials with `[REDACTED]`.
+1. **Keep Python code PEP 8** — Ruff rules are centralized in pyproject.toml.
+1. **Platforms:** x86_64-linux only. No cross-compilation.
+1. **Model quantization:** prefer Q4_K_M or Q5_K_M.

@@ -265,7 +265,9 @@ class OrmModelDir(Base):
     def to_domain(self):  # pragma: no cover - simple mapping
         from .tuning_store import ModelDir
 
-        return ModelDir(path=self.path, created_at=self.created_at, updated_at=self.updated_at)
+        return ModelDir(
+            path=self.path, created_at=self.created_at, updated_at=self.updated_at
+        )
 
 
 # ---------------------------------------------------------------------------
