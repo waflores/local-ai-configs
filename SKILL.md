@@ -48,6 +48,13 @@ nix flake show && nix flake check && nix fmt --check
 - **Hermes docs:** https://hermes-agent.nousresearch.com/docs/
 - **Hermes skill:** `/home/waflores/.hermes/skills/autonomous-ai-agents/hermes-agent/SKILL.md`
 
+**For spawning additional Hermes instances:**
+
+- **One-shot:** `hermes chat -q "<query>"`
+- **Interactive:** `tmux new-session -d -s hermes "hermes"`
+- **Worktree mode:** `hermes -w` (prevents git conflicts when editing code)
+- **Resume:** `hermes --continue` or `hermes --resume <session-id>`
+
 ______________________________________________________________________
 
 ## Agent Commands — llama-swap
@@ -65,7 +72,7 @@ curl http://127.0.0.1:10001/v1/models
   "object": "list",
   "data": [
     {
-      "id": "CodeLlama-7B-Instruct",
+      "id": "IBM Granite 4 Tiny",
       "object": "model",
       "created": 1718668800,
       "owned_by": "llama-swap"
@@ -80,8 +87,8 @@ curl http://127.0.0.1:10001/v1/models
 curl -X POST http://127.0.0.1:10001/v1/models \
   -H "Content-Type: application/json" \
   -d '{
-    "name": "Meta-Llama-3.1-8B-Instruct",
-    "path": "/home/waflores/.lmstudio/models/lmstudio-community/Meta-Llama-3.1-8B-Instruct-GGUF/Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf",
+    "name": "IBM Granite 4 Tiny",
+    "path": "/home/waflores/.lmstudio/models/lmstudio-community/IBM-Granite-4-Tiny-GGUF/granite-4-h-tiny-Q4_K_M.gguf",
     "ttl": 600
   }'
 ```
@@ -89,115 +96,95 @@ curl -X POST http://127.0.0.1:10001/v1/models \
 ### `/unload <model-name>` - Unload a Model
 
 ```bash
-curl -X DELETE http://127.0.0.1:10001/v1/models/Meta-Llama-3.1-8B-Instruct
+curl -X DELETE http://127.0.0.1:10001/v1/models/IBM Granite 4 Tiny
 ```
 
-### `/health` - Check System Health
+### `/bench <model-name>` - Benchmark a Model
+
+```bash
+/home/waflores/DevFolder/ai/local-config/llama-swap/run_benchmarks.py \
+  --model <model-name> \
+  --output benchmarks/results.json
+```
+
+### `/health` - Health Check
 
 ```bash
 curl http://127.0.0.1:10001/health
 ```
 
-**Response:**
-
-```json
-{
-  "status": "ok",
-  "models": [
-    {
-      "id": "CodeLlama-7B-Instruct",
-      "status": "loaded"
-    }
-  ]
-}
-```
-
-### `/inference` - Run Inference Request
+### `/list-models` - List Loaded Models
 
 ```bash
-curl -X POST http://127.0.0.1:10001/v1/chat/completions \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "CodeLlama-7B-Instruct",
-    "messages": [
-      {
-        "role": "user",
-        "content": "Write a Python function to sort an array"
-      }
-    ],
-    "max_tokens": 100
-  }'
+curl http://127.0.0.1:10001/v1/models
 ```
 
-### `/benchmark <model-name>` - Run Performance Benchmark
+______________________________________________________________________
+
+## Nix Commands
+
+### Build
 
 ```bash
-/home/waflores/DevFolder/ai/local-config/llama-swap/run_benchmarks.py \
-  --model CodeLlama-7B-Instruct \
-  --output benchmarks/results.json
+nix build .#packages.x86_64-linux.local-config
 ```
 
-### `/config-analyze` - Analyze Configuration
+### Develop Shell
 
 ```bash
-/home/waflores/DevFolder/ai/local-config/llama-swap/config-analyzer.sh
+nix develop .#default
 ```
 
-## Model Inventory
+### Format
 
-| Model | Parameters | Size (Q4_K_M) | Use Case |
-|-------|------------|---------------|----------|
-| CodeLlama-7B-Instruct | 7B | ~4 GB | Python, general coding |
-| Meta-Llama-3.1-8B-Instruct | 8B | ~5 GB | General tasks |
-| Qwen3.5-9B-GGUF | 9B | ~5.6 GB | General tasks |
-| Qwen3.6-27B-GGUF | 27B | ~16.5 GB | Advanced tasks |
-| DeepSeek-R1-0528-Qwen3-8B-GGUF | 8B | ~5 GB | Reasoning |
-| Ministral-3-3B-Instruct-2512-GGUF | 3B | ~2 GB | Fast completions |
-| Ministral-3-14B-Reasoning-2512-GGUF | 14B | ~8 GB | Reasoning tasks |
-| Mistral-Nemo-Instruct-2407-GGUF | 13B | ~6.5 GB | Balanced performance |
-| Phi-4-mini-reasoning-GGUF | 3B | ~2.5 GB | Lightweight tasks |
-| Phi-4-reasoning-plus-GGUF | 13B | ~9 GB | Advanced reasoning |
-| gemma-4-E4B-it-GGUF | 8B | ~5.3 GB | General tasks |
-| NVIDIA-Nemotron-3-Nano-4B-GGUF | 4B | ~2.8 GB | NVIDIA-optimized |
-| Devstral-Small-2-24B-Instruct-2512-GGUF | 24B | ~14 GB | Advanced reasoning |
-| LFM2-24B-A2B-GGUF | 24B | ~14.4 GB | Embeddings |
-| Qwen3-VL-8B-Instruct-GGUF | 8B | ~5 GB | Vision-language |
-| olmOCR-2-7B-1025-GGUF | 8B | ~4.7 GB | OCR tasks |
-| granite-4-h-tiny | 7B | ~4 GB | IBM's code model |
-| zerank-1-small-gguf | - | - | Reranking |
-| zerank-2-gguf | - | - | Embeddings |
-| rnj-1-instruct-GGUF | - | - | General tasks |
+```bash
+nix fmt
+```
 
-## Hardware Configuration
+### Check
 
-### GPU Devices
+```bash
+nix flake check
+```
 
-| Device | Type | Memory | Status |
-|--------|------|--------|--------|
-| CUDA0 | NVIDIA RTX 5070 | 7.7 GB | Active inference |
-| Vulkan0 | Intel (ARL) | 23.6 GB | Model storage |
-| Vulkan1 | NVIDIA RTX 5070 | 8.1 GB | Fallback |
+______________________________________________________________________
 
-### Performance Targets
+## Performance Targets
 
 | Metric | Target |
 |--------|--------|
-| Model Load Time | < 5s |
-| Model Unload Time | < 2s |
-| Swap Operation | < 2s |
-| Inference Speed (7B) | > 10 t/s |
+| Model Swap Time | < 2s |
+| Generation Speed (7B) | > 10 t/s |
 | VRAM Utilization | < 70% |
+| Context Efficiency | > 80% |
 
-## Configuration Files
+## Model Inventory
 
-- **`llama-swap/config.yaml`** - Main configuration with model definitions
-- **`SKILL.md`** - This file - Agent commands and capabilities
-- **`README.md`** - Project vision and documentation
-- **`AGENTS.md`** - Testing agent responsibilities
+| Model | Parameters | Size (Q4_K_M) | Device |
+|-------|------------|---------------|--------|
+| CodeLlama-7B-Instruct | 7B | ~4 GB | CUDA0 |
+| Meta-Llama-3.1-8B-Instruct | 8B | ~5 GB | CUDA0 |
+| Qwen3.5-9B-GGUF | 9B | ~5.6 GB | CUDA0 |
+| Qwen3.6-27B-GGUF | 27B | ~16.5 GB | CUDA0 |
+| DeepSeek-R1-0528-Qwen3-8B-GGUF | 8B | ~5 GB | CUDA0 |
+| Ministral-3-3B-Instruct-2512-GGUF | 3B | ~2 GB | CUDA0 |
+| Ministral-3-14B-Reasoning-2512-GGUF | 14B | ~8 GB | CUDA0 |
+| Mistral-Nemo-Instruct-2407-GGUF | 13B | ~6.5 GB | CUDA0 |
+| Phi-4-mini-reasoning-GGUF | 3B | ~2.5 GB | CUDA0 |
+| Phi-4-reasoning-plus-GGUF | 13B | ~9 GB | CUDA0 |
+| gemma-4-E4B-it-GGUF | 8B | ~5.3 GB | CUDA0 |
+| NVIDIA-Nemotron-3-Nano-4B-GGUF | 4B | ~2.8 GB | CUDA0 |
+| Devstral-Small-2-24B-Instruct-2512-GGUF | 24B | ~14 GB | CUDA0 |
+| LFM2-24B-A2B-GGUF | 24B | ~14.4 GB | CUDA0 |
+| Qwen3-VL-8B-Instruct-GGUF | 8B | ~5 GB | CUDA0 |
+| olmOCR-2-7B-1025-GGUF | 8B | ~4.7 GB | CUDA0 |
+| granite-4-h-tiny | 7B | ~4 GB | CUDA0 |
 
-## Quick Reference
+______________________________________________________________________
 
-### Start llama-swap
+## Quick Start
+
+1. **Start llama-swap:**
 
 ```bash
 /home/waflores/bin/llama-swap \
@@ -205,79 +192,51 @@ curl -X POST http://127.0.0.1:10001/v1/chat/completions \
   --listen 127.0.0.1:10001
 ```
 
-### Check Health
+2. **Health check:**
 
 ```bash
 curl http://127.0.0.1:10001/health
 ```
 
-### List Models
+3. **Load a model:**
 
 ```bash
-curl http://127.0.0.1:10001/v1/models
+curl -X POST http://127.0.0.1:10001/v1/models \
+  -H "Content-Type: application/json" \
+  -d '{"name": "CodeLlama-7B-Instruct", "path": "/home/waflores/.lmstudio/models/lmstudio-community/CodeLlama-7B-Instruct-GGUF/CodeLlama-7B-Instruct-Q4_K_M.gguf", "ttl": 600}'
 ```
 
-### Access Benchmarks
+4. **Run benchmarks:**
 
 ```bash
-/home/waflores/DevFolder/ai/local-config/llama-swap/run_benchmarks.py
-```
-
-### LLm Manager Web App
-
-```bash
-# Development (debug mode, binds 127.0.0.1:5000)
-uv run python -m llm_manager.webapp
-
-# Production (gunicorn, no debug)
-uv run gunicorn 'llm_manager.webapp:app' --bind 127.0.0.1:5000
-
-# Route Overview
-#   /                   - Front page (hardware + Configuration Summary)
-#   /hardware           - Hardware overview page
-#   /configs            - Model configurations with paths
-#   /reload             - Reload configuration
-#   /shell              - Interactive Python shell
-```
-
-## Best Practices
-
-1. **Use Q4_K_M or Q5_K_M quantization** - Balance between quality and size
-1. **Prefer CUDA for active models** - Better performance on RTX 5070
-1. **Use Vulkan for swapped models** - Free up VRAM for active models
-1. **Monitor VRAM usage** - Keep below 70% for optimal performance
-1. **Set appropriate context sizes** - Match task requirements
-1. **Enable flash-attn** - Improves inference speed
-
-## Troubleshooting
-
-### Model Load Timeout
-
-```bash
-# Increase health check timeout
-healthCheckTimeout: 60
-```
-
-### VRAM Overflow
-
-```bash
-# Reduce context size or enable swapping
-macros.ctxSize: '131072'
-groups.swappable.exclusive: true
-```
-
-### Performance Issues
-
-```bash
-# Verify CUDA is accessible
-nvidia-smi
-
-# Check available VRAM
-cat /proc/driver/nvidia/gpu/0/vram_total
+/home/waflores/DevFolder/ai/local-config/llama-swap/run_benchmarks.py \
+  --model CodeLlama-7B-Instruct \
+  --output benchmarks/results.json
 ```
 
 ______________________________________________________________________
 
-**Last Updated:** 2026-06-20
-**Status:** Production-ready
-**Version:** 1.0
+## Configuration Files
+
+| File | Purpose |
+|------|---------|
+| llama-swap/config.yaml | llama-swap model definitions (22 models) |
+| flake.nix | Nix flake (x86_64-linux only) |
+| pyproject.toml | Python project metadata (uv) |
+| nix/treefmt.nix | treefmt-nix formatter declaration |
+| nix/formatter.nix | treefmt-nix bridge |
+| nix/pyproject.nix | buildPythonPackage builder |
+| nix/packages/default.nix | blueprint packages output |
+| nix/devshells/default.nix | blueprint devShells output |
+| nix/checks/pre-commit-check.nix | pre-commit check wired to treefmt |
+| .agents/config.json | Machine-readable project authority |
+
+______________________________________________________________________
+
+## Core Rules
+
+1. **Always run `nix flake show`, `nix flake check`, and `nix fmt` before declaring work complete.**
+2. **Never commit secrets** — replace API keys, tokens, and credentials with `[REDACTED]`.
+3. **Keep Python code PEP 8** — Ruff rules are centralized in pyproject.toml.
+4. **Platforms:** x86_64-linux only. No cross-compilation.
+5. **Model quantization:** prefer Q4_K_M or Q5_K_M.
