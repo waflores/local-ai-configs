@@ -82,9 +82,9 @@ This project uses the **Agent Skills** format for extending AI agent capabilitie
 - **[INSTALL.md](./INSTALL.md)** - Installation guide
 - **[QUICK-START.md](./QUICK-START.md)** - One-command setup
 - **[CONFIG-STRUCTURE.md](./CONFIG-STRUCTURE.md)** - Configuration hierarchy
-- **[API-SPECIFICATIONS.md](./API-SPECIFICATIONS.md)** - API endpoints
+- **[llamastash-integration.md](./llamastash-integration.md)** - API endpoints
 - **[INTEGRATION-PATTERNS.md](./INTEGRATION-PATTERNS.md)** - Integration strategies
-- **[TROUBLESHOOTING.md](./TROUBLESHOOTING.md)** - Common issues and solutions
+- **[update-yaml.py](./update-yaml.py)** - Common issues and solutions
 
 ## Technical Details
 

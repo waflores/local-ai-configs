@@ -9,6 +9,9 @@ dependencies = [
     "pyyaml>=6.0.3",
 ]
 
+[project.scripts]
+check-md-links = "scripts.check_md_links:main"
+
 [tool.ruff.lint]
 select = ["B", "D3", "E", "F"]
 ignore = ["E501"]

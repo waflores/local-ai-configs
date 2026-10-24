@@ -387,7 +387,7 @@ ______________________________________________________________________
 ## See Also
 
 - [CONFIG-STRUCTURE.md](CONFIG-STRUCTURE.md) - Configuration hierarchy
-- [API-SPECIFICATIONS.md](API-SPECIFICATIONS.md) - API endpoint documentation
+- [llamastash-integration.md](llamastash-integration.md) - API endpoint documentation
 - [INSTALL.md](INSTALL.md) - Installation guide
 - [QUICK-START.md](QUICK-START.md) - Quick setup guide
 

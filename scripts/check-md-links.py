@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S uv run --no-project
 """
 Markdown link checker for the llama-swap configuration repo.
 
@@ -6,8 +6,8 @@ Checks that all relative internal links in .md files resolve to existing
 files. External links and anchor-only links are skipped.
 
 Usage:
-    python3 scripts/check-md-links.py
-    python3 scripts/check-md-links.py --strict   # also fail on dead links
+    check-md-links.py
+    check-md-links.py --strict   # also fail on dead links
 """
 
 import os
