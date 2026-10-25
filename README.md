@@ -24,9 +24,9 @@ This repo is a **monorepo** of four subprojects. After the agent entry point,
 read in this order:
 
 1. `README.md` (root) — system overview, quick start, path adaptation
-2. `docs/README.md` — documentation index
-3. `docs/monorepo.md` — directory layout + phase plan
-4. The subfolder you need:
+1. `docs/README.md` — documentation index
+1. `docs/monorepo.md` — directory layout + phase plan
+1. The subfolder you need:
    - `llama-swap/` — model config + benchmarks
    - `llm_manager/` — Python package (registry, hardware, profiles, web UI)
    - `nix/` — Nix flake + formatting

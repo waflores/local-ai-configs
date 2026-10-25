@@ -9,7 +9,7 @@ from the repo root, or `pi.dev/SKILL.md` for a dedicated skill entry point. On t
 repo, pi.dev is configured to:
 
 1. Read `AGENTS.md` — the platform-neutral entry point (generic, no agent branding)
-2. Read `SKILL.md` — the generic entry point (with "for Hermes Agent only" label)
+1. Read `SKILL.md` — the generic entry point (with "for Hermes Agent only" label)
 
 ## Quick reference
 

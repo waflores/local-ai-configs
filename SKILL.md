@@ -12,12 +12,14 @@ leveraging NVIDIA RTX 5070 Max-Q GPU for optimal inference performance.
 ## Core Capabilities
 
 ### Model Management
+
 - **Model Loading/Unloading** - Swap between models on-demand
 - **Performance Benchmarking** - Measure inference speed and latency
 - **Resource Monitoring** - Track VRAM, RAM, and swap usage
 - **Health Checking** - Verify model availability and readiness
 
 ### Inference Operations
+
 - **Chat Completion** - Interactive conversations
 - **Code Generation** - Python, C, C++ code completion
 - **Reasoning Tasks** - Complex problem solving
@@ -81,6 +83,7 @@ curl http://127.0.0.1:10001/v1/models
 ```
 
 ### `/nix-check` command is for Hermes Agent only. See `AGENTS.md` for
+
 generic, platform-neutral repo documentation.
 
 ## Nix Commands
