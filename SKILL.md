@@ -1,8 +1,13 @@
 # llama-swap Agent Skills
 
+> **For Hermes Agent only.** For generic AI harnesses (pi, Codex, OpenCode,
+> Claude), read `AGENTS.md` or `CLAUDE.md` at the repo root.
+
 ## Overview
 
-This project uses **llama-swap** as the primary interface for all AI agent interactions. The system provides a high-performance model swapping infrastructure that leverages your NVIDIA RTX 5070 Max-Q GPU for optimal inference performance.
+This project uses **llama-swap** as the primary interface for all AI agent
+interactions. The system provides high-performance model swapping infrastructure
+leveraging NVIDIA RTX 5070 Max-Q GPU for optimal inference performance.
 
 ## Core Capabilities
 
@@ -30,58 +35,17 @@ nix flake show && nix flake check && nix fmt --check
 
 **Purpose:** Verify the Nix flake is healthy (must succeed before committing).
 
-### `/hermes` - Hermes Agent Context
+### `/health` - Health Check
 
-**Purpose:** Load this project's Hermes Agent documentation.
+```bash
+curl http://127.0.0.1:10001/health
+```
 
-**Context files:**
-
-- `AGENTS.md` — Agent roles, responsibilities, and workflow
-- `.hermes.md` — Hermes-specific project rules
-- `SKILL.md` — Agent commands and capabilities
-- `docs/monorepo.md` — Monorepo structure and phase plan
-- `docs/nix-formatting.md` — Nix formatting infrastructure
-
-**Key references:**
-
-- **Hermes home:** `/home/waflores/.hermes/` (profiles, skills, memory, plugins)
-- **Hermes docs:** https://hermes-agent.nousresearch.com/docs/
-- **Hermes skill:** `/home/waflores/.hermes/skills/autonomous-ai-agents/hermes-agent/SKILL.md`
-
-**For spawning additional Hermes instances:**
-
-- **One-shot:** `hermes chat -q "<query>"`
-- **Interactive:** `tmux new-session -d -s hermes "hermes"`
-- **Worktree mode:** `hermes -w` (prevents git conflicts when editing code)
-- **Resume:** `hermes --continue` or `hermes --resume <session-id>`
-
-______________________________________________________________________
-
-## Agent Commands — llama-swap
-
-### `/models` - List Available Models
+### `/list-models` - List Loaded Models
 
 ```bash
 curl http://127.0.0.1:10001/v1/models
 ```
-
-**Response:**
-
-```json
-{
-  "object": "list",
-  "data": [
-    {
-      "id": "IBM Granite 4 Tiny",
-      "object": "model",
-      "created": 1718668800,
-      "owned_by": "llama-swap"
-    }
-  ]
-}
-```
-
-Model inventory and API details are in `docs/llama-swap.md`.
 
 ### `/load <model-name>` - Load a Specific Model
 
@@ -109,21 +73,18 @@ curl -X DELETE http://127.0.0.1:10001/v1/models/IBM Granite 4 Tiny
   --output benchmarks/results.json
 ```
 
-NOTE: `run_benchmarks.py` and `run_llama_bench.sh` are placeholders. See `docs/llama-swap.md` for the benchmark status.
+NOTE: `run_benchmarks.py` and `run_llama_bench.sh` are placeholders. See
+`llama-swap/README.md` for the benchmark status.
 
-### `/health` - Health Check
-
-```bash
-curl http://127.0.0.1:10001/health
-```
-
-### `/list-models` - List Loaded Models
+### `/models` - List Available Models
 
 ```bash
 curl http://127.0.0.1:10001/v1/models
 ```
 
-______________________________________________________________________
+### `/nix-check` command is for Hermes Agent only. See `AGENTS.md` for
+
+generic, platform-neutral repo documentation.
 
 ## Nix Commands
 
@@ -150,8 +111,6 @@ nix fmt
 ```bash
 nix flake check
 ```
-
-______________________________________________________________________
 
 ## Performance Targets
 
@@ -183,8 +142,6 @@ ______________________________________________________________________
 | Qwen3-VL-8B-Instruct-GGUF | 8B | ~5 GB | CUDA0 |
 | olmOCR-2-7B-1025-GGUF | 8B | ~4.7 GB | CUDA0 |
 | granite-4-h-tiny | 7B | ~4 GB | CUDA0 |
-
-______________________________________________________________________
 
 ## Quick Start
 
@@ -218,8 +175,6 @@ curl -X POST http://127.0.0.1:10001/v1/models \
   --output benchmarks/results.json
 ```
 
-______________________________________________________________________
-
 ## Configuration Files
 
 | File | Purpose |
@@ -234,8 +189,6 @@ ______________________________________________________________________
 | nix/devshells/default.nix | blueprint devShells output |
 | nix/checks/pre-commit-check.nix | pre-commit check wired to treefmt |
 | .agents/config.json | Machine-readable project authority |
-
-______________________________________________________________________
 
 ## Core Rules
 
