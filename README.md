@@ -12,17 +12,26 @@ paths live in `llama-swap/config.yaml`; the Python package (`llm_manager/`) read
 them via env vars (`LLM_MANAGER_*`) with machine defaults. To adapt to another
 machine, edit `llama-swap/config.yaml` and/or set the env vars below.
 
-______________________________________________________________________
-
 ## How to use this repo as an AI agent
 
-- **Generic AI harness** (pi, Codex, OpenCode, Claude): read `AGENTS.md` at the
-  repo root. See `CLAUDE.md` for a Claude mirror.
-- **Hermes Agent**: read `.hermes.md` (Hermes-only).
-- **General inquiry**: read this file, then `README.md` → `docs/README.md` →
-  `docs/monorepo.md`.
+| Agent | Entry point | Docs to read |
+|-------|-------------|--------------|
+| **pi.dev** (https://pi.dev) | `AGENTS.md` + `SKILL.md` at repo root, or `pi.dev/SKILL.md` in any file | `AGENTS.md`, `SKILL.md`, `CLAUDE.md`, `docs/` |
+| **Codex / OpenCode / Claude** | `AGENTS.md` + `CLAUDE.md` at repo root | `AGENTS.md`, `CLAUDE.md`, `docs/` |
+| **Hermes Agent** (Nous Research) | `.hermes.md` (Hermes-only) + `.hermes/` skills | `.hermes.md`, `.hermes/skills/hermes-agent/SKILL.md`, `docs/` |
 
-______________________________________________________________________
+This repo is a **monorepo** of four subprojects. After the agent entry point,
+read in this order:
+
+1. `README.md` (root) — system overview, quick start, path adaptation
+2. `docs/README.md` — documentation index
+3. `docs/monorepo.md` — directory layout + phase plan
+4. The subfolder you need:
+   - `llama-swap/` — model config + benchmarks
+   - `llm_manager/` — Python package (registry, hardware, profiles, web UI)
+   - `nix/` — Nix flake + formatting
+   - `context-verification/` — 22 model JSON metadata
+   - `other_experiments/` — experimental, non-portable
 
 ## Quick start
 
