@@ -1,0 +1,28 @@
+name: Nix checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  nix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: cachix/install-nix-action@v24
+        with:
+          install_url: https://github.com/numtide/nix-nixpkgs-config/releases/download/nixpkgs-24.11/nix-nixpkgs-config-24.11-linux-x86_64.tar.xz
+
+      - name: nix flake check
+        run: nix flake check
+
+      - name: nix fmt --check
+        run: |
+          # nix fmt--check is not supported in Nix 2.34; use nix fmt and compare
+          # with a baseline. This is informational only.
+          nix fmt

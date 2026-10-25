@@ -1,0 +1,21 @@
+# pre-commit hooks for local-ai-configs
+# These run outside the Nix flake (which uses git-hooks.nix).
+
+repos:
+  - repo: local
+    hooks:
+      - id: nixfmt
+        name: Nix format
+        entry: nix fmt
+        language: system
+        pass_filenames: false
+      - id: ruff
+        name: Ruff lint
+        entry: uv run ruff check
+        language: system
+        pass_filenames: false
+      - id: ruff-format
+        name: Ruff format
+        entry: uv run ruff format --check
+        language: system
+        pass_filenames: false
