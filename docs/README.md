@@ -8,9 +8,9 @@ deeper detail in sub-docs. Start here, then jump to the doc you actually need.
 This repo is a monorepo of four subprojects. Read in this order:
 
 1. `README.md` (root) — system overview, quick start, hardpaths note
-1. `docs/README.md` — this file (documentation index)
-1. `docs/monorepo.md` — directory layout + phase plan
-1. The subfolder you need:
+2. `docs/README.md` — this file (documentation index)
+3. `docs/monorepo.md` — directory layout + phase plan
+4. The subfolder you need:
    - `llama-swap/` — model config + benchmarks
    - `llm_manager/` — Python package: architecture, web UI, tests
    - `nix/` — Nix flake + formatting

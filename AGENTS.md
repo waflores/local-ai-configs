@@ -66,5 +66,8 @@ edit `llama-swap/config.yaml` and/or set `LLM_MANAGER_MODELS_DIR` etc.
 
 ## Agent-specific docs
 
-- **Hermes-only:** `.hermes.md`, `.hermes/` (plans, skills)
-- **Generic:** this file + `CLAUDE.md` + `docs/`
+| Agent | Entry point | Docs to read |
+|-------|-------------|--------------|
+| **pi.dev** (https://pi.dev) | `AGENTS.md` + `SKILL.md` at repo root, or `pi.dev/SKILL.md` in any file | `AGENTS.md`, `SKILL.md`, `CLAUDE.md`, `docs/` |
+| **Codex / OpenCode / Claude** | `AGENTS.md` + `CLAUDE.md` at repo root | `AGENTS.md`, `CLAUDE.md`, `docs/` |
+| **Hermes Agent** (Nous Research) | `.hermes.md`, `.hermes/` (plans, skills) | `.hermes.md`, `.hermes/skills/hermes-agent/SKILL.md`, `docs/` |
