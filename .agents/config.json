@@ -2,12 +2,11 @@
   "name": "local-config",
   "version": "1.0.0",
   "description": "LLM manager and llama-swap configuration toolkit",
-
   "authority": {
     "folder": ".agents",
-    "priority": "high"
+    "priority": "high",
+    "agent": "Hermes Agent only. For generic AI harnesses, read AGENTS.md / CLAUDE.md at the repo root."
   },
-
   "core_stack": {
     "llama-server": {
       "description": "Inference engine",
@@ -22,43 +21,34 @@
       "status": "active"
     }
   },
-
-  "model_location": "/home/waflores/.lmstudio/models",
-
+  "model_location": "/lmstudio/models",
   "configuration_paths": {
-    "llama_swap": "/home/waflores/DevFolder/ai/local-config/llama-swap/config.yaml"
+    "llama_swap": "./llama-swap/config.yaml"
   },
-
   "performance_targets": {
     "model_swap_time": "< 2s",
     "generation_speed_7b": "> 10 t/s",
     "vram_utilization": "< 70%",
     "context_window": "32K+"
   },
-
   "agents": {
     "folder": ".agents/agents",
     "primary_contract": ".agents/agents/PROJECT-CONTRACT.md"
   },
-
   "prompts": {
     "folder": ".agents/prompts"
   },
-
   "rules": {
     "folder": ".agents/rules"
   },
-
   "checks": {
     "folder": ".agents/checks"
   },
-
   "get_started": {
     "step_1": "Consult .agents/agents/PROJECT-CONTRACT.md for project overview and critical rules",
-    "step_2": "Start llama-swap with /home/waflores/bin/llama-swap-config /home/waflores/DevFolder/ai/local-config/llama-swap/config.yaml -watch-config",
+    "step_2": "Start llama-swap with ./llama-swap/config.yaml -watch-config",
     "step_3": "Use 'cn' to chat with models"
   },
-
   "hardware": {
     "cpu": "Intel Core Ultra 9 275HX (24 cores, up to 5.4 GHz)",
     "gpu": "NVIDIA GeForce RTX 5070 Max-Q (~8 GB VRAM) + Intel Integrated Graphics (~23 GB shared)",
@@ -66,7 +56,6 @@
     "storage": "~1 TB total (~245 GB free)",
     "os": "Ubuntu 26.04 LTS (Resolute Raccoon)"
   },
-
   "available_devices": {
     "CUDA0": {
       "name": "NVIDIA GeForce RTX 5070 Laptop GPU",
