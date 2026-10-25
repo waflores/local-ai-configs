@@ -26,11 +26,10 @@ read in this order:
 1. `README.md` (root) — system overview, quick start, path adaptation
 1. `docs/README.md` — documentation index
 1. `docs/monorepo.md` — directory layout + phase plan
-1. The subfolder you need:
-   - `llama-swap/` — model config + benchmarks
-   - `llm_manager/` — Python package (registry, hardware, profiles, web UI)
+   - `llama-swap/` — model config (6 models) + benchmarks
+   - `llm_manager/` — Python package: registry, hardware, profiles, web UI
    - `nix/` — Nix flake + formatting
-   - `context-verification/` — 22 model JSON metadata
+   - `context-verification/` — 22 model JSON metadata (source of truth)
    - `other_experiments/` — experimental, non-portable
 
 ## Quick start
@@ -73,7 +72,7 @@ uv run python -m llm_manager.webapp
 
 ```
 local-config/
-├── llama-swap/               # Model config (config.yaml: 22 models) + benchmarks
+├── llama-swap/               # Model config (config.yaml: 6 models) + benchmarks
 ├── llm_manager/              # Flask package: registry, hardware, profiles, web UI
 ├── nix/                      # treefmt-nix formatter infra + blueprint flake
 ├── context-verification/     # 22 JSON verification metadata files (source of truth)
@@ -93,7 +92,7 @@ local-config/
 
 For anything else, read the sub-docs in this order:
 
-1. [llama-swap/README.md](llama-swap/README.md) — what llama-swap is, its API, 22-model inventory
+1. [llama-swap/README.md](llama-swap/README.md) — what llama-swap is, its API, 6-model config inventory
 1. [docs/README.md](docs/README.md) — overview of the documentation set and where to look
 1. [docs/nix-formatting.md](docs/nix-formatting.md) — the Nix formatter infrastructure
 1. [docs/monorepo.md](docs/monorepo.md) — how the repo is organized (and why)

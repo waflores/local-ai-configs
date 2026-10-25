@@ -18,7 +18,7 @@ or `LLM_MANAGER_CONFIG_YAML` env vars.
 
 ## Model inventory
 
-22 models are defined in `llama-swap/config.yaml` and verified by `context-verification/*.json`.
+6 models are defined in `llama-swap/config.yaml` and verified by `context-verification/*.json`.
 
 ### Model discovery
 

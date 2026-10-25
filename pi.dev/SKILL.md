@@ -35,7 +35,7 @@ nix develop .#default # enter dev shell
 
 ## Key files
 
-- `llama-swap/config.yaml` — model registry (22 models)
+- `llama-swap/config.yaml` — model registry (6 models)
 - `context-verification/*.json` — per-model verification metadata
 - `llm_manager/loader.py` — model discovery pipeline
 - `llm_manager/configurator.py` — hardware-aware profile generation

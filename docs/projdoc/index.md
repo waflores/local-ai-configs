@@ -7,10 +7,10 @@ Use this to navigate the repository without reading everything.
 
 | Path | Role |
 |------|------|
-| `llama-swap/config.yaml` | Model registry (22 models, roles, context, paths) |
-| `llama-swap/run_benchmarks.py` | Benchmark harness (placeholder — redesign in progress) |
-| `llama-swap/run_llama_bench.sh` | Shell wrapper around benchmarks |
-| `llm_manager/` | Python package (registry + hardware + profiles + web UI + tests) |
+| `llama-swap/config.yaml` | Model config (6 models) + benchmark scripts |
+| `llama-swap/run_benchmarks.py` | Benchmark harness — placeholder to be retired or replaced |
+| `llama-swap/run_llama_bench.sh` | Shell wrapper around benchmarks — not a real pipeline |
+| `llm_manager/` | Python package: registry, hardware, profiles, web UI, tests |
 | `nix/treefmt.nix` | treefmt-nix module: declares formatters |
 | `nix/formatter.nix` | Bridge: extracts the treefmt wrapper binary |
 | `nix/packages/default.nix` | Blueprint packages output |
@@ -34,13 +34,15 @@ Use this to navigate the repository without reading everything.
 | Web UI | `llm_manager/webapp.py`, `templates/` | What the user sees and does |
 | API docs | `llm_manager/api_docs.py` | The FastAPI OpenAPI spec |
 | Nix packaging | `nix/*.nix`, `flake.nix` | Reproducible build, dev shell, formatting |
-| Benchmarking | `llama-swap/run_benchmarks.py`, `run_llama_bench.sh` | Performance measurement (see note below) |
+| Model registry | `llama-swap/config.yaml` (6 models) + `context-verification/*.json` (22 source-of-truth files) |
+| Model discovery | `llm_manager/loader.py`, `llm_manager/model_paths.py` | How paths are resolved at runtime |
+| Benchmarking | `llama-swap/run_benchmarks.py`, `run_llama_bench.sh` | Performance measurement — placeholder/wrapper, see note below |
+
+The key facts: `config.yaml` defines 6 models; `context-verification/*.json` is the 22-file source of truth for `llm_manager`.
 
 ## Note on benchmarking
 
-`llama-swap/run_benchmarks.py` and `run_llama_bench.sh` are **not yet a real benchmark
-pipeline** — they are a placeholder and a generic shell wrapper. The performance targets
-(`docs/llama-swap.md`) are the contract; the pipeline is planned for a later phase.
+`llama-swap/run_benchmarks.py` and `run_llama_bench.sh` are **placeholder/wrapper**, not a real benchmark pipeline yet. The performance targets (`docs/llama-swap.md`) are the contract; the pipeline is the first item in the re-scoped CMMI roadmap. See `.hermes/plans/2026-09-24_133545-cmmi-5-roadmap.md` and `.hermes/plans/2026-09-24_134500-benchmarking-infrastructure-report.md` for the current implementation plan.
 
 ## Reading order
 

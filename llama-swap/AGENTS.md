@@ -1,3 +1,5 @@
+
+
 # llama-swap Configuration Agent
 
 ## For Hermes Agent only
@@ -9,6 +11,8 @@
 ## Purpose
 
 This agent handles configuration, testing, and validation of llama-swap. It provides structured workflows for model management, performance benchmarking, and system health monitoring.
+
+**Model counts:** `config.yaml` defines **6** models; `context-verification/*.json` holds the **22**-model source-of-truth registry. The benchmark pipeline is the top priority in `.hermes/plans/`. The `run_benchmarks.py` placeholder is being retired/replaced per the CMMI roadmap.
 
 ## Responsibilities
 

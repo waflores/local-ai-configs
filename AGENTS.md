@@ -18,8 +18,8 @@ note below).
 
 | Path | What it is |
 |------|-----------|
-| `llama-swap/` | Model config (22 models), benchmarks, parameter optimizer |
-| `llm_manager/` | Python package: model registry, hardware-aware profiles, Flask web UI + FastAPI docs |
+| `llama-swap/` | Model config (6 models) + benchmarks |
+| `llm_manager/` | Python package: registry, hardware-aware profiles, Flask web UI + FastAPI docs |
 | `nix/` | treefmt-nix + blueprint flake (x86_64-linux only) |
 | `context-verification/` | 22 model JSON metadata (source of truth for the model registry) |
 | `other_experiments/` | Experimental: inferhost, llamastash. **Hardcoded absolute paths. Not portable.** |
@@ -51,8 +51,8 @@ uv run ruff format --check
 
 ## Key files
 
-- `llama-swap/config.yaml` — model registry (22 models)
-- `context-verification/*.json` — per-model verification metadata
+- `llama-swap/config.yaml` — model config (6 models)
+- `context-verification/*.json` — per-model verification metadata (22 models)
 - `llm_manager/loader.py` — model discovery pipeline (JSON metadata + config.yaml + on-disk scan)
 - `llm_manager/configurator.py` — hardware-aware profile generation
 - `flake.nix` + `nix/` — Nix packaging and formatting

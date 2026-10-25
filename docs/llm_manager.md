@@ -4,10 +4,7 @@ The Python Flask application: model registry, hardware-aware config generation, 
 
 ## Why this exists
 
-`llm_manager` is the web-facing layer. It turns the 22-model registry (from
-`context-verification/*.json` + `config.yaml`) plus live hardware detection into
-hardware-aware "profiles" — quantized, context-capped configurations that tell the user
-which models fit in the RTX 5070 Max-Q VRAM and what llama.cpp parameters to use.
+`llm_manager` is the web-facing layer. It turns the 22-model registry (from `context-verification/*.json` + `llama-swap/config.yaml`) plus live hardware detection into hardware-aware "profiles" — quantized, context-capped configurations that tell the user which models fit in the RTX 5070 Max-Q VRAM and what llama.cpp parameters to use.
 
 ## Architecture
 

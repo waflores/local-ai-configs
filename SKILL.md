@@ -179,7 +179,7 @@ curl -X POST http://127.0.0.1:10001/v1/models \
 
 | File | Purpose |
 |------|---------|
-| llama-swap/config.yaml | llama-swap model definitions (22 models) |
+| llama-swap/config.yaml | llama-swap model definitions (6 models) |
 | flake.nix | Nix flake (x86_64-linux only) |
 | pyproject.toml | Python project metadata (uv) |
 | nix/treefmt.nix | treefmt-nix formatter declaration |

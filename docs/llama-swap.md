@@ -1,6 +1,6 @@
 # llama-swap.md
 
-What llama-swap is, its config format, its REST API, the 22-model inventory, and the
+What llama-swap is, its config format, its REST API, the 6-model config inventory, and the performance targets.
 performance targets.
 
 ## Why this exists
@@ -13,9 +13,9 @@ GGUF models on demand, swapping between CUDA0 (active inference) and Vulkan0/Vul
 
 | Artifact | Purpose |
 |----------|---------|
-| `config.yaml` | 22 model definitions (name, roles, context, paths) |
-| `run_benchmarks.py` | Benchmark harness (placeholder — redesign in progress) |
-| `run_llama_bench.sh` | Shell wrapper that runs all benchmarks |
+| `config.yaml` | llama-swap model config — 6 models (see catalog below) |
+| `run_benchmarks.py` | Benchmark harness — placeholder, to be retired or replaced |
+| `run_llama_bench.sh` | Shell wrapper around benchmarks — not a real pipeline |
 
 ## REST API (daemon on 127.0.0.1:10001)
 
@@ -35,16 +35,13 @@ curl -X DELETE http://127.0.0.1:10001/v1/models/<name>
 curl -X POST http://127.0.0.1:10001/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{"model": "...", "messages": [{"role": "user", "content": "..."}]}'
-```
+| Model inventory (22) |
 
-## Model inventory (22)
+16 of the 22 models in `context-verification/*.json` are the source of truth for `llm_manager`'s discovery pipeline; the other 6 live directly in `config.yaml` as `llama-swap` model definitions. Each model is discovered by:
 
-The registry is defined in `context-verification/*.json` and matched to `config.yaml`
-keys by a string alias map. Each model is discovered by:
-
-1. **Static metadata** (*context-verification/*.json) — name, size, context, quantization.
+1. **Static metadata** (`context-verification/*.json`) — name, size, context, quantization.
 1. **On-disk scan** (`loader.discover_models_on_disk()`) — live `.gguf` paths.
-1. **config.yaml path override** — if a `model_path` is declared.
+1. **config.yaml path override** — declared `model_path`.
 1. **Directory mapping** — case-insensitive dir name → canonical path.
 1. **Directory scan** — recursive walk for matching `.gguf` files.
 
