@@ -3,7 +3,8 @@
 ## For Hermes Agent only
 
 > This file is for **Hermes Agent only**. Generic agent docs: `AGENTS.md` (root)
-> + `docs/`.
+>
+> - `docs/`.
 
 ## Purpose
 

@@ -219,7 +219,7 @@ def discover_models(
     for json_path in sorted(context_dir.glob("*.json")):
         try:
             data = json.loads(json_path.read_text(encoding="utf-8"))
-        except json.JSONDecodeError, OSError, UnicodeDecodeError:
+        except (json.JSONDecodeError, OSError, UnicodeDecodeError):
             continue
         parse_verification_metadata(json_path, data, models)
 
@@ -715,7 +715,7 @@ def enrich_with_verification(
         for json_path in context_dir.glob("*.json"):
             try:
                 data = json.loads(json_path.read_text(encoding="utf-8"))
-            except json.JSONDecodeError, OSError, UnicodeDecodeError:
+            except (json.JSONDecodeError, OSError, UnicodeDecodeError):
                 continue
             model_id = data.get("model", "")
             if not model_id:

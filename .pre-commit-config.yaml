@@ -1,6 +1,5 @@
 # pre-commit hooks for local-ai-configs
 # These run outside the Nix flake (which uses git-hooks.nix).
-
 repos:
   - repo: local
     hooks:

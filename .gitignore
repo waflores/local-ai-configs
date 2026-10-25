@@ -19,7 +19,7 @@ result
 result-*
 
 # git-hooks.nix
-/.pre-commit-config.yaml
+
 
 # HerMES scratch
 .hermes/cache/

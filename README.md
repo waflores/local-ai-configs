@@ -12,7 +12,7 @@ paths live in `llama-swap/config.yaml`; the Python package (`llm_manager/`) read
 them via env vars (`LLM_MANAGER_*`) with machine defaults. To adapt to another
 machine, edit `llama-swap/config.yaml` and/or set the env vars below.
 
----
+______________________________________________________________________
 
 ## How to use this repo as an AI agent
 
@@ -22,7 +22,7 @@ machine, edit `llama-swap/config.yaml` and/or set the env vars below.
 - **General inquiry**: read this file, then `README.md` → `docs/README.md` →
   `docs/monorepo.md`.
 
----
+______________________________________________________________________
 
 ## Quick start
 
