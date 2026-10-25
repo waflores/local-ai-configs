@@ -1,5 +1,10 @@
 # llama-swap Configuration Agent
 
+## For Hermes Agent only
+
+> This file is for **Hermes Agent only**. Generic agent docs: `AGENTS.md` (root)
+> + `docs/`.
+
 ## Purpose
 
 This agent handles configuration, testing, and validation of llama-swap. It provides structured workflows for model management, performance benchmarking, and system health monitoring.

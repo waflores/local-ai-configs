@@ -7,11 +7,22 @@ load/unload GGUF models across two GPUs (CUDA0 active, Vulkan0 storage, Vulkan1 
 - **Hardware:** NVIDIA RTX 5070 Max-Q (8 GB VRAM) + Intel (ARL) (23 GB shared) + NVIDIA RTX 5070
 - **Models:** 22 GGUF models discovered from `context-verification/*.json` + on-disk scanning
 
-The repo mirror: `llama-swap` (model config + benchmarks) and `llm_manager` (Python Flask app
-with model registry, hardware-aware config generation, and a web UI). `nix/` wraps it all into
-a reproducible package on x86_64-linux only.
+This repo is a **user-specific config** for a machine at `/home/waflores/`. Model
+paths live in `llama-swap/config.yaml`; the Python package (`llm_manager/`) reads
+them via env vars (`LLM_MANAGER_*`) with machine defaults. To adapt to another
+machine, edit `llama-swap/config.yaml` and/or set the env vars below.
 
-______________________________________________________________________
+---
+
+## How to use this repo as an AI agent
+
+- **Generic AI harness** (pi, Codex, OpenCode, Claude): read `AGENTS.md` at the
+  repo root. See `CLAUDE.md` for a Claude mirror.
+- **Hermes Agent**: read `.hermes.md` (Hermes-only).
+- **General inquiry**: read this file, then `README.md` → `docs/README.md` →
+  `docs/monorepo.md`.
+
+---
 
 ## Quick start
 
@@ -31,6 +42,14 @@ curl http://127.0.0.1:10001/health
 uv run python -m llm_manager.webapp
 # Open http://127.0.0.1:5000/
 ```
+
+### Env vars for path adaptation
+
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `LLM_MANAGER_MODELS_DIR` | `/home/waflores/.lmstudio/models/lmstudio-community` | Where GGUF models live |
+| `LLM_MANAGER_CONTEXT_DIR` | `context-verification/` | Model verification metadata |
+| `LLM_MANAGER_CONFIG_YAML` | `llama-swap/config.yaml` | llama-swap model config |
 
 ## Performance targets
 
@@ -52,10 +71,18 @@ local-config/
 ├── .agents/                  # Agent intent layer (config.json, README.md, agents/)
 ├── docs/                     # Layered documentation
 ├── flake.nix / pyproject.toml  # Build definitions
+├── other_experiments/        # Experimental: inferhost, llamastash. NOT portable.
+└── billion-context/          # Removed from git.
 ```
 
-Detailed docs are below. This file intentionally stays short — for anything else, read the
-sub-docs in this order:
+## Agent-specific docs
+
+- **Hermes-only:** `.hermes.md`, `.hermes/` (plans, skills)
+- **Generic:** `AGENTS.md` + `CLAUDE.md` + `docs/`
+
+## Detailed docs
+
+For anything else, read the sub-docs in this order:
 
 1. [llama-swap/README.md](llama-swap/README.md) — what llama-swap is, its API, 22-model inventory
 1. [docs/README.md](docs/README.md) — overview of the documentation set and where to look

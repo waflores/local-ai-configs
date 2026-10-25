@@ -4,14 +4,17 @@
 
 llama-swap is a model management tool that allows you to load and unload large language models (LLMs) dynamically. It uses `llama-server` for inference and supports multiple GPU backends (CUDA, Vulkan).
 
-## Core Stack
-
-- **llama-server**: Inference engine
-- **llama-swap**: Model management and swapping tool
-
 ## Authority
 
 This project uses the `.agents` folder to define AI agent behavior. Agents should consult `.agents/agents/` for project-specific instructions.
+
+## Hardpaths note
+
+**This is a user-specific config for a machine at `/home/waflores/`.** Model
+paths live in `config.yaml`; the Python package (`llm_manager/`) reads them via
+env vars (`LLM_MANAGER_*`) with machine defaults. To adapt to another machine,
+edit `config.yaml` and/or set `LLM_MANAGER_MODELS_DIR`, `LLM_MANAGER_CONTEXT_DIR`,
+or `LLM_MANAGER_CONFIG_YAML` env vars.
 
 ## Model inventory
 
