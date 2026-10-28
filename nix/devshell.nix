@@ -4,7 +4,11 @@ let
 in
 pkgs.mkShell {
   # Add build dependencies
-  packages = [ ];
+  packages = [
+    pkgs.statix
+    pkgs.uv
+    pkgs.pre-commit
+  ];
 
   # Add environment variables
   env = { };

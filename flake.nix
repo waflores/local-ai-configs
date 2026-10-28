@@ -28,8 +28,6 @@
           default = self.packages.x86_64-linux.default.default;
         };
       };
-    in
-    let
       # Evaluate blueprint once to access its outputs.
       blueprintOut = inputs.blueprint {
         inherit inputs;
@@ -44,21 +42,22 @@
       # blueprint's mkPackagesFor (packages.x86_64-linux.default is now
       # a set { default, override, overrideDerivation }, not a derivation).
       packages = flattenPackages blueprintOut;
-      # Re-expose the remaining outputs the flake expects.
-      lib = blueprintOut.lib;
-      legacyPackages = blueprintOut.legacyPackages;
-      nixosConfigurations = blueprintOut.nixosConfigurations;
-      darwinConfigurations = blueprintOut.darwinConfigurations;
-      systemConfigs = blueprintOut.systemConfigs;
-      robotnixConfigurations = blueprintOut.robotnixConfigurations;
-      nixOnDroidConfigurations = blueprintOut.nixOnDroidConfigurations;
-      modules = blueprintOut.modules;
-      devShells = blueprintOut.devShells;
-      checks = blueprintOut.checks;
-      formatter = blueprintOut.formatter;
-      homeModules = blueprintOut.homeModules;
-      nixosModules = blueprintOut.nixosModules;
-      darwinModules = blueprintOut.darwinModules;
-      templates = blueprintOut.templates;
+      inherit (blueprintOut)
+        lib
+        legacyPackages
+        nixosConfigurations
+        darwinConfigurations
+        systemConfigs
+        robotnixConfigurations
+        nixOnDroidConfigurations
+        modules
+        devShells
+        checks
+        formatter
+        homeModules
+        nixosModules
+        darwinModules
+        templates
+        ;
     };
 }
