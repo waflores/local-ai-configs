@@ -4,7 +4,7 @@
 > **Last reviewed:** 2026-10-24
 > **Author:** Hermes Agent
 
----
+______________________________________________________________________
 
 ## 1. Executive summary
 
@@ -18,7 +18,7 @@ The benchmarking infrastructure in this repo is **functionally incomplete** and 
 
 This report recommends adopting a standard, open-source benchmarking tool (llama-bench / llama-benchy / llama.cpp `llama-bench`) rather than continuing to hand-roll a suite, and folding the existing `PERFORMANCE_NOTES.md` data into a normalized results pipeline.
 
----
+______________________________________________________________________
 
 ## 2. What's actually in the repo (corrected facts)
 
@@ -50,7 +50,7 @@ This report recommends adopting a standard, open-source benchmarking tool (llama
 - `docs/`: `llama-swap.md` (performance targets), `monorepo.md` (layout + rules), `inference-tuning.md` (context sizing math).
 - `docs/monorepo.md` and `docs/monorepo.md` rule set: `llama-swap/` gets first-class docs/review; `other_experiments/` is experimental/throwaway.
 
----
+______________________________________________________________________
 
 ## 3. Recommendation
 
@@ -59,7 +59,7 @@ This report recommends adopting a standard, open-source benchmarking tool (llama
 The most defensible, maintainable path is to **standardize on one open-source tool** and either:
 
 1. **Adopt llama-bench** (`alexziskind1/llama-throughput-lab`, MIT, actively maintained) as the primary tool, or
-2. **Wrap an existing tool** (llama-bench / llama-benchy / llama.cpp `llama-bench`) with a thin Python/Shell driver, and keep the hand-rolled `run_benchmarks.py` only as a deprecated placeholder.
+1. **Wrap an existing tool** (llama-bench / llama-benchy / llama.cpp `llama-bench`) with a thin Python/Shell driver, and keep the hand-rolled `run_benchmarks.py` only as a deprecated placeholder.
 
 Continue **not** to hand-roll a benchmark suite from scratch. The repo's existing scripts (`run_benchmarks.py`, `run_llama_bench.sh`, `parameter-optimizer/`) have produced **zero** committed benchmark results and are a maintenance burden without a clear, standardized output format.
 
@@ -74,7 +74,7 @@ Continue **not** to hand-roll a benchmark suite from scratch. The repo's existin
 - **Test the scripts now.** If they produce the promised outputs, fix the README to match reality and add a `logs/parameter-analysis/` output directory.
 - If they don't, **mark the README claims as inaccurate** and deprecate the scripts, or leave them as config-tuning helpers without benchmark claims.
 
----
+______________________________________________________________________
 
 ## 4. Migration plan (updated for current repo state)
 
@@ -98,7 +98,7 @@ Continue **not** to hand-roll a benchmark suite from scratch. The repo's existin
 - [ ] Add a migration guide documenting the new workflow + canonical output format.
 - [ ] Update `docs/monorepo.md`, `docs/llama-swap.md`, `README.md`, `AGENTS.md`, `SKILL.md`, `.hermes.md` to reflect the corrected model counts (22 in `context-verification`, 6 in `config.yaml`) and the live benchmark pipeline.
 
----
+______________________________________________________________________
 
 ## 5. Expected benefits
 
@@ -123,7 +123,7 @@ Continue **not** to hand-roll a benchmark suite from scratch. The repo's existin
 - Model comparison for selection.
 - Baseline for CMMI Level 2 (repeatable) rather than Level 5.
 
----
+______________________________________________________________________
 
 ## 6. Conclusion
 
@@ -138,15 +138,15 @@ The benchmarking infrastructure is **functionally incomplete**:
 **Action items:**
 
 1. **Adopt a standard benchmark tool** (llama-bench / llama-benchy / llama.cpp llama-bench).
-2. **Integrate existing data** into a normalized, timestamped results pipeline.
-3. **Deprecate the placeholder scripts** after migration.
-4. **Correct documentation** (model counts, benchmark status, hardpaths).
-5. **Resolve the unverified `parameter-optimizer` claims** — test, fix, or deprecate.
+1. **Integrate existing data** into a normalized, timestamped results pipeline.
+1. **Deprecate the placeholder scripts** after migration.
+1. **Correct documentation** (model counts, benchmark status, hardpaths).
+1. **Resolve the unverified `parameter-optimizer` claims** — test, fix, or deprecate.
 
 This approach uses free, open-source tooling, preserves existing data, and gives the repo a real, repeatable benchmark foundation.
 
----
+______________________________________________________________________
 
-**Report created:** 2026-09-24  
-**Re-issued:** 2026-10-24  
+**Report created:** 2026-09-24\
+**Re-issued:** 2026-10-24\
 **Status:** Ready for implementation (after re-baselining model counts & tool decision)

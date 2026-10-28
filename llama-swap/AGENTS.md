@@ -1,5 +1,3 @@
-
-
 # llama-swap Configuration Agent
 
 ## For Hermes Agent only

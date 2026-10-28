@@ -94,3 +94,4 @@ curl -X POST http://127.0.0.1:10001/v1/chat/completions \
   wired into a real benchmark pipeline. Benchmarks are tracked in `docs/monorepo.md`.
 - `my-config.yaml`, `tweaking-config.yaml`, and `profiles_generated.yaml` are duplicates/
   working files; they are not part of the canonical config. See `docs/monorepo.md`.
+```
