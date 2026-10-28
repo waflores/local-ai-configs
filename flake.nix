@@ -14,20 +14,13 @@
     treefmt.inputs.nixpkgs.follows = "nixpkgs";
     git-hooks.url = "github:cachix/git-hooks.nix";
     git-hooks.inputs.nixpkgs.follows = "nixpkgs";
+    uv2nix.url = "github:pyproject-nix/uv2nix";
+    uv2nix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
     inputs:
     let
-      # blueprint's packages.${system}.default is a set
-      # { default, override, overrideDerivation } in newer nixpkgs,
-      # instead of a raw derivation. Flatten it so flake check /
-      # nix build / nix build .#packages.x86_64-linux.default work.
-      flattenPackages = self: {
-        x86_64-linux = {
-          default = self.packages.x86_64-linux.default.default;
-        };
-      };
       # Evaluate blueprint once to access its outputs.
       blueprintOut = inputs.blueprint {
         inherit inputs;
@@ -38,10 +31,11 @@
       };
     in
     {
-      # Override the packages output, flattening the set produced by
-      # blueprint's mkPackagesFor (packages.x86_64-linux.default is now
-      # a set { default, override, overrideDerivation }, not a derivation).
-      packages = flattenPackages blueprintOut;
+      # Override the packages output, using the blueprint's packages output
+      # which is a function that takes the inputs as arguments.
+      packages = (blueprintOut.packages.x86_64-linux).default {
+        inherit inputs;
+      };
       inherit (blueprintOut)
         lib
         legacyPackages

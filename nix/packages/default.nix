@@ -1,8 +1,8 @@
-# Local Python package built from pyproject.toml
+# Local Python package built from pyproject.toml + uv.lock using uv2nix
 # blueprint maps nix/packages/default.nix to packages.default
-# The pyproject.nix builder is used directly (standard derivation).
+# The uv2nix builder is used to generate the package from the project's dependencies.
 
-{ pkgs, ... }:
+{ pkgs, uv2nix, ... }:
 {
-  default = import ../pyproject.nix { inherit pkgs; };
+  default = import ../uv2nix.nix { inherit pkgs uv2nix; };
 }
