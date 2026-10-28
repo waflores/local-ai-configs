@@ -23,23 +23,21 @@
       # { default, override, overrideDerivation } in newer nixpkgs,
       # instead of a raw derivation. Flatten it so flake check /
       # nix build / nix build .#packages.x86_64-linux.default work.
-      flattenPackages =
-        self:
-        { x86_64-linux = {
-            default = self.packages.x86_64-linux.default.default;
-          };
+      flattenPackages = self: {
+        x86_64-linux = {
+          default = self.packages.x86_64-linux.default.default;
         };
+      };
     in
     let
       # Evaluate blueprint once to access its outputs.
-      blueprintOut =
-        inputs.blueprint {
-          inherit inputs;
-          systems = [ "x86_64-linux" ];
-          nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (inputs.nixpkgs.lib.getName pkg) [ ];
-          # Import the nix/ modules into blueprint's module scope.
-          prefix = ./nix;
-        };
+      blueprintOut = inputs.blueprint {
+        inherit inputs;
+        systems = [ "x86_64-linux" ];
+        nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (inputs.nixpkgs.lib.getName pkg) [ ];
+        # Import the nix/ modules into blueprint's module scope.
+        prefix = ./nix;
+      };
     in
     {
       # Override the packages output, flattening the set produced by
