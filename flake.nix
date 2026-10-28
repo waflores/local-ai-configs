@@ -18,16 +18,49 @@
 
   outputs =
     inputs:
-    inputs.blueprint {
-      inherit inputs;
-      # Restrict systems to x86_64-linux only, so blueprint generates
-      # outputs for a single platform (no cross-compilation machinery).
-      systems = [ "x86_64-linux" ];
-      nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (inputs.nixpkgs.lib.getName pkg) [ ];
-      # Import the nix/ modules into blueprint's module scope.
-      # The packages/ directory maps to packages.<system> (e.g.
-      # packages.x86_64-linux), and devshells/ maps to devShells.<system>
-      # (e.g. devShells.x86_64-linux).
-      prefix = ./nix;
+    let
+      # blueprint's packages.${system}.default is a set
+      # { default, override, overrideDerivation } in newer nixpkgs,
+      # instead of a raw derivation. Flatten it so flake check /
+      # nix build / nix build .#packages.x86_64-linux.default work.
+      flattenPackages =
+        self:
+        { x86_64-linux = {
+            default = self.packages.x86_64-linux.default.default;
+          };
+        };
+    in
+    let
+      # Evaluate blueprint once to access its outputs.
+      blueprintOut =
+        inputs.blueprint {
+          inherit inputs;
+          systems = [ "x86_64-linux" ];
+          nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (inputs.nixpkgs.lib.getName pkg) [ ];
+          # Import the nix/ modules into blueprint's module scope.
+          prefix = ./nix;
+        };
+    in
+    {
+      # Override the packages output, flattening the set produced by
+      # blueprint's mkPackagesFor (packages.x86_64-linux.default is now
+      # a set { default, override, overrideDerivation }, not a derivation).
+      packages = flattenPackages blueprintOut;
+      # Re-expose the remaining outputs the flake expects.
+      lib = blueprintOut.lib;
+      legacyPackages = blueprintOut.legacyPackages;
+      nixosConfigurations = blueprintOut.nixosConfigurations;
+      darwinConfigurations = blueprintOut.darwinConfigurations;
+      systemConfigs = blueprintOut.systemConfigs;
+      robotnixConfigurations = blueprintOut.robotnixConfigurations;
+      nixOnDroidConfigurations = blueprintOut.nixOnDroidConfigurations;
+      modules = blueprintOut.modules;
+      devShells = blueprintOut.devShells;
+      checks = blueprintOut.checks;
+      formatter = blueprintOut.formatter;
+      homeModules = blueprintOut.homeModules;
+      nixosModules = blueprintOut.nixosModules;
+      darwinModules = blueprintOut.darwinModules;
+      templates = blueprintOut.templates;
     };
 }
