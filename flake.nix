@@ -112,16 +112,14 @@
       };
     in
     {
-      packages = {
-        "x86_64-linux" = {
-          default = localPackage;
-        };
-      };
-      devShells = {
+      # Formatting shells (alternative to the old treefmt wrapper).
+      # Provide the standard 'formatter' output so users can call
+      # `nix fmt`/`nix fmt --check` from anywhere via nixpkgs formatter
+      # integrations, or `nix develop .#formatter` directly.
+      formatter = {
         "x86_64-linux" = {
           default = devShell;
         };
       };
-      legacyPackages = legacyPackages;
     };
 }
